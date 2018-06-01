@@ -9,9 +9,12 @@
         </div>
         <div class="col-xs-12 col-md-9">
 
-            {% for post in posts %}
-                <h3><a href="{% url 'detail' post.id %}">{{ post.title }}</a></h3>
-            {% endfor %}
+                <h3>{{ posts.title }}</h3>
+                <p>Created: {{ posts.created_date }}</p>
+                <p>Published: {{ posts.published_date }}</p>
+                <p>Graph: {{ posts.graph }}</p>
+                <p>Subject: {{ posts.subject }}</p>
+                <p>Result: {{ posts.result }}</p>
 
             <div id="curved-link"></div>
         </div>
