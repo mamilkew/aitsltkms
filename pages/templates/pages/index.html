@@ -1,5 +1,26 @@
 {% extends 'pages/layout.html' %}
+{% block container %}
 
-{% block content %}
+    <div class="row">
+        <div class="col-md-3 left-faceted">
+            <br>
+            <h4>Faceted Search</h4>
+            <hr>
+        </div>
+        <div class="col-xs-12 col-md-9">
+
+            {% for post in posts %}
+                <h3>{{ post.title }}</h3>
+                <p>Created: {{ post.created_date }}</p>
+                <p>Published: {{ post.published_date }}</p>
+                <p>Graph: {{ post.graph }}</p>
+                <p>Subject: {{ post.subject }}</p>
+            {% endfor %}
+
+            <div id="curved-link"></div>
+        </div>
+    </div>
+
+
 
 {% endblock %}

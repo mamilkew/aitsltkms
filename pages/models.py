@@ -11,7 +11,7 @@ class Post(models.Model):
     # text = models.TextField()
     graph = models.CharField(max_length=200)
     subject = models.CharField(max_length=200)
-    result = JSONField()
+    result = JSONField(blank=True, null=True)
     created_date = models.DateTimeField(
             default=timezone.now)
     published_date = models.DateTimeField(
