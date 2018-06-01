@@ -1,0 +1,990 @@
+{
+  "head" : {
+    "vars" : [
+      "subject",
+      "predicate",
+      "object"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Construction Engineering"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-03-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "1040000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-06-30T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Workshop/Training"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ceim-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SouthKorea"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Bonaventura"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Training HYUNDAI Engineering & Construction (Hyundai E&C) South Korea"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "1040000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#HYUNDAIEngineering"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "MoU between AIT and Univ. of Cordilleras"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "678600.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "678600.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#mec-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Nitin"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#AIT"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2014-04-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R007"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-03-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-09-17T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Image Processing"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "157500.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "157500.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-06-17T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#cs-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Matthew_N"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NanyangPolytechnicUniversity"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Image Processing and Classification System"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R015"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isRelatedTo"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ImageProcessing-area"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2017-05-31T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NSTDA Investorday Award 2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "500000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "500000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-06-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesMember"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Matthew_N"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#mes-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Mongkol"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NationalScienceAndTechnologyDevelopmentAgency"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NSTDA Investorday Award 2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R017"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#YamahaMotor"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isRelatedTo"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#AccidentRiskManagement-area"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "659360.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Motorcycle Accident Analysis: Phase 1"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#te-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Kunnawee"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-07-15T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2013"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2013-12-31T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "659360.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2013-R019"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Motorcycle Accidents"
+        }
+      }
+    ]
+  }
+}
