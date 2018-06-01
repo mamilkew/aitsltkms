@@ -12,16 +12,28 @@ class Post(models.Model):
     # text = models.TextField()
     graph = models.CharField(max_length=200)
     subject = models.CharField(max_length=200)
-    result = JSONField(blank=True, null=True)
+    result = JSONField(blank=True, null=True, editable=False)
     created_date = models.DateTimeField(
         default=timezone.now)
     published_date = models.DateTimeField(
         blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        self.result = {"nodes": [{"id": "hello1"}, {"id": "hello2"}],
-                       "links": [{"source": "hello1", "target": "hello2"}]}
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+#  should be the result from ice API
+    # def save(self, *args, **kwargs):
+    #     self.result = [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"},
+    #            {"subject": "ex:TomYumKung", "predicate": "ex:isFoodOf", "object": "ex:ThaiLand"},
+    #            {"subject": "ex:TomYumKung", "predicate": "rdf:type", "object": "ex:SpicyFood"},
+    #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:shrimp"},
+    #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:chilly"},
+    #            {"subject": "ex:TomYumKung", "predicate": "ex:requires", "object": "ex:chilly"},
+    #            {'"subject"': "ex:TomYumKung", "predicate": "ex:hasSpicy", "object": "ex:chilly"},
+    #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:lemon"},
+    #            {"subject": "ex:lemon", "predicate": "ex:hasTaste", "object": "ex:sour"},
+    #            {"subject": "ex:chilly", "predicate": "ex:hasTaste", "object": "ex:spicy"}]
+
+    # {"nodes": [{"id": "hello1"}, {"id": "hello2"}],
+    #            "links": [{"source": "hello1", "target": "hello2"}]}
+    # super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def publish(self):
         self.published_date = timezone.now()
