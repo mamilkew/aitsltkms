@@ -294,32 +294,32 @@
             container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         }
 
-        function filtering(filter_id) {
-            $.ajax({
-                url: '{% url 'filter_detail' %}',
-                data: $('#filter_' + filter_id).serialize(),
-                type: 'POST',
-                success: function (response) {
-                    console.log(response);
-                    alert(response.status + " & " + response.filter_name)
-                    d3.select("svg").remove();
-                    svg = d3.select("#svg-body").append("svg")
-                        .attr("width", w + margin.right + margin.left)
-                        .attr("height", h + margin.top + margin.bottom)
-                        .append("g")
-                        .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
-                        .call(zoom);
-                    container = svg.append("g");
-                    triples = response.query
-                    graph = triplesToGraph(triples);
-                    update();
-                    console.log(graph);
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        }
+        {#function filtering(filter_id) {#}
+        {#    $.ajax({#}
+        {#        url: '{% url 'filter_detail' %}',#}
+        {#        data: $('#filter_' + filter_id).serialize(),#}
+        {#        type: 'POST',#}
+        {#        success: function (response) {#}
+        {#            console.log(response);#}
+        {#            alert(response.status + " & " + response.filter_name)#}
+        {#            d3.select("svg").remove();#}
+        {#            svg = d3.select("#svg-body").append("svg")#}
+        {#                .attr("width", w + margin.right + margin.left)#}
+        {#                .attr("height", h + margin.top + margin.bottom)#}
+        {#                .append("g")#}
+        {#                .attr("transform", "translate(" + margin.left + "," + margin.right + ")")#}
+        {#                .call(zoom);#}
+        {#            container = svg.append("g");#}
+        {#            triples = response.query#}
+        {#            graph = triplesToGraph(triples);#}
+        {#            update();#}
+        {#            console.log(graph);#}
+        {#        },#}
+        {#        error: function (error) {#}
+        {#            console.log(error);#}
+        {#        }#}
+        {#    });#}
+        {#\}#}
 
         $(function () {
             $("#filter_facet").on('change', function (e) {
@@ -330,18 +330,18 @@
                     success: function (response) {
                         console.log(response);
                         alert(response.status + " & " + response.filter_name)
-                        {#d3.select("svg").remove();#}
-                        {#svg = d3.select("#svg-body").append("svg")#}
-                        {#    .attr("width", w + margin.right + margin.left)#}
-                        {#    .attr("height", h + margin.top + margin.bottom)#}
-                        {#    .append("g")#}
-                        {#    .attr("transform", "translate(" + margin.left + "," + margin.right + ")")#}
-                        {#    .call(zoom);#}
-                        {#container = svg.append("g");#}
-                        {#triples = response.query#}
-                        {#graph = triplesToGraph(triples);#}
-                        {#update();#}
-                        {#console.log(graph);#}
+                        d3.select("svg").remove();
+                        svg = d3.select("#svg-body").append("svg")
+                            .attr("width", w + margin.right + margin.left)
+                            .attr("height", h + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
+                            .call(zoom);
+                        container = svg.append("g");
+                        triples = response.query
+                        graph = triplesToGraph(triples);
+                        update();
+                        console.log(graph);
                     },
                     error: function (error) {
                         console.log(error);

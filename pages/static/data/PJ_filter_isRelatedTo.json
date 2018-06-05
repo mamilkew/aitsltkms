@@ -1,0 +1,931 @@
+{
+  "head" : {
+    "vars" : [
+      "subject",
+      "predicate",
+      "object"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Vision-Based Industrial Robotic Bin-Picking System (Phase IV)"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SolimacAutomationCompanyLimited"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "931875.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "931875.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#cs-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Matthew_N"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isRelatedTo"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Robotics-area"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Completed"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2010-02-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2010"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Industrial Robot"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2010-07-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "vision-based robot"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2010-R001"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "bin-picking"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Straircase Climbing"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJlatedEnd"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2018-01-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Autonomous Mobile Rocotic Chair"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Handicapped and Elderly People"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2015"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2015-02-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Extended"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isRelatedTo"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Robotics-area"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#HumansServicesResearchInstitute"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Manukid"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#mes-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "1590000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2017-01-31T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Development of Autonomous Mobile Rocotic Chair with Ability of Straircase Climbing for Handicapped and Elderly People Project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R006"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "1590000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJlatedEnd"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2016-09-06T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2016-01-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Mobile robot platform"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "field based navigation"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2015"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Closed"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isRelatedTo"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Robotics-area"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#AM_Harsha"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#cs-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "58000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2016-06-30T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Development of a versatile mobile robot platform for future research on field based navigation"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2015-R029"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "58000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NameOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Development of Autonomous Mobile Robotic Chair with Ability of Staircase Climbing for Handicapped and Elderly People (Phase II) Project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isSponsoredBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#HumansServicesResearchInstitute"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJbaht"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "672000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJContractedAmount"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#float",
+          "type" : "literal",
+          "value" : "672000.0"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedBy"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#mes-fos"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#includesInvestigator"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Manukid"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isRelatedTo"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Robotics-area"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#isImplementedIn"
+        },
+        "object" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Thailand"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstatus"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "NA"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJstart"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2016-11-01T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TypeOfProject"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Research project"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJyear"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#integer",
+          "type" : "literal",
+          "value" : "2016"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Autonomous Mobile Rocotic Chair"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJend"
+        },
+        "object" : {
+          "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type" : "literal",
+          "value" : "2018-10-31T00:00:00"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Straircase Climbing"
+        }
+      },
+      {
+        "subject" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET-2016-R030"
+        },
+        "predicate" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#PJkeyword"
+        },
+        "object" : {
+          "type" : "literal",
+          "value" : "Handicapped and Elderly People"
+        }
+      }
+    ]
+  }
+}

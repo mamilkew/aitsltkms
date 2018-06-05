@@ -22,68 +22,6 @@ def index(request):
     return render(request, 'pages/index.html', {'posts': posts})
 
 
-def make_filter_script(list_filter):
-    text = ''
-    print(list_filter)
-    for idx, each in enumerate(list_filter):
-        if each.isdigit() == True:
-            each = each
-        else:
-            each = '"{}"'.format(each)
-
-        if idx == 0:
-            text += ' && (?object = ' + each
-        else:
-            text += ' || ?object = ' + each
-    if text != '':
-        text += ')'
-    return text
-
-
-def filter_detail(request):
-    if request.method == 'POST':
-        if request.is_ajax():
-            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
-                     + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                     + '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . ' \
-                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
-            facetdata = ''
-
-            if request.POST.get('PJyear') is not None:
-                facetdata += 'PJyear'
-                print(request.POST)
-                pjyeardata = request.POST.getlist('PJyear')
-                text = make_filter_script(pjyeardata)
-
-                if request.POST.get('PJstatus') is not None:
-                    sparql += 'filter(?predicate = aitslt:PJyear' + text + ')}'
-                    facetdata += 'PJstatus'
-                    pjstatusdata = request.POST.getlist('PJstatus')
-                    filter_text = make_filter_script(pjstatusdata)
-                    sparql_add = '}{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . ' \
-                                 + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) '
-                    sparql += sparql_add + 'filter(?predicate = aitslt:PJstatus' + filter_text + ')' + '}}}order by ?subject'
-                else:
-                    sparql += 'filter(?predicate = aitslt:PJyear' + text + ')' + '}}}order by ?subject'
-
-                new_results = transform_data("PJ_filter_PJyear.json")
-
-            elif request.POST.get('PJstatus') is not None:
-                facetdata += 'PJstatus'
-                pjstatusdata = request.POST.getlist('PJstatus')
-                text = make_filter_script(pjstatusdata)
-                sparql += 'filter(?predicate = aitslt:PJstatus' + text + ')' + '}}}order by ?subject'
-                new_results = transform_data("PJ_filter_PJstatus.json")
-
-            else:
-                sparql += '}}}order by ?subject'
-
-                new_results = transform_data("select_project.json")
-                return JsonResponse({'filter_name': 'No Filter', 'status': sparql, 'query': new_results})
-
-    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
-
-
 def detail(request, post_id):
     # posts = get_object_or_404(Post, pk=post_id)
 
@@ -99,7 +37,7 @@ def detail(request, post_id):
         new_results = []
         tmp_PJyear = []
         tmp_PJstatus = []
-        # tmp_isRelatedTo = []
+        tmp_isRelatedTo = []
 
         # transform to pattern for visualization standard
         for result in results:
@@ -113,18 +51,105 @@ def detail(request, post_id):
                 tmp_PJyear.append(tmp['object'])  # {'PJyear': [2013, 2014, 2015, 2016]}
             elif tmp['predicate'] == 'PJstatus':
                 tmp_PJstatus.append(tmp['object'])
-            # elif tmp['predicate'] == 'isRelatedTo':
-            #     tmp_isRelatedTo.append(tmp['object'])
+            elif tmp['predicate'] == 'isRelatedTo':
+                tmp_isRelatedTo.append(tmp['object'])
 
         posts.result = new_results
         posts.save()
         filter_facets = {'PJyear': list_facet(tmp_PJyear),
-                         'PJstatus': list_facet(tmp_PJstatus)}  # ,'isRelatedTo': list_facet(tmp_isRelatedTo)
+                         'PJstatus': list_facet(tmp_PJstatus), 'isRelatedTo': list_facet(tmp_isRelatedTo)}
 
     except Post.DoesNotExist:
         raise Http404("Question does not exist")
 
     return render(request, 'pages/detail.html', {'posts': posts, 'filter_facets': filter_facets})
+
+
+#  Ajax from filter in detail page for call API to get result and display in existing page
+def filter_detail(request):
+    if request.method == 'POST':
+        if request.is_ajax():
+            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
+                     + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+
+            facetdata = ''
+            if request.POST.get('PJyear') is not None:
+                facetdata += 'PJyear'
+                print(request.POST)
+                pjyeardata = request.POST.getlist('PJyear')
+                sparql += make_nested_filter('PJyear', pjyeardata)
+
+                if request.POST.get('PJstatus') is not None:
+                    facetdata += 'PJstatus'
+                    pjstatusdata = request.POST.getlist('PJstatus')
+                    sparql += make_nested_filter('PJstatus', pjstatusdata)
+
+                    if request.POST.get('isRelatedTo') is not None:
+                        facetdata += 'isRelatedTo'
+                        isrelatedtodata = request.POST.getlist('isRelatedTo')
+                        sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
+                    else:
+                        sparql += '}order by ?subject'
+
+                elif request.POST.get('isRelatedTo') is not None:
+                    facetdata += 'isRelatedTo'
+                    isrelatedtodata = request.POST.getlist('isRelatedTo')
+                    sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
+                else:
+                    sparql += '}order by ?subject'
+                new_results = transform_data("PJ_filter_PJyear.json")
+
+            elif request.POST.get('PJstatus') is not None:
+                facetdata += 'PJstatus'
+                pjstatusdata = request.POST.getlist('PJstatus')
+                sparql += make_nested_filter('PJstatus', pjstatusdata)
+                if request.POST.get('isRelatedTo') is not None:
+                    facetdata += 'isRelatedTo'
+                    isrelatedtodata = request.POST.getlist('isRelatedTo')
+                    sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
+                else:
+                    sparql += '}order by ?subject'
+                new_results = transform_data("PJ_filter_PJstatus.json")
+
+            elif request.POST.get('isRelatedTo') is not None:
+                facetdata += 'isRelatedTo'
+                isrelatedtodata = request.POST.getlist('isRelatedTo')
+                sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
+                new_results = transform_data("PJ_filter_isRelatedTo.json")
+
+            else:
+                sparql += '}order by ?subject'
+                new_results = transform_data("select_project.json")
+                return JsonResponse({'filter_name': 'No Filter', 'status': sparql, 'query': new_results})
+
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
+
+
+def make_nested_filter(predicate, list_object):
+    if predicate == 'isRelatedTo':
+        for idx, each in enumerate(list_object):
+            list_object[idx] = 'aitslt:{}'.format(each)
+    if predicate == 'PJstatus':
+        for idx, each in enumerate(list_object):
+            list_object[idx] = '"{}"'.format(each)
+    nested = '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . ' \
+             + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+    text = make_filter_sparql(list_object)
+    nested += 'filter(?predicate = aitslt:' + predicate + text + ')}}'
+    return nested
+
+
+def make_filter_sparql(list_filter):
+    text = ''
+    print(list_filter)
+    for idx, each in enumerate(list_filter):
+        if idx == 0:
+            text += ' && (?object = ' + each
+        else:
+            text += ' || ?object = ' + each
+    if text != '':
+        text += ')'
+    return text
 
 
 def check_type(type_result, value):
