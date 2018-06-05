@@ -7,8 +7,15 @@ import os
 import json
 
 
-# Create your views here.
-
+# call another API (sample for call ICE)
+# def my_django_view(request):
+#     if request.method == 'POST':
+#         r = requests.post('https://www.somedomain.com/some/url/save', params=request.POST)
+#     else:
+#         r = requests.get('https://www.somedomain.com/some/url/save', params=request.GET)
+#     if r.status_code == 200:
+#         return HttpResponse('Yay, it worked')
+#     return HttpResponse('Could not save data')
 
 def index(request):
     posts = Post.objects.filter(published_date__lte=timezone.now())
