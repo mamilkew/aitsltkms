@@ -2,6 +2,8 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils import timezone
 import datetime
+import os
+import json
 
 # Create your models here.
 
@@ -12,28 +14,38 @@ class Post(models.Model):
     # text = models.TextField()
     graph = models.CharField(max_length=200)
     subject = models.CharField(max_length=200)
+    source = JSONField(blank=True, null=True, editable=False)
     result = JSONField(blank=True, null=True, editable=False)
     created_date = models.DateTimeField(
         default=timezone.now)
     published_date = models.DateTimeField(
         blank=True, null=True)
 
-#  should be the result from ice API
-    # def save(self, *args, **kwargs):
-    #     self.result = [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"},
-    #            {"subject": "ex:TomYumKung", "predicate": "ex:isFoodOf", "object": "ex:ThaiLand"},
-    #            {"subject": "ex:TomYumKung", "predicate": "rdf:type", "object": "ex:SpicyFood"},
-    #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:shrimp"},
-    #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:chilly"},
-    #            {"subject": "ex:TomYumKung", "predicate": "ex:requires", "object": "ex:chilly"},
-    #            {'"subject"': "ex:TomYumKung", "predicate": "ex:hasSpicy", "object": "ex:chilly"},
-    #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:lemon"},
-    #            {"subject": "ex:lemon", "predicate": "ex:hasTaste", "object": "ex:sour"},
-    #            {"subject": "ex:chilly", "predicate": "ex:hasTaste", "object": "ex:spicy"}]
+#  -----should be the result from ice API ==> add to DB into "source" attribute-----
 
-    # {"nodes": [{"id": "hello1"}, {"id": "hello2"}],
-    #            "links": [{"source": "hello1", "target": "hello2"}]}
-    # super().save(*args, **kwargs)  # Call the "real" save() method.
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # This code only happens if the objects is not in the database yet. Otherwise it would have pk
+            SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+            json_url = os.path.join(SITE_ROOT, "static/data", "select_project.json")
+            data = json.load(open(json_url))
+            self.source = data
+
+        #     self.source = [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"},
+        #            {"subject": "ex:TomYumKung", "predicate": "ex:isFoodOf", "object": "ex:ThaiLand"},
+        #            {"subject": "ex:TomYumKung", "predicate": "rdf:type", "object": "ex:SpicyFood"},
+        #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:shrimp"},
+        #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:chilly"},
+        #            {"subject": "ex:TomYumKung", "predicate": "ex:requires", "object": "ex:chilly"},
+        #            {'"subject"': "ex:TomYumKung", "predicate": "ex:hasSpicy", "object": "ex:chilly"},
+        #            {"subject": "ex:TomYumKung", "predicate": "ex:includes", "object": "ex:lemon"},
+        #            {"subject": "ex:lemon", "predicate": "ex:hasTaste", "object": "ex:sour"},
+        #            {"subject": "ex:chilly", "predicate": "ex:hasTaste", "object": "ex:spicy"}]
+
+        # {"nodes": [{"id": "hello1"}, {"id": "hello2"}],
+        #            "links": [{"source": "hello1", "target": "hello2"}]}
+
+            super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def publish(self):
         self.published_date = timezone.now()
