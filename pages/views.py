@@ -18,22 +18,15 @@ def index(request):
 def filter_detail(request):
     if request.method == 'POST':
         if request.is_ajax():
-            radiodata = request.POST.get('PJyear')
-            print(radiodata)
-            SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-            json_url = os.path.join(SITE_ROOT, "static/data", "PJ_filter_PJyear.json")
-            data = json.load(open(json_url))
-            results = data['results']['bindings']
-            new_results = []
+            if request.POST.get('PJyear') is not None:
+                radiodata = request.POST.get('PJyear')
+                print(radiodata)
+                new_results = transform_data("PJ_filter_PJyear.json")
 
-            # transform to pattern for visualization standard
-            for result in results:
-                tmp = {}
-                tmp['subject'] = check_type(result.get('subject').get('type'), result.get('subject').get('value'))
-                tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
-                tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
-                new_results.append(tmp)
-                # print(new_results)
+            elif request.POST.get('PJstatus') is not None:
+                radiodata = request.POST.get('PJstatus')
+                print(radiodata)
+                new_results = transform_data("PJ_filter_PJstatus.json")
 
     return JsonResponse({'status': 'OK', 'filter_name': radiodata, 'query': new_results})
 
@@ -93,3 +86,20 @@ def check_type(type_result, value):
 def list_facet(tmp_facets):
     facets = sorted(list(set(tmp_facets)))
     return facets
+
+
+def transform_data(filename):  # transform to pattern for visualization standard
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "static/data", filename)
+    data = json.load(open(json_url))
+    results = data['results']['bindings']
+    new_results = []
+
+    for result in results:
+        tmp = {}
+        tmp['subject'] = check_type(result.get('subject').get('type'), result.get('subject').get('value'))
+        tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
+        tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
+        new_results.append(tmp)
+        # print(new_results)
+    return new_results

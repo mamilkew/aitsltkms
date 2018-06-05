@@ -292,12 +292,10 @@
             container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         }
 
-        $(function () {
-            $(document).on('change', 'input[name="PJyear"]', function (e) {
-                var val = $(this).val();
-                $.ajax({
+        function filtering(filter_id) {
+            $.ajax({
                     url: '{% url 'filter_detail' %}',
-                    data: $('#filter_PJyear').serialize(),
+                    data: $('#filter_'+filter_id).serialize(),
                     type: 'POST',
                     success: function (response) {
                         console.log(response);
@@ -319,6 +317,18 @@
                         console.log(error);
                     }
                 });
+        }
+
+        $(function () {
+            $(document).on('change', 'input[name="PJyear"]', function (e) {
+                {#var val = $(this).val();#}
+                filtering('PJyear');
+                e.preventDefault();
+            });
+
+            $(document).on('change', 'input[name="PJstatus"]', function (e) {
+                {#var val = $(this).val();#}
+                filtering('PJstatus');
                 e.preventDefault();
             });
         });
