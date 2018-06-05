@@ -2,7 +2,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from .models import Post
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import os
 import json
 
@@ -16,22 +16,26 @@ def index(request):
 
 
 def filter_detail(request):
-    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-    json_url = os.path.join(SITE_ROOT, "static/data", "PJ_filter_PJyear.json")
-    data = json.load(open(json_url))
-    results = data['results']['bindings']
-    new_results = []
+    if request.method == 'POST':
+        if request.is_ajax():
+            radiodata = request.POST.get('PJyear')
+            print(radiodata)
+            SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+            json_url = os.path.join(SITE_ROOT, "static/data", "PJ_filter_PJyear.json")
+            data = json.load(open(json_url))
+            results = data['results']['bindings']
+            new_results = []
 
-    # transform to pattern for visualization standard
-    for result in results:
-        tmp = {}
-        tmp['subject'] = check_type(result.get('subject').get('type'), result.get('subject').get('value'))
-        tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
-        tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
-        new_results.append(tmp)
-        # print(new_results)
+            # transform to pattern for visualization standard
+            for result in results:
+                tmp = {}
+                tmp['subject'] = check_type(result.get('subject').get('type'), result.get('subject').get('value'))
+                tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
+                tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
+                new_results.append(tmp)
+                # print(new_results)
 
-        return json.dumps({'status': 'OK', 'query': new_results})
+    return JsonResponse({'status': 'OK', 'filter_name': radiodata, 'query': new_results})
 
 
 def detail(request, post_id):

@@ -6,11 +6,13 @@
             <br>
             <h4>Faceted Search</h4>
             <hr>
+
             <div id="accordion" class="accordion">
                 {#        Group #iterative        #}
                 {% for key, value in filter_facets.items %}
                     <div class="card">
-                        <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse" data-target="#collapse{{ key }}"
+                        <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse"
+                             data-target="#collapse{{ key }}"
                              aria-expanded="false" aria-controls="collapse{{ key }}">
                             {{ key }}
                         </div>
@@ -18,20 +20,24 @@
                              data-parent="#accordion">
                             <div class="card-body">
                                 <ul class="list-group">
-                                    {% for v in value %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="{{ key }}"
-                                                   value="{{ v }}"
-                                                   id="checked{{ v }}"/>
-                                            <label class="form-check-label" for="checked{{ v }}">{{ v }}</label>
-                                        </div>
-                                    {% endfor %}
+                                    <form id="filter_{{ key }}">
+                                        {% csrf_token %}
+                                        {% for v in value %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="{{ key }}"
+                                                       value="{{ v }}"
+                                                       id="checked{{ v }}"/>
+                                                <label class="form-check-label" for="checked{{ v }}">{{ v }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </form>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+
         </div>
         <div class="col-xs-12 col-md-9">
 
@@ -44,14 +50,16 @@
 
 
             <div id="svg-body" class="panel-body"></div>
-            <ul>
-                {% for each in posts.result %}
-                    <li>{{ each }}</li>
-                {% endfor %}
-            </ul>
+            {#            <ul>#}
+            {#                {% for each in posts.result %}#}
+            {#                    <li>{{ each }}</li>#}
+            {#                {% endfor %}#}
+            {#            </ul>#}
 
         </div>
     </div>
+{% endblock %}
+{% block javascript %}
     <style type="text/css">
         .node {
             stroke: #fff;
@@ -102,8 +110,7 @@
             .attr("height", h + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
-            .call(zoom)
-        ;
+            .call(zoom);
 
         var container = svg.append("g");
 
@@ -285,6 +292,36 @@
             container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
         }
 
-
+        $(function () {
+            $(document).on('change', 'input[name="PJyear"]', function (e) {
+                var val = $(this).val();
+                $.ajax({
+                    url: '{% url 'filter_detail' %}',
+                    data: $('#filter_PJyear').serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                        console.log(response);
+                        alert(response.status + " & " + response.filter_name)
+                        d3.select("svg").remove();
+                        svg = d3.select("#svg-body").append("svg")
+                            .attr("width", w + margin.right + margin.left)
+                            .attr("height", h + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
+                            .call(zoom);
+                        container = svg.append("g");
+                        triples = response.query
+                        graph = triplesToGraph(triples);
+                        update();
+                        console.log(graph);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+                e.preventDefault();
+            });
+        });
     </script>
+
 {% endblock %}
