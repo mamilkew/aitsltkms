@@ -6,6 +6,32 @@
             <br>
             <h4>Faceted Search</h4>
             <hr>
+            <div id="accordion" class="accordion">
+                {#        Group #iterative        #}
+                {% for key, value in filter_facets.items %}
+                    <div class="card">
+                        <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse" data-target="#collapse{{ key }}"
+                             aria-expanded="false" aria-controls="collapse{{ key }}">
+                            {{ key }}
+                        </div>
+                        <div id="collapse{{ key }}" class="collapse" aria-labelledby="{{ key }}"
+                             data-parent="#accordion">
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    {% for v in value %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="{{ key }}"
+                                                   value="{{ v }}"
+                                                   id="checked{{ v }}"/>
+                                            <label class="form-check-label" for="checked{{ v }}">{{ v }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         <div class="col-xs-12 col-md-9">
 
