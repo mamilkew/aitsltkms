@@ -9,18 +9,19 @@
 
             <div id="accordion" class="accordion">
                 {#        Group #iterative        #}
-                {% for key, value in filter_facets.items %}
-                    <div class="card">
-                        <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse"
-                             data-target="#collapse{{ key }}"
-                             aria-expanded="false" aria-controls="collapse{{ key }}">
-                            {{ key }}
-                        </div>
-                        <div id="collapse{{ key }}" class="collapse" aria-labelledby="{{ key }}"
-                             data-parent="#accordion">
-                            <div class="card-body">
-                                <ul class="list-group">
-                                    <form id="filter_{{ key }}">
+                <form id="filter_facet">
+                    {% for key, value in filter_facets.items %}
+                        <div class="card">
+                            <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse"
+                                 data-target="#collapse{{ key }}"
+                                 aria-expanded="false" aria-controls="collapse{{ key }}">
+                                {{ key }}
+                            </div>
+                            <div id="collapse{{ key }}" class="collapse" aria-labelledby="{{ key }}"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {#                                    <form id="filter_{{ key }}">#}
                                         {% csrf_token %}
                                         {% for v in value %}
                                             <div class="form-check">
@@ -30,12 +31,13 @@
                                                 <label class="form-check-label" for="checked{{ v }}">{{ v }}</label>
                                             </div>
                                         {% endfor %}
-                                    </form>
-                                </ul>
+                                        {#                                    </form>#}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </form>
             </div>
 
         </div>
@@ -294,43 +296,70 @@
 
         function filtering(filter_id) {
             $.ajax({
+                url: '{% url 'filter_detail' %}',
+                data: $('#filter_' + filter_id).serialize(),
+                type: 'POST',
+                success: function (response) {
+                    console.log(response);
+                    alert(response.status + " & " + response.filter_name)
+                    d3.select("svg").remove();
+                    svg = d3.select("#svg-body").append("svg")
+                        .attr("width", w + margin.right + margin.left)
+                        .attr("height", h + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
+                        .call(zoom);
+                    container = svg.append("g");
+                    triples = response.query
+                    graph = triplesToGraph(triples);
+                    update();
+                    console.log(graph);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $(function () {
+            $("#filter_facet").on('change', function (e) {
+                $.ajax({
                     url: '{% url 'filter_detail' %}',
-                    data: $('#filter_'+filter_id).serialize(),
+                    data: $('#filter_facet').serialize(),
                     type: 'POST',
                     success: function (response) {
                         console.log(response);
                         alert(response.status + " & " + response.filter_name)
-                        d3.select("svg").remove();
-                        svg = d3.select("#svg-body").append("svg")
-                            .attr("width", w + margin.right + margin.left)
-                            .attr("height", h + margin.top + margin.bottom)
-                            .append("g")
-                            .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
-                            .call(zoom);
-                        container = svg.append("g");
-                        triples = response.query
-                        graph = triplesToGraph(triples);
-                        update();
-                        console.log(graph);
+                        {#d3.select("svg").remove();#}
+                        {#svg = d3.select("#svg-body").append("svg")#}
+                        {#    .attr("width", w + margin.right + margin.left)#}
+                        {#    .attr("height", h + margin.top + margin.bottom)#}
+                        {#    .append("g")#}
+                        {#    .attr("transform", "translate(" + margin.left + "," + margin.right + ")")#}
+                        {#    .call(zoom);#}
+                        {#container = svg.append("g");#}
+                        {#triples = response.query#}
+                        {#graph = triplesToGraph(triples);#}
+                        {#update();#}
+                        {#console.log(graph);#}
                     },
                     error: function (error) {
                         console.log(error);
                     }
                 });
-        }
-
-        $(function () {
-            $(document).on('change', 'input[name="PJyear"]', function (e) {
-                {#var val = $(this).val();#}
-                filtering('PJyear');
                 e.preventDefault();
             });
-
-            $(document).on('change', 'input[name="PJstatus"]', function (e) {
-                {#var val = $(this).val();#}
-                filtering('PJstatus');
-                e.preventDefault();
-            });
+            {#$(document).on('change', 'input[name="PJyear"]', function (e) {#}
+            {#var val = $(this).val();#}
+            {#    filtering('PJyear');#}
+            {#    e.preventDefault();#}
+            {#\});#}
+            {##}
+            {#$(document).on('change', 'input[name="PJstatus"]', function (e) {#}
+            {#var val = $(this).val();#}
+            {#    filtering('PJstatus');#}
+            {#    e.preventDefault();#}
+            {#\});#}
         });
     </script>
 

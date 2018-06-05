@@ -15,54 +15,66 @@ def index(request):
     return render(request, 'pages/index.html', {'posts': posts})
 
 
+def make_filter_script(list_filter):
+    text = ''
+    print(list_filter)
+    for idx, each in enumerate(list_filter):
+        if each.isdigit() == True:
+            each = each
+        else:
+            each = '"{}"'.format(each)
+
+        if idx == 0:
+            text += ' && (?object = ' + each
+        else:
+            text += ' || ?object = ' + each
+    if text != '':
+        text += ')'
+    return text
+
+
 def filter_detail(request):
     if request.method == 'POST':
         if request.is_ajax():
+            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
+                     + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
+                     + '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . ' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+            facetdata = ''
+
             if request.POST.get('PJyear') is not None:
-                text = ''
-                radiodata = request.POST.getlist('PJyear')
-                print(radiodata)
-                for idx, each in enumerate(radiodata):
-                    if idx == 0:
-                        text += ' && (?object = ' + each
-                    else:
-                        text += ' || ?object = ' + each
-                if text != '':
-                    text += ')'
-                sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
-                         + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                         + '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                         + 'filter(?predicate = aitslt:PJyear' + text + ')' + '}}}order by ?subject'
+                facetdata += 'PJyear'
+                print(request.POST)
+                pjyeardata = request.POST.getlist('PJyear')
+                text = make_filter_script(pjyeardata)
+
+                if request.POST.get('PJstatus') is not None:
+                    sparql += 'filter(?predicate = aitslt:PJyear' + text + ')}'
+                    facetdata += 'PJstatus'
+                    pjstatusdata = request.POST.getlist('PJstatus')
+                    filter_text = make_filter_script(pjstatusdata)
+                    sparql_add = '}{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . ' \
+                                 + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) '
+                    sparql += sparql_add + 'filter(?predicate = aitslt:PJstatus' + filter_text + ')' + '}}}order by ?subject'
+                else:
+                    sparql += 'filter(?predicate = aitslt:PJyear' + text + ')' + '}}}order by ?subject'
 
                 new_results = transform_data("PJ_filter_PJyear.json")
 
             elif request.POST.get('PJstatus') is not None:
-                text = ''
-                radiodata = request.POST.getlist('PJstatus')
-                print(radiodata)
-                for idx, each in enumerate(radiodata):
-                    if idx == 0:
-                        text += ' && (?object = "' + each + '"'
-                    else:
-                        text += ' || ?object = "' + each + '"'
-                if text != '':
-                    text += ')'
-                sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
-                         + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                         + '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                         + 'filter(?predicate = aitslt:PJstatus' + text + ')' + '}}}order by ?subject'
-
+                facetdata += 'PJstatus'
+                pjstatusdata = request.POST.getlist('PJstatus')
+                text = make_filter_script(pjstatusdata)
+                sparql += 'filter(?predicate = aitslt:PJstatus' + text + ')' + '}}}order by ?subject'
                 new_results = transform_data("PJ_filter_PJstatus.json")
 
             else:
-                sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
-                         + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                         + '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                         + '}}}order by ?subject'
+                sparql += '}}}order by ?subject'
+
                 new_results = transform_data("select_project.json")
                 return JsonResponse({'filter_name': 'No Filter', 'status': sparql, 'query': new_results})
 
-    return JsonResponse({'filter_name': radiodata, 'status': sparql, 'query': new_results})
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
 
 def detail(request, post_id):
