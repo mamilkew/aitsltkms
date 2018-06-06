@@ -19,6 +19,7 @@ class Post(models.Model):
     facet_country = JSONField(blank=True, null=True, editable=False)
     facet_donor = JSONField(blank=True, null=True, editable=False)
     facet_organizationunit = JSONField(blank=True, null=True, editable=False)
+    facet_person = JSONField(blank=True, null=True, editable=False)
     created_date = models.DateTimeField(
         default=timezone.now)
     published_date = models.DateTimeField(
@@ -44,6 +45,10 @@ class Post(models.Model):
             json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
             data = json.load(open(json_url))
             self.facet_organizationunit = data
+            #  -----facet person-----
+            # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_person.json")
+            # data = json.load(open(json_url))
+            # self.facet_person = data
 
         #     self.source = [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"},
         #            {"subject": "ex:TomYumKung", "predicate": "ex:isFoodOf", "object": "ex:ThaiLand"},

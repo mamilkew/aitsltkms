@@ -67,12 +67,15 @@ def detail(request, post_id):
         # ----facet_organizationunit----
         tmp_isImplementedBy = advance_facet(posts.facet_organizationunit['head']['vars'][0],
                                             posts.facet_organizationunit['results']['bindings'])
+        # ----facet_person----
+        tmp_person = advance_facet(posts.facet_person['head']['vars'][0], posts.facet_person['results']['bindings'])
 
         filter_facets = {'PJyear': list_facet(tmp_PJyear),
                          'PJstatus': list_facet(tmp_PJstatus),
                          'isSponsoredBy': list_facet(tmp_isSponsoredBy),
                          'isImplementedIn': list_facet(tmp_isImplementedIn),
-                         'isImplementedBy': list_facet(tmp_isImplementedBy), 'isRelatedTo': list_facet(tmp_isRelatedTo)}
+                         'isImplementedBy': list_facet(tmp_isImplementedBy),
+                         'includesPerson': list_facet(tmp_person), 'isRelatedTo': list_facet(tmp_isRelatedTo)}
 
     except Post.DoesNotExist:
         raise Http404("Question does not exist")
@@ -130,6 +133,11 @@ def filter_detail(request):
                 list_data = request.POST.getlist('isImplementedBy')
                 sparql += make_nested_filter('isImplementedBy', list_data)
 
+            if request.POST.get('includesPerson') is not None:
+                facetdata += 'includesPerson'
+                list_data = request.POST.getlist('includesPerson')
+                sparql += make_nested_filter('includesPerson', list_data)
+
             sparql += '}order by ?subject'
 
             new_results = transform_data("select_project.json")
@@ -139,7 +147,7 @@ def filter_detail(request):
 
 
 def make_nested_filter(predicate, list_object):
-    if predicate in ('isRelatedTo', 'isImplementedIn', 'isImplementedBy', 'isSponsoredBy'):
+    if predicate in ('isRelatedTo', 'isImplementedIn', 'isImplementedBy', 'isSponsoredBy', 'includesPerson'):
         for idx, each in enumerate(list_object):
             list_object[idx] = 'aitslt:{}'.format(each)
     if predicate == 'PJstatus':
@@ -149,15 +157,19 @@ def make_nested_filter(predicate, list_object):
              + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
 
     if predicate == 'isSponsoredBy':
-        nested += 'optional{?object rdf:type ?donor .}'
+        nested += 'optional{?object rdf:type ?donor .} filter(?predicate = aitslt:' + predicate
         text = make_filter_sparql(list_object, 'donor')
     elif predicate == 'isImplementedBy':
-        nested += 'optional{?object aitslt:under ?organizationunit .}'
+        nested += 'optional{?object aitslt:under ?organizationunit .} filter(?predicate = aitslt:' + predicate
         text = make_filter_sparql(list_object, 'organizationunit')
+    elif predicate == 'includesPerson':
+        nested += 'optional{?object rdf:type ?person .} filter((?predicate = aitslt:includesInvestigator || ?predicate = aitslt:includesMember)'
+        text = make_filter_sparql(list_object, 'person')
     else:
+        nested += 'filter(?predicate = aitslt:' + predicate
         text = make_filter_sparql(list_object, 'object')
 
-    nested += 'filter(?predicate = aitslt:' + predicate + text + ')}}'
+    nested += text + ')}}'
     return nested
 
 
