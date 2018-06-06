@@ -1,0 +1,131 @@
+{
+  "head" : {
+    "vars" : [
+      "person"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#AIT_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#CEIM_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#CS_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Civil_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#DPMM_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#GTE_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ICT_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#IME_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ISE_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#InDis_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#MEC_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#MES_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#NANO_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Person"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#RSGIS_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SET_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#SE_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TC_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#TE_Faculty"
+        }
+      },
+      {
+        "person" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#WEM_Faculty"
+        }
+      }
+    ]
+  }
+}

@@ -1,11 +1,27 @@
 from django.contrib.postgres.fields import JSONField
+from django.dispatch import receiver
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils import timezone
 import datetime
 import os
 import json
+from urllib.request import Request, urlopen
+from urllib.parse import urlencode
 
 # Create your models here.
+
+
+def call_api(sparql):
+    values = urlencode("query=PREFIX aitslt: < http: // www.semanticweb.org / milkk / ontologies / 2017 / 11 / testData> " + sparql)
+    headers = {
+      'Content-Type': 'application/x-www-form-urlencoded, application/sparql-query',
+      'Accept': 'application/sparql-results+json'
+    }
+    request = Request('http://0.0.0.0:5820/db/query', data=values, headers=headers)
+    response_body = urlopen(request).read()
+    print(response_body)
+    return response_body
 
 
 class Post(models.Model):
@@ -25,31 +41,11 @@ class Post(models.Model):
     published_date = models.DateTimeField(
         blank=True, null=True)
 
+    def save(self, *args, **kwargs):  # do something every time you save
+        # if not self.pk:
+            # This code only happens if the objects is not in the database yet. Otherwise it would have pk
 
-#  -----should be the result from ice API ==> add to DB into "source" attribute-----
-    def save(self, *args, **kwargs):
-        if not self.pk:  # This code only happens if the objects is not in the database yet. Otherwise it would have pk
-            SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-            json_url = os.path.join(SITE_ROOT, "static/data", "select_project.json")
-            data = json.load(open(json_url))
-            self.source = data
-            #  -----facet country-----
-            json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_country.json")
-            data = json.load(open(json_url))
-            self.facet_country = data
-            #  -----facet donor-----
-            json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_donor.json")
-            data = json.load(open(json_url))
-            self.facet_donor = data
-            #  -----facet organization unit-----
-            json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
-            data = json.load(open(json_url))
-            self.facet_organizationunit = data
-            #  -----facet person-----
-            # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_person.json")
-            # data = json.load(open(json_url))
-            # self.facet_person = data
-
+        #  ex === [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"}]
         #     self.source = [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"},
         #            {"subject": "ex:TomYumKung", "predicate": "ex:isFoodOf", "object": "ex:ThaiLand"},
         #            {"subject": "ex:TomYumKung", "predicate": "rdf:type", "object": "ex:SpicyFood"},
@@ -66,7 +62,7 @@ class Post(models.Model):
 
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
-    def publish(self):
+    def publish(self):  # for making publish button on preview page
         self.published_date = timezone.now()
         self.save()
 
@@ -81,3 +77,61 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+#  -----should be the result from ice API ==> add to DB into "source" attribute-----
+@receiver(post_save, sender=Post)
+def ensure_post_exists(sender, instance, created, **kwargs):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    if created is True:  # only new create
+        print(instance.subject)
+        json_url = os.path.join(SITE_ROOT, "static/data", "select_project.json")
+        data = json.load(open(json_url))
+        # sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type aitslt:' + instance.subject + ' .' \
+        #          + '?subject ?predicate ?object .' \
+        #          + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
+        #          + '}order by ?subject'
+        # data = call_api(sparql_all)
+        instance.source = data
+        #  -----facet country-----
+        json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_country.json")
+        data = json.load(open(json_url))
+        # sparql_country = 'select distinct ?object where{?subject rdf:type aitslt:' + instance.subject \
+        #                  + ' . ?subject ?predicate ?object.' \
+        #                  + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
+        #                  + '?object rdf:type aitslt:Country .}order by ?object' \
+        # data = call_api(sparql_country)
+        instance.facet_country = data
+        #  -----facet donor-----
+        json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_donor.json")
+        data = json.load(open(json_url))
+        # sparql_donor = 'select distinct ?donor where{?subject rdf:type aitslt:' + instance.subject \
+        #                + ' . ?subject ?predicate ?object.' \
+        #                + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?donor.' \
+        #                + 'filter(?donor != owl:NamedIndividual && ?predicate = aitslt:isSponsoredBy)' \
+        #                + '}order by ?donor'
+        # data = call_api(sparql_donor)
+        instance.facet_donor = data
+        #  -----facet organization unit-----
+        json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
+        data = json.load(open(json_url))
+        # sparql_org = 'select distinct ?organizationunit where{?subject rdf:type aitslt:' + instance.subject \
+        #              + ' . ?subject ?predicate ?object.' \
+        #              + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
+        #              + '?object aitslt:under ?organizationunit .}'
+        # data = call_api(sparql_org)
+        instance.facet_organizationunit = data
+        #  -----facet person-----
+        json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_person.json")
+        data = json.load(open(json_url))
+        # sparql_person = 'select distinct ?person where{?subject rdf:type aitslt:' + instance.subject \
+        #                 + ' . ?subject ?predicate ?object.' \
+        #                 + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?person.' \
+        #                 + 'filter(?person != owl:NamedIndividual && ( ?predicate = aitslt:includesInvestigator ' \
+        #                 + '|| ?predicate = aitslt:includesMember))}order by ?person'
+        # data = call_api(sparql_person)
+        instance.facet_person = data
+        instance.save()
+        # print(instance)
+    else:
+        print(kwargs)

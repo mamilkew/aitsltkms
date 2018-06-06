@@ -5,7 +5,8 @@ from .models import Post
 from django.http import HttpResponse, JsonResponse
 import os
 import json
-
+# from urllib.parse import urlencode
+# from urllib.request import Request, urlopen
 
 # call another API (sample for call ICE)
 # def my_django_view(request):
@@ -17,8 +18,12 @@ import json
 #         return HttpResponse('Yay, it worked')
 #     return HttpResponse('Could not save data')
 
+# ===============
+
+
 def index(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now())
+    posts = Post.objects.filter(published_date__lte=timezone.now()).last()
+    # posts = Post.objects.filter(published_date__lte=timezone.now())
     return render(request, 'pages/index.html', {'posts': posts})
 
 
@@ -140,8 +145,16 @@ def filter_detail(request):
 
             sparql += '}order by ?subject'
 
-            new_results = transform_data("select_project.json")
-            # return JsonResponse({'filter_name': 'No Filter', 'status': sparql, 'query': new_results})
+            # values = urlencode("query=PREFIX aitslt: < http: // www.semanticweb.org / milkk / ontologies / 2017 / 11 / testData> " + sparql)
+            # headers = {
+            #   'Content-Type': 'application/x-www-form-urlencoded, application/sparql-query',
+            #   'Accept': 'application/sparql-results+json'
+            # }
+            # request = Request('http://0.0.0.0:5820/db/query', data=values, headers=headers)
+            # response_body = urlopen(request).read()
+            # print response_body
+
+            new_results = transform_data("select_project.json")  # response_body
 
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
