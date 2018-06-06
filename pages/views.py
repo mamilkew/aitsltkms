@@ -33,7 +33,7 @@ def detail(request, post_id):
 
     try:
         posts = Post.objects.get(pk=post_id)
-        results = posts.source['results']['bindings']
+        results = posts.source['results']['bindings']  # get DB (from API)
         new_results = []
         tmp_PJyear = []
         tmp_PJstatus = []
@@ -46,7 +46,8 @@ def detail(request, post_id):
             tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
             tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
             new_results.append(tmp)
-            # print(new_results)
+
+            #  make the list of ----facets---- and value
             if tmp['predicate'] == 'PJyear':
                 tmp_PJyear.append(tmp['object'])  # {'PJyear': [2013, 2014, 2015, 2016]}
             elif tmp['predicate'] == 'PJstatus':
@@ -56,13 +57,35 @@ def detail(request, post_id):
 
         posts.result = new_results
         posts.save()
+
+        # get DB (from API) ----facet_donor----
+        tmp_isSponsoredBy = advance_facet(posts.facet_donor['head']['vars'][0],
+                                          posts.facet_donor['results']['bindings'])
+        # ----facet_country----
+        tmp_isImplementedIn = advance_facet(posts.facet_country['head']['vars'][0],
+                                            posts.facet_country['results']['bindings'])
+        # ----facet_organizationunit----
+        tmp_isImplementedBy = advance_facet(posts.facet_organizationunit['head']['vars'][0],
+                                            posts.facet_organizationunit['results']['bindings'])
+
         filter_facets = {'PJyear': list_facet(tmp_PJyear),
-                         'PJstatus': list_facet(tmp_PJstatus), 'isRelatedTo': list_facet(tmp_isRelatedTo)}
+                         'PJstatus': list_facet(tmp_PJstatus),
+                         'isSponsoredBy': list_facet(tmp_isSponsoredBy),
+                         'isImplementedIn': list_facet(tmp_isImplementedIn),
+                         'isImplementedBy': list_facet(tmp_isImplementedBy), 'isRelatedTo': list_facet(tmp_isRelatedTo)}
 
     except Post.DoesNotExist:
         raise Http404("Question does not exist")
 
     return render(request, 'pages/detail.html', {'posts': posts, 'filter_facets': filter_facets})
+
+
+def advance_facet(facet_head, facet_result):
+    tmp_list = []
+    print(facet_head)
+    for each in facet_result:
+        tmp_list.append(check_type(each.get(facet_head).get('type'), each.get(facet_head).get('value')))
+    return tmp_list
 
 
 #  Ajax from filter in detail page for call API to get result and display in existing page
@@ -166,7 +189,7 @@ def list_facet(tmp_facets):
     return facets
 
 
-# transform to pattern for visualization standard
+# transform to pattern for visualization standard with file .json
 def transform_data(filename):
     SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
     json_url = os.path.join(SITE_ROOT, "static/data", filename)
