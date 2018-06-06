@@ -1,0 +1,53 @@
+{
+  "head" : {
+    "vars" : [
+      "donor"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Academic_Organization"
+        }
+      },
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Business_Organization"
+        }
+      },
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Donor"
+        }
+      },
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Government_Organization"
+        }
+      },
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Non_Government_Organization"
+        }
+      },
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#Research_Organization"
+        }
+      },
+      {
+        "donor" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#United_Nations"
+        }
+      }
+    ]
+  }
+}

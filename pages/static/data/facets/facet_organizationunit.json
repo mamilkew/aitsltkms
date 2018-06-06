@@ -1,0 +1,41 @@
+{
+  "head" : {
+    "vars" : [
+      "organizationunit"
+    ]
+  },
+  "results" : {
+    "bindings" : [
+      {
+        "organizationunit" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#civil-dept"
+        }
+      },
+      {
+        "organizationunit" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#set-school"
+        }
+      },
+      {
+        "organizationunit" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ict-dept"
+        }
+      },
+      {
+        "organizationunit" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#indisprograms-dept"
+        }
+      },
+      {
+        "organizationunit" : {
+          "type" : "uri",
+          "value" : "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ise-dept"
+        }
+      }
+    ]
+  }
+}

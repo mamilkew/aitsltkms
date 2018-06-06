@@ -16,20 +16,34 @@ class Post(models.Model):
     subject = models.CharField(max_length=200)
     source = JSONField(blank=True, null=True, editable=False)
     result = JSONField(blank=True, null=True, editable=False)
+    facet_country = JSONField(blank=True, null=True, editable=False)
+    facet_donor = JSONField(blank=True, null=True, editable=False)
+    facet_organizationunit = JSONField(blank=True, null=True, editable=False)
     created_date = models.DateTimeField(
         default=timezone.now)
     published_date = models.DateTimeField(
         blank=True, null=True)
 
-#  -----should be the result from ice API ==> add to DB into "source" attribute-----
 
+#  -----should be the result from ice API ==> add to DB into "source" attribute-----
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # This code only happens if the objects is not in the database yet. Otherwise it would have pk
+        if not self.pk:  # This code only happens if the objects is not in the database yet. Otherwise it would have pk
             SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
             json_url = os.path.join(SITE_ROOT, "static/data", "select_project.json")
             data = json.load(open(json_url))
             self.source = data
+            #  -----facet country-----
+            json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_country.json")
+            data = json.load(open(json_url))
+            self.facet_country = data
+            #  -----facet donor-----
+            json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_donor.json")
+            data = json.load(open(json_url))
+            self.facet_donor = data
+            #  -----facet organization unit-----
+            json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
+            data = json.load(open(json_url))
+            self.facet_organizationunit = data
 
         #     self.source = [{"subject": "ex:ThaiLand", "predicate": "ex:hasFood", "object": "ex:TomYumKung"},
         #            {"subject": "ex:TomYumKung", "predicate": "ex:isFoodOf", "object": "ex:ThaiLand"},
@@ -45,7 +59,7 @@ class Post(models.Model):
         # {"nodes": [{"id": "hello1"}, {"id": "hello2"}],
         #            "links": [{"source": "hello1", "target": "hello2"}]}
 
-            super().save(*args, **kwargs)  # Call the "real" save() method.
+        super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def publish(self):
         self.published_date = timezone.now()
