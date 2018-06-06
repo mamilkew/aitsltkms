@@ -82,7 +82,7 @@ def detail(request, post_id):
 
 def advance_facet(facet_head, facet_result):
     tmp_list = []
-    print(facet_head)
+    # print(facet_head)
     for each in facet_result:
         tmp_list.append(check_type(each.get(facet_head).get('type'), each.get(facet_head).get('value')))
     return tmp_list
@@ -94,62 +94,52 @@ def filter_detail(request):
         if request.is_ajax():
             sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type aitslt:Project .' \
                      + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
-
             facetdata = ''
+            print(request.POST)
+
             if request.POST.get('PJyear') is not None:
                 facetdata += 'PJyear'
-                print(request.POST)
-                pjyeardata = request.POST.getlist('PJyear')
-                sparql += make_nested_filter('PJyear', pjyeardata)
+                list_data = request.POST.getlist('PJyear')
+                sparql += make_nested_filter('PJyear', list_data)
+                # new_results = transform_data("PJ_filter_PJyear.json")
 
-                if request.POST.get('PJstatus') is not None:
-                    facetdata += 'PJstatus'
-                    pjstatusdata = request.POST.getlist('PJstatus')
-                    sparql += make_nested_filter('PJstatus', pjstatusdata)
-
-                    if request.POST.get('isRelatedTo') is not None:
-                        facetdata += 'isRelatedTo'
-                        isrelatedtodata = request.POST.getlist('isRelatedTo')
-                        sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
-                    else:
-                        sparql += '}order by ?subject'
-
-                elif request.POST.get('isRelatedTo') is not None:
-                    facetdata += 'isRelatedTo'
-                    isrelatedtodata = request.POST.getlist('isRelatedTo')
-                    sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
-                else:
-                    sparql += '}order by ?subject'
-                new_results = transform_data("PJ_filter_PJyear.json")
-
-            elif request.POST.get('PJstatus') is not None:
+            if request.POST.get('PJstatus') is not None:
                 facetdata += 'PJstatus'
-                pjstatusdata = request.POST.getlist('PJstatus')
-                sparql += make_nested_filter('PJstatus', pjstatusdata)
-                if request.POST.get('isRelatedTo') is not None:
-                    facetdata += 'isRelatedTo'
-                    isrelatedtodata = request.POST.getlist('isRelatedTo')
-                    sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
-                else:
-                    sparql += '}order by ?subject'
-                new_results = transform_data("PJ_filter_PJstatus.json")
+                list_data = request.POST.getlist('PJstatus')
+                sparql += make_nested_filter('PJstatus', list_data)
+                # new_results = transform_data("PJ_filter_PJstatus.json")
 
-            elif request.POST.get('isRelatedTo') is not None:
+            if request.POST.get('isRelatedTo') is not None:
                 facetdata += 'isRelatedTo'
-                isrelatedtodata = request.POST.getlist('isRelatedTo')
-                sparql += make_nested_filter('isRelatedTo', isrelatedtodata) + '}order by ?subject'
-                new_results = transform_data("PJ_filter_isRelatedTo.json")
+                list_data = request.POST.getlist('isRelatedTo')
+                sparql += make_nested_filter('isRelatedTo', list_data)
+                # new_results = transform_data("PJ_filter_isRelatedTo.json")
 
-            else:
-                sparql += '}order by ?subject'
-                new_results = transform_data("select_project.json")
-                return JsonResponse({'filter_name': 'No Filter', 'status': sparql, 'query': new_results})
+            if request.POST.get('isSponsoredBy') is not None:
+                facetdata += 'isSponsoredBy'
+                list_data = request.POST.getlist('isSponsoredBy')
+                sparql += make_nested_filter('isSponsoredBy', list_data)
+
+            if request.POST.get('isImplementedIn') is not None:
+                facetdata += 'isImplementedIn'
+                list_data = request.POST.getlist('isImplementedIn')
+                sparql += make_nested_filter('isImplementedIn', list_data)
+
+            if request.POST.get('isImplementedBy') is not None:
+                facetdata += 'isImplementedBy'
+                list_data = request.POST.getlist('isImplementedBy')
+                sparql += make_nested_filter('isImplementedBy', list_data)
+
+            sparql += '}order by ?subject'
+
+            new_results = transform_data("select_project.json")
+            # return JsonResponse({'filter_name': 'No Filter', 'status': sparql, 'query': new_results})
 
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
 
 def make_nested_filter(predicate, list_object):
-    if predicate == 'isRelatedTo':
+    if predicate in ('isRelatedTo', 'isImplementedIn', 'isImplementedBy', 'isSponsoredBy'):
         for idx, each in enumerate(list_object):
             list_object[idx] = 'aitslt:{}'.format(each)
     if predicate == 'PJstatus':
@@ -157,19 +147,28 @@ def make_nested_filter(predicate, list_object):
             list_object[idx] = '"{}"'.format(each)
     nested = '{ select distinct ?subject where { ?subject rdf:type aitslt:Project . ?subject ?predicate ?object . ' \
              + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
-    text = make_filter_sparql(list_object)
+
+    if predicate == 'isSponsoredBy':
+        nested += 'optional{?object rdf:type ?donor .}'
+        text = make_filter_sparql(list_object, 'donor')
+    elif predicate == 'isImplementedBy':
+        nested += 'optional{?object aitslt:under ?organizationunit .}'
+        text = make_filter_sparql(list_object, 'organizationunit')
+    else:
+        text = make_filter_sparql(list_object, 'object')
+
     nested += 'filter(?predicate = aitslt:' + predicate + text + ')}}'
     return nested
 
 
-def make_filter_sparql(list_filter):
+def make_filter_sparql(list_filter, object_var):
     text = ''
     print(list_filter)
     for idx, each in enumerate(list_filter):
         if idx == 0:
-            text += ' && (?object = ' + each
+            text += ' && (?' + object_var + ' = ' + each
         else:
-            text += ' || ?object = ' + each
+            text += ' || ?' + object_var + ' = ' + each
     if text != '':
         text += ')'
     return text
