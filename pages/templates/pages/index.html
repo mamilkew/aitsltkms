@@ -1,22 +1,17 @@
 {% extends 'pages/layout.html' %}
 {% block container %}
 
-    <div class="row">
-        <div class="col-md-3 left-faceted">
-            <br>
-            <h4>Faceted Search</h4>
-            <hr>
-        </div>
-        <div class="col-xs-12 col-md-9">
+    <div class="starter-template">
+        <h1>Prototype</h1>
+        <p class="lead">ProjMind by AIT Solution</p>
 
-            {% for post in posts %}
-                <h3><a href="{% url 'detail' post.id %}">{{ post.title }}</a></h3>
-            {% endfor %}
+        <h3><a href="{% url 'detail' posts.id %}">{{ posts.title }}</a></h3>
 
-            <div id="curved-link"></div>
-        </div>
+        {#        {% for post in posts %}#}
+        {#            <h3><a href="{% url 'detail' post.id %}">{{ post.title }}</a></h3>#}
+        {#        {% endfor %}#}
+
     </div>
-
 
 
 {% endblock %}
