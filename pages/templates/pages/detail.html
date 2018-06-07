@@ -43,12 +43,11 @@
 
         </div>
         <div class="col-xs-12 col-md-9">
-
-            <h3>{{ posts.title }}</h3>
-            <p>Created: {{ posts.created_date }}</p>
-            <p>Published: {{ posts.published_date }}</p>
-            <p>Graph: {{ posts.graph }}</p>
-            <p>Subject: {{ posts.subject }}</p>
+            {#            <h3>{{ posts.title }}</h3>#}
+            {#            <p>Created: {{ posts.created_date }}</p>#}
+            {#            <p>Published: {{ posts.published_date }}</p>#}
+            {#            <p>Graph: {{ posts.graph }}</p>#}
+            {#            <p>Subject: {{ posts.subject }}</p>#}
             {#            <p>Result: {{ posts.result }}</p>#}
 
 
@@ -58,7 +57,37 @@
             {#                    <li>{{ each }}</li>#}
             {#                {% endfor %}#}
             {#            </ul>#}
+            <br><h3>Summary</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Initiated Year</th>
+                            <th scope="col">No. of Project</th>
+                            <th scope="col">Contracted Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody id="pjyear">
 
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Project Status</th>
+                            <th scope="col">No. of Project</th>
+                            <th scope="col">Contracted Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody id="pjstatus">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -98,6 +127,7 @@
     </style>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
+        var sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
         var margin = {top: 20, right: 50, bottom: 20, left: 150},
             w = 800 - margin.right - margin.left,
             h = 600 - margin.top - margin.bottom;
@@ -172,11 +202,82 @@
 
                 graph.triples.push({s: subjNode, p: predNode, o: objNode});
 
+                ///////
+
+                counting_PJ({s: subjNode, p: predNode, o: objNode});
+
             });
 
+            graph.triples.forEach(function (triple) {
+                counting_PJamount(triple);
+            });
+
+            Object.entries(sum_year).forEach(function ([key, value]) {
+                $('#pjyear').append('<tr><td>' + key + '</td><td>' + value[0] + '</td><td>' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
+            });
+            Object.entries(sum_status).forEach(function ([key, value]) {
+                $('#pjstatus').append('<tr><td>' + key + '</td><td>' + value[0] + '</td><td>' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
+            });
+            console.log('===============');
+            console.log(sum_status);
+
+            {#console.log(list_year);#}
             return graph;
+
         }
 
+        function counting_PJamount(pj_obj) {
+            if (pj_obj.p.id == 'PJContractedAmount') {
+                for (var key in list_year) {
+                    if (list_year[key].includes(pj_obj.s.id)) {
+                        if (sum_year[key].length == 2) { //!Array.isArray(sum_year[key]
+                            sum_year[key][1] = parseFloat(sum_year[key][1]) + parseFloat(pj_obj.o.id);
+                        }
+                        else {
+                            var tmp = [parseFloat(pj_obj.o.id)];
+                            sum_year[key] = sum_year[key].concat(tmp);
+                        }
+                    }
+                }
+                for (var key in list_status) {
+                    if (list_status[key].includes(pj_obj.s.id)) {
+                        if (sum_status[key].length == 2) { //!Array.isArray(sum_year[key]
+                            sum_status[key][1] = parseFloat(sum_status[key][1]) + parseFloat(pj_obj.o.id);
+                            console.log('===============');
+                        }
+                        else {
+                            var tmp = [parseFloat(pj_obj.o.id)];
+                            sum_status[key] = sum_status[key].concat(tmp);
+                        }
+                    }
+                }
+            }
+        }
+
+        function counting_PJ(pj_obj) {
+            if (pj_obj.p.id == 'PJyear') {
+                if (!(pj_obj.o.id in sum_year)) {
+                    sum_year[pj_obj.o.id] = [pj_obj.o.weight];
+                    list_year[pj_obj.o.id] = [pj_obj.s.id];
+                }
+                else {
+                    sum_year[pj_obj.o.id] = [parseInt(sum_year[pj_obj.o.id]) + 1];
+                    var tmp = [pj_obj.s.id]
+                    list_year[pj_obj.o.id] = tmp.concat(list_year[pj_obj.o.id]);
+                }
+            }
+            else if (pj_obj.p.id == 'PJstatus') {
+                if (!(pj_obj.o.id in sum_status)) {
+                    sum_status[pj_obj.o.id] = [pj_obj.o.weight];
+                    list_status[pj_obj.o.id] = [pj_obj.s.id];
+                }
+                else {
+                    sum_status[pj_obj.o.id] = [parseInt(sum_status[pj_obj.o.id]) + 1];
+                    var tmp = [pj_obj.s.id]
+                    list_status[pj_obj.o.id] = tmp.concat(list_status[pj_obj.o.id]);
+                }
+            }
+        }
 
         function update() {
             // ==================== Add Marker ====================
