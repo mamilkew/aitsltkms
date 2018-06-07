@@ -430,8 +430,11 @@
                     data: $('#filter_facet').serialize(),
                     type: 'POST',
                     success: function (response) {
+                        $('#pjyear').text('');
+                        $('#pjstatus').text('');
+                        sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
                         console.log(response);
-                        alert(response.status + " & " + response.filter_name)
+                        alert(response.status + " & " + response.filter_name);
                         d3.select("svg").remove();
                         svg = d3.select("#svg-body").append("svg")
                             .attr("width", w + margin.right + margin.left)
@@ -440,7 +443,7 @@
                             .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
                             .call(zoom);
                         container = svg.append("g");
-                        triples = response.query
+                        triples = response.query;
                         graph = triplesToGraph(triples);
                         update();
                         console.log(graph);
