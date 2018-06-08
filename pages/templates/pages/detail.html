@@ -95,14 +95,14 @@
     <style type="text/css">
         .node {
             stroke: #fff;
-            fill: #c3e6cb;
+            fill: #479a5b;
             stroke-width: 1.5px;
         }
 
         .link {
             fill: none;
             stroke: #999;
-            stroke-opacity: .6;
+            stroke-opacity: .20;
             stroke-width: 1px;
         }
 
@@ -135,7 +135,7 @@
         var triples = {{ posts.result | safe }};
 
         var zoom = d3.behavior.zoom()
-            .scaleExtent([0.3, 1])
+            .scaleExtent([0.3, 3])
             .on("zoom", zoomed);
 
         var svg = d3.select("#svg-body").append("svg")
@@ -151,6 +151,7 @@
 
         var graph = triplesToGraph(triples);
 
+        var nodes, links, nodeTexts, linkTexts;
         update();
         console.log(graph);
 
@@ -302,7 +303,7 @@
             ;
 
             // ==================== Add Links ====================
-            var links = container.append("g")
+            links = container.append("g")
                 .selectAll(".link")
                 .data(graph.triples)
                 .enter()
@@ -312,7 +313,7 @@
             ;
 
             // ==================== Add Link Names =====================
-            var linkTexts = container.append("g")
+            linkTexts = container.append("g")
                 .selectAll(".link-text")
                 .data(graph.triples)
                 .enter()
@@ -326,7 +327,7 @@
             //		.text(function(d) { return d.predicate; });
 
             // ==================== Add Node Names =====================
-            var nodeTexts = container.append("g")
+            nodeTexts = container.append("g")
                 .selectAll(".node-text")
                 .data(filterNodesByType(graph.nodes, "node"))
                 .enter()
@@ -340,13 +341,15 @@
             //		.text(function(d) { return d.label; });
 
             // ==================== Add Node =====================
-            var nodes = container.append("g")
+            nodes = container.append("g")
                 .selectAll(".node")
                 .data(filterNodesByType(graph.nodes, "node"))
                 .enter()
                 .append("circle")
                 .attr("class", "node")
                 .attr("r", 8)
+                .on("mouseover", mouseOver(.20))
+                .on("mouseout", mouseOut)
                 .call(force.drag)
             ;//nodes
 
@@ -392,14 +395,61 @@
             force
                 .nodes(graph.nodes)
                 .links(graph.links)
-                .charge(-400)
-                .linkDistance(20)
+                .charge(-250)
+                .linkDistance(5)
                 .start()
             ;
+
         }
 
         function zoomed() {
             container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        }
+
+
+        // build a dictionary of nodes that are linked
+        var linkedByIndex = {};
+        graph.triples.forEach(function (d) {
+            linkedByIndex[d.s.index + "_" + d.o.index] = 1;
+        });
+        console.log(JSON.parse(JSON.stringify(linkedByIndex)));
+
+        // check the dictionary to see if nodes are linked
+        function isConnected(a, b) {
+            return linkedByIndex[a.index + "_" + b.index] || linkedByIndex[b.index + "_" + a.index] || a.index == b.index;
+        }
+
+        function mouseOver(opacity) {
+            return function (d) {
+                // check all other nodes to see if they're connected
+                // to this one. if so, keep the opacity at 1, otherwise
+                // fade
+                nodes.style("stroke-opacity", function (o) {
+                    thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;
+                });
+                nodes.style("fill-opacity", function (o) {
+                    thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;
+                });
+                // also style link accordingly
+                links.style("stroke-opacity", function (o) {
+                    return o.s === d || o.o === d ? 1 : opacity;
+                });
+                links.style("stroke", function (o) {
+                    return o.s === d || o.o === d ? "#7ab380" : "#999";
+                });
+                nodeTexts.style("fill", function (o) {
+                    return o.s === d || o.o === d ? "#000000" : "#999";
+                });
+            };
+        }
+
+        function mouseOut() {
+            nodes.style("stroke-opacity", 1);
+            nodes.style("fill-opacity", 1);
+            links.style("stroke-opacity", .20);
+            links.style("stroke", "#999");
         }
 
         {#function filtering(filter_id) {#}
@@ -453,6 +503,11 @@
                         graph = triplesToGraph(triples);
                         update();
                         console.log(graph);
+                        linkedByIndex = {};
+                        graph.triples.forEach(function (d) {
+                            linkedByIndex[d.s.index + "_" + d.o.index] = 1;
+                        });
+                        console.log(linkedByIndex);
                     },
                     error: function (error) {
                         console.log(error);
