@@ -5,8 +5,10 @@ from .models import Post
 from django.http import HttpResponse, JsonResponse
 import os
 import json
-# from urllib.parse import urlencode
-# from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+from base64 import b64encode
 
 # call another API (sample for call ICE)
 # def my_django_view(request):
@@ -96,6 +98,52 @@ def advance_facet(facet_head, facet_result):
     return tmp_list
 
 
+def call_api(sparql):
+    values = urlencode({'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
+    credentials = b64encode('admin:admin'.encode('ascii'))
+    headers = {
+        'Authorization': 'Basic %s' % credentials.decode('ascii'),
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/sparql-results+json'
+    }
+    data = values.encode('ascii')
+    request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
+    try:
+        response_body = urlopen(request).read().decode('ascii')
+        return transform_api(response_body)
+    except HTTPError as e:
+        print(e.code + e.reason)
+        print(request.__dict__)
+        response_body = {
+            "head": {
+                "vars": [
+                    "subject",
+                    "predicate",
+                    "object"
+                ]
+            },
+            "results": {
+                "bindings": [
+                    {
+                        "subject": {
+                            "type": "literal",
+                            "value": "Error"
+                        },
+                        "predicate": {
+                            "type": "literal",
+                            "value": e.code
+                        },
+                        "object": {
+                            "type": "literal",
+                            "value": e.reason
+                        }
+                    }
+                ]
+            }
+        }
+        return response_body
+
+
 #  Ajax from filter in detail page for call API to get result and display in existing page
 def filter_detail(request):
     if request.method == 'POST':
@@ -145,16 +193,9 @@ def filter_detail(request):
 
             sparql += '}order by ?subject'
 
-            # values = urlencode("query=PREFIX aitslt: < http: // www.semanticweb.org / milkk / ontologies / 2017 / 11 / testData> " + sparql)
-            # headers = {
-            #   'Content-Type': 'application/x-www-form-urlencoded, application/sparql-query',
-            #   'Accept': 'application/sparql-results+json'
-            # }
-            # request = Request('http://0.0.0.0:5820/db/query', data=values, headers=headers)
-            # response_body = urlopen(request).read()
-            # print response_body
+            new_results = call_api(sparql)
 
-            new_results = transform_data("select_project.json")  # response_body
+            # new_results = transform_data("select_project.json")  # response_body
 
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
@@ -214,11 +255,13 @@ def list_facet(tmp_facets):
 
 
 # transform to pattern for visualization standard with file .json
-def transform_data(filename):
-    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-    json_url = os.path.join(SITE_ROOT, "static/data", filename)
-    data = json.load(open(json_url))
-    results = data['results']['bindings']
+# def transform_data(filename):
+    # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    # json_url = os.path.join(SITE_ROOT, "static/data", filename)
+    # data = json.load(open(json_url))
+    #
+def transform_api(data):
+    results = json.loads(data)['results']['bindings']
     new_results = []
 
     for result in results:
@@ -227,5 +270,4 @@ def transform_data(filename):
         tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
         tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
         new_results.append(tmp)
-        # print(new_results)
     return new_results
