@@ -78,6 +78,15 @@ def detail(request, post_id):
     return render(request, 'pages/detail.html', {'posts': posts, 'filter_facets': filter_facets})
 
 
+def check_type(type_result, value):
+    if type_result == "uri":
+        return value.split('#')[-1]
+    elif type_result == "literal":
+        return value
+    else:
+        return ''
+
+
 def advance_facet(facet_head, facet_result):
     tmp_list = []
     # print(facet_head)
@@ -86,51 +95,9 @@ def advance_facet(facet_head, facet_result):
     return tmp_list
 
 
-def call_api(sparql):
-    values = urlencode({'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
-    credentials = b64encode('admin:admin'.encode('ascii'))
-    headers = {
-        'Authorization': 'Basic %s' % credentials.decode('ascii'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/sparql-results+json'
-    }
-    data = values.encode('ascii')
-    request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
-    try:
-        response_body = urlopen(request).read().decode('ascii')
-        return transform_api(response_body)
-    except HTTPError as e:
-        print(e.code + e.reason)
-        print(request.__dict__)
-        response_body = {
-            "head": {
-                "vars": [
-                    "subject",
-                    "predicate",
-                    "object"
-                ]
-            },
-            "results": {
-                "bindings": [
-                    {
-                        "subject": {
-                            "type": "literal",
-                            "value": "Error"
-                        },
-                        "predicate": {
-                            "type": "literal",
-                            "value": e.code
-                        },
-                        "object": {
-                            "type": "literal",
-                            "value": e.reason
-                        }
-                    }
-                ]
-            }
-        }
-        return response_body
-
+def list_facet(tmp_facets):
+    facets = sorted(list(set(tmp_facets)))
+    return facets
 
 #  Ajax from filter in detail page for call API to get result and display in existing page
 def filter_detail(request):
@@ -228,18 +195,50 @@ def make_filter_sparql(list_filter, object_var):
     return text
 
 
-def check_type(type_result, value):
-    if type_result == "uri":
-        return value.split('#')[-1]
-    elif type_result == "literal":
-        return value
-    else:
-        return ''
-
-
-def list_facet(tmp_facets):
-    facets = sorted(list(set(tmp_facets)))
-    return facets
+def call_api(sparql):
+    values = urlencode({'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
+    credentials = b64encode('admin:admin'.encode('ascii'))
+    headers = {
+        'Authorization': 'Basic %s' % credentials.decode('ascii'),
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/sparql-results+json'
+    }
+    data = values.encode('ascii')
+    request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
+    try:
+        response_body = urlopen(request).read().decode('ascii')
+        return transform_api(response_body)
+    except HTTPError as e:
+        print(e.code + e.reason)
+        print(request.__dict__)
+        response_body = {
+            "head": {
+                "vars": [
+                    "subject",
+                    "predicate",
+                    "object"
+                ]
+            },
+            "results": {
+                "bindings": [
+                    {
+                        "subject": {
+                            "type": "literal",
+                            "value": "Error"
+                        },
+                        "predicate": {
+                            "type": "literal",
+                            "value": e.code
+                        },
+                        "object": {
+                            "type": "literal",
+                            "value": e.reason
+                        }
+                    }
+                ]
+            }
+        }
+        return response_body
 
 
 # transform to pattern for visualization standard with file .json
