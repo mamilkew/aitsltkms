@@ -59,13 +59,13 @@
             {#            </ul>#}
             <br><h3>Summary</h3>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-sm-6 table-responsive">
                     <table class="table">
                         <thead>
-                        <tr>
-                            <th scope="col">Initiated Year</th>
-                            <th scope="col">No. of Project</th>
-                            <th scope="col">Contracted Amount</th>
+                        <tr class="row">
+                            <th scope="col" class="col-4">Initiated Year</th>
+                            <th scope="col" class="col-3 text-center">No. of Project</th>
+                            <th scope="col" class="col-5 text-right">Contracted Amount</th>
                         </tr>
                         </thead>
                         <tbody id="pjyear">
@@ -73,13 +73,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-6">
+                <div class="col-sm-6 table-responsive">
                     <table class="table">
                         <thead>
-                        <tr>
-                            <th scope="col">Project Status</th>
-                            <th scope="col">No. of Project</th>
-                            <th scope="col">Contracted Amount</th>
+                        <tr class="row">
+                            <th scope="col" class="col-4">Project Status</th>
+                            <th scope="col" class="col-3 text-center">No. of Project</th>
+                            <th scope="col" class="col-5 text-right">Contracted Amount</th>
                         </tr>
                         </thead>
                         <tbody id="pjstatus">
@@ -212,14 +212,25 @@
                 counting_PJamount(triple);
             });
 
+            var total_pj = 0, total_amount = 0;
             Object.entries(sum_year).forEach(function ([key, value]) {
-                $('#pjyear').append('<tr><td>' + key + '</td><td>' + value[0] + '</td><td>' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
+                total_pj += value[0];
+                total_amount += value[1];
+                $('#pjyear').append('<tr class="row"><td class="col-4">' + key + '</td><td class="col-3 text-center">' + value[0] + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
             });
+            $('#pjyear').append('<tr class="table-success row"><td class="col-4">Total</td><td class="col-3 text-center">' + total_pj + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(total_amount) + '</td></tr>');
+        //=======================//
+            total_pj = 0, total_amount = 0;
             Object.entries(sum_status).forEach(function ([key, value]) {
-                $('#pjstatus').append('<tr><td>' + key + '</td><td>' + value[0] + '</td><td>' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
+                total_pj += value[0];
+                total_amount += value[1];
+                $('#pjstatus').append('<tr class="row"><td class="col-4">' + key + '</td><td class="col-3 text-center">' + value[0] + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
             });
+            $('#pjstatus').append('<tr class="table-success row"><td class="col-4">Total</td><td class="col-3 text-center">' + total_pj + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(total_amount) + '</td></tr>');
+
+
             console.log('===============');
-            console.log(sum_status);
+            console.log(total_pj+' '+total_amount);
 
             {#console.log(list_year);#}
             return graph;
