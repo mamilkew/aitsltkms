@@ -333,7 +333,7 @@
                 .append("text")
                 .attr("class", "node-text")
                 .text(function (d) {
-                    return d.label;
+                    return d.label.replace(/T00:00:00/, '');
                 })
             ;
             //nodeTexts.append("title")
