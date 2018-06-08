@@ -24,74 +24,71 @@
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
-                                        {#                                    <form id="filter_{{ key }}">#}
-
                                         {% for v in value %}
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="{{ key }}"
                                                        value="{{ v }}"
                                                        id="checked{{ v }}"/>
-                                                <label class="form-check-label" for="checked{{ v }}">{{ v }}</label>
+                                                <label class="form-check-label d-block"
+                                                       for="checked{{ v }}">{{ v }}</label>
                                             </div>
                                         {% endfor %}
-                                        {#                                    </form>#}
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
+                </div>
             </form>
         </div>
-
-    </div>
-    <div class="col-xs-12 col-md-9">
-        {#            <h3>{{ posts.title }}</h3>#}
-        {#            <p>Created: {{ posts.created_date }}</p>#}
-        {#            <p>Published: {{ posts.published_date }}</p>#}
-        {#            <p>Graph: {{ posts.graph }}</p>#}
-        {#            <p>Subject: {{ posts.subject }}</p>#}
-        {#            <p>Result: {{ posts.result }}</p>#}
+        <div class="col-xs-12 col-md-9">
+            {#            <h3>{{ posts.title }}</h3>#}
+            {#            <p>Created: {{ posts.created_date }}</p>#}
+            {#            <p>Published: {{ posts.published_date }}</p>#}
+            {#            <p>Graph: {{ posts.graph }}</p>#}
+            {#            <p>Subject: {{ posts.subject }}</p>#}
+            {#            <p>Result: {{ posts.result }}</p>#}
 
 
-        <div id="svg-body" class="panel-body"></div>
-        {#            <ul>#}
-        {#                {% for each in posts.result %}#}
-        {#                    <li>{{ each }}</li>#}
-        {#                {% endfor %}#}
-        {#            </ul>#}
-        <br>
-        <h3>Summary</h3>
-        <div class="row">
-            <div class="col-sm-6 table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr class="row">
-                        <th scope="col" class="col-4">Initiated Year</th>
-                        <th scope="col" class="col-3 text-center">No. of Project</th>
-                        <th scope="col" class="col-5 text-right">Contracted Amount</th>
-                    </tr>
-                    </thead>
-                    <tbody id="pjyear">
+            <div id="svg-body" class="panel-body"></div>
+            {#            <ul>#}
+            {#                {% for each in posts.result %}#}
+            {#                    <li>{{ each }}</li>#}
+            {#                {% endfor %}#}
+            {#            </ul>#}
+            <br>
+            <h3>Summary</h3>
+            <div class="row">
+                <div class="col-sm-6 table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr class="row">
+                            <th scope="col" class="col-4">Initiated Year</th>
+                            <th scope="col" class="col-3 text-center">No. of Project</th>
+                            <th scope="col" class="col-5 text-right">Contracted Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody id="pjyear">
 
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-sm-6 table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr class="row">
-                        <th scope="col" class="col-4">Project Status</th>
-                        <th scope="col" class="col-3 text-center">No. of Project</th>
-                        <th scope="col" class="col-5 text-right">Contracted Amount</th>
-                    </tr>
-                    </thead>
-                    <tbody id="pjstatus">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-6 table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr class="row">
+                            <th scope="col" class="col-4">Project Status</th>
+                            <th scope="col" class="col-3 text-center">No. of Project</th>
+                            <th scope="col" class="col-5 text-right">Contracted Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody id="pjstatus">
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 {% endblock %}
 {% block javascript %}
