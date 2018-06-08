@@ -4,13 +4,15 @@
     <div class="row">
         <div class="col-md-3 left-faceted">
             <br>
-            <h4>Faceted Search</h4>
-            <hr>
+            <form id="filter_facet">
+                {% csrf_token %}
+                <h4>Faceted Search</h4>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+                <hr>
 
-            <div id="accordion" class="accordion">
-                {#        Group #iterative        #}
-                <form id="filter_facet">
-                    {% csrf_token %}
+                <div id="accordion" class="accordion">
+                    {#        Group #iterative        #}
+
                     {% for key, value in filter_facets.items %}
                         <div class="card">
                             <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse"
@@ -38,64 +40,65 @@
                             </div>
                         </div>
                     {% endfor %}
-                </form>
-            </div>
-
+            </form>
         </div>
-        <div class="col-xs-12 col-md-9">
-            {#            <h3>{{ posts.title }}</h3>#}
-            {#            <p>Created: {{ posts.created_date }}</p>#}
-            {#            <p>Published: {{ posts.published_date }}</p>#}
-            {#            <p>Graph: {{ posts.graph }}</p>#}
-            {#            <p>Subject: {{ posts.subject }}</p>#}
-            {#            <p>Result: {{ posts.result }}</p>#}
+
+    </div>
+    <div class="col-xs-12 col-md-9">
+        {#            <h3>{{ posts.title }}</h3>#}
+        {#            <p>Created: {{ posts.created_date }}</p>#}
+        {#            <p>Published: {{ posts.published_date }}</p>#}
+        {#            <p>Graph: {{ posts.graph }}</p>#}
+        {#            <p>Subject: {{ posts.subject }}</p>#}
+        {#            <p>Result: {{ posts.result }}</p>#}
 
 
-            <div id="svg-body" class="panel-body"></div>
-            {#            <ul>#}
-            {#                {% for each in posts.result %}#}
-            {#                    <li>{{ each }}</li>#}
-            {#                {% endfor %}#}
-            {#            </ul>#}
-            <br><h3>Summary</h3>
-            <div class="row">
-                <div class="col-sm-6 table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr class="row">
-                            <th scope="col" class="col-4">Initiated Year</th>
-                            <th scope="col" class="col-3 text-center">No. of Project</th>
-                            <th scope="col" class="col-5 text-right">Contracted Amount</th>
-                        </tr>
-                        </thead>
-                        <tbody id="pjyear">
+        <div id="svg-body" class="panel-body"></div>
+        {#            <ul>#}
+        {#                {% for each in posts.result %}#}
+        {#                    <li>{{ each }}</li>#}
+        {#                {% endfor %}#}
+        {#            </ul>#}
+        <br>
+        <h3>Summary</h3>
+        <div class="row">
+            <div class="col-sm-6 table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-4">Initiated Year</th>
+                        <th scope="col" class="col-3 text-center">No. of Project</th>
+                        <th scope="col" class="col-5 text-right">Contracted Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody id="pjyear">
 
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-sm-6 table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr class="row">
-                            <th scope="col" class="col-4">Project Status</th>
-                            <th scope="col" class="col-3 text-center">No. of Project</th>
-                            <th scope="col" class="col-5 text-right">Contracted Amount</th>
-                        </tr>
-                        </thead>
-                        <tbody id="pjstatus">
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-6 table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-4">Project Status</th>
+                        <th scope="col" class="col-3 text-center">No. of Project</th>
+                        <th scope="col" class="col-5 text-right">Contracted Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody id="pjstatus">
 
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
     </div>
 {% endblock %}
 {% block javascript %}
     <style type="text/css">
         .node {
             stroke: #fff;
-            fill: #ddd;
+            fill: #c3e6cb;
             stroke-width: 1.5px;
         }
 
@@ -122,7 +125,7 @@
         }
 
         svg {
-            border: 1px solid black;
+            border: 1px solid #eeeeee;
         }
     </style>
     <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -135,7 +138,7 @@
         var triples = {{ posts.result | safe }};
 
         var zoom = d3.behavior.zoom()
-            .scaleExtent([0.3, 5])
+            .scaleExtent([0.3, 1])
             .on("zoom", zoomed);
 
         var svg = d3.select("#svg-body").append("svg")
@@ -219,7 +222,7 @@
                 $('#pjyear').append('<tr class="row"><td class="col-4">' + key + '</td><td class="col-3 text-center">' + value[0] + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(value[1]) + '</td></tr>')
             });
             $('#pjyear').append('<tr class="table-success row"><td class="col-4">Total</td><td class="col-3 text-center">' + total_pj + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(total_amount) + '</td></tr>');
-        //=======================//
+            //=======================//
             total_pj = 0, total_amount = 0;
             Object.entries(sum_status).forEach(function ([key, value]) {
                 total_pj += value[0];
@@ -228,11 +231,6 @@
             });
             $('#pjstatus').append('<tr class="table-success row"><td class="col-4">Total</td><td class="col-3 text-center">' + total_pj + '</td><td class="col-5 text-right">' + Intl.NumberFormat().format(total_amount) + '</td></tr>');
 
-
-            console.log('===============');
-            console.log(total_pj+' '+total_amount);
-
-            {#console.log(list_year);#}
             return graph;
 
         }
@@ -297,7 +295,7 @@
                 .enter().append("svg:marker")
                 .attr("id", String)
                 .attr("viewBox", "0 -5 10 10")
-                .attr("refX", 30)
+                .attr("refX", 25)
                 .attr("refY", -0.5)
                 .attr("markerWidth", 6)
                 .attr("markerHeight", 6)
@@ -330,7 +328,7 @@
             //linkTexts.append("title")
             //		.text(function(d) { return d.predicate; });
 
-            // ==================== Add Link Names =====================
+            // ==================== Add Node Names =====================
             var nodeTexts = container.append("g")
                 .selectAll(".node-text")
                 .data(filterNodesByType(graph.nodes, "node"))
@@ -397,7 +395,7 @@
             force
                 .nodes(graph.nodes)
                 .links(graph.links)
-                .charge(-500)
+                .charge(-400)
                 .linkDistance(20)
                 .start()
             ;
@@ -435,7 +433,7 @@
         {#\}#}
 
         $(function () {
-            $("#filter_facet").on('change', function (e) {
+            $("#filter_facet").submit(function (e) {
                 $.ajax({
                     url: '{% url 'filter_detail' %}',
                     data: $('#filter_facet').serialize(),
@@ -445,7 +443,7 @@
                         $('#pjstatus').text('');
                         sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
                         console.log(response);
-                        alert(response.status + " & " + response.filter_name);
+                        alert(response.filter_name);
                         d3.select("svg").remove();
                         svg = d3.select("#svg-body").append("svg")
                             .attr("width", w + margin.right + margin.left)
