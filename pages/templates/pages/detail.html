@@ -334,7 +334,13 @@
                 .append("text")
                 .attr("class", "node-text")
                 .text(function (d) {
-                    return d.label.replace(/T00:00:00/, '');
+                    if (d.label.slice(-2, -1) == "."){
+                        return Intl.NumberFormat().format(parseFloat(d.label).toFixed(2));
+                    }
+                    else{
+                        return d.label.replace(/T00:00:00/, '');
+                    }
+
                 })
             ;
             //nodeTexts.append("title")
@@ -432,6 +438,10 @@
                     thisOpacity = isConnected(d, o) ? 1 : opacity;
                     return thisOpacity;
                 });
+                nodeTexts.style("fill", function (o) {
+                    thisOpacity = isConnected(d, o) ? "#000000" : "#999";
+                    return thisOpacity;
+                });
                 // also style link accordingly
                 links.style("stroke-opacity", function (o) {
                     return o.s === d || o.o === d ? 1 : opacity;
@@ -439,7 +449,7 @@
                 links.style("stroke", function (o) {
                     return o.s === d || o.o === d ? "#7ab380" : "#999";
                 });
-                nodeTexts.style("fill", function (o) {
+                linkTexts.style("fill", function (o) {
                     return o.s === d || o.o === d ? "#000000" : "#999";
                 });
             };
@@ -448,8 +458,10 @@
         function mouseOut() {
             nodes.style("stroke-opacity", 1);
             nodes.style("fill-opacity", 1);
+            nodeTexts.style("fill", "#000000");
             links.style("stroke-opacity", .20);
             links.style("stroke", "#999");
+            linkTexts.style("fill", "#808080");
         }
 
         {#function filtering(filter_id) {#}
