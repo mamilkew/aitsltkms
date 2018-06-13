@@ -42,8 +42,10 @@
             <div class="row">
                 <div class="col-xs-12 col-md-12">
                     <br>
-                    <h3 class="text-center">{{ posts.subject }}</h3>
-                    <br>
+                    <h3 class="text-center">{{ posts.title }}</h3>
+                    <div class="text-right">
+                        <label class="text-info">Domain: {{ posts.subject }}</label>
+                    </div>
                 </div>
             </div>
             <div id="svg-body" class="panel-body"></div>

@@ -50,7 +50,7 @@ def forcegraph(request, post_id):
 
 
 def index(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).last()
+    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
     # posts = Post.objects.filter(published_date__lte=timezone.now())
     return render(request, 'pages/index.html', {'posts': posts})
 

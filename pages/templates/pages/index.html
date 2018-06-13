@@ -15,3 +15,13 @@
 
 
 {% endblock %}
+{% block javascript %}
+    <script>
+        {#$(document).ready(function () {#}
+        {#{% for each in posts %}#}
+        {#    $("div.mapping").append('<a class="dropdown-item" href="{% url 'forcegraph' each.id %}">{{ each.title }}</a>');#}
+        {#{% endfor %}#}
+        {#/});#}
+    </script>
+
+{% endblock %}
