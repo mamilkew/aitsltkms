@@ -1,0 +1,426 @@
+{% extends 'pages/layout.html' %}
+{% block container %}
+    <div class="row">
+        <div class="col-md-3 left-faceted">
+            <br>
+            <form id="filter_facet">
+                {% csrf_token %}
+                <h4>Faceted Search</h4>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+                <hr>
+
+                <div id="accordion" class="accordion">
+                    {#        Group #iterative        #}
+
+                    {% for key, value in filter_facets.items %}
+                        <div class="card">
+                            <div class="card-header collapsed card-filter" id="{{ key }}" data-toggle="collapse"
+                                 data-target="#collapse{{ key }}"
+                                 aria-expanded="false" aria-controls="collapse{{ key }}">
+                                {{ key }}
+                            </div>
+                            <div id="collapse{{ key }}" class="collapse" aria-labelledby="{{ key }}"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for v in value %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="{{ key }}"
+                                                       value="{{ v }}"
+                                                       id="checked{{ v }}"/>
+                                                <label class="form-check-label d-block"
+                                                       for="checked{{ v }}">{{ v }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-12 col-md-9">
+            <div id="svg-body" class="panel-body"></div>
+        </div>
+        <div id="nodeClickable" class="card border-success mb-3 position-absolute invisible"
+             style="width: 350px; right: 0; opacity: 0.9;">
+            <div class="card-header bg-transparent border-success text-success" id="cardHeader">Header
+                <button type="button" class="close" aria-label="Close"
+                        onclick='$("#nodeClickable").toggleClass("visible invisible");'>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="card-body" id="cardBody">
+                <h5 class="card-title">No Title</h5>
+                <p class="card-text">No Content</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascript %}
+    <style type="text/css">
+        .node {
+            stroke: #fff;
+            fill: #479a5b;
+            stroke-width: 1.5px;
+        }
+
+        .link {
+            fill: none;
+            stroke: #999;
+            stroke-opacity: .20;
+            stroke-width: 1px;
+        }
+
+        marker {
+            stroke: #999;
+            fill: rgba(124, 240, 10, 0);
+        }
+
+        .node-text {
+            font: 11px sans-serif;
+            fill: black;
+        }
+
+        .link-text {
+            font: 9px sans-serif;
+            fill: grey;
+        }
+
+        svg {
+            border: 1px solid #eeeeee;
+        }
+    </style>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+        var sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
+        var margin = {top: 20, right: 50, bottom: 20, left: 150},
+            w = 800 - margin.right - margin.left,
+            h = 600 - margin.top - margin.bottom;
+
+        var triples = {{ posts.result | safe }};
+
+        var zoom = d3.behavior.zoom()
+            .scaleExtent([0.3, 3])
+            .on("zoom", zoomed);
+
+        var svg = d3.select("#svg-body").append("svg")
+            .attr("width", w + margin.right + margin.left)
+            .attr("height", h + margin.top + margin.bottom)
+            .call(zoom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
+
+        var container = svg.append("g");
+
+        var force = d3.layout.force().size([w, h]);
+
+        var graph = triplesToGraph(triples);
+
+        var nodes, links, nodeTexts, linkTexts;
+        update();
+        console.log(graph);
+
+        function filterNodesById(nodes, id) {
+            return nodes.filter(function (n) {
+                return n.id === id;
+            });
+        }
+
+        function filterNodesByType(nodes, value) {
+            return nodes.filter(function (n) {
+                return n.type === value;
+            });
+        }
+
+        function triplesToGraph(triples) {
+
+            {#svg.html("");#}
+            //Graph
+            var graph = {nodes: [], links: [], triples: []};
+
+            //Initial Graph from triples
+            triples.forEach(function (triple) {
+                var subjId = triple.subject;
+                var predId = triple.predicate;
+                var objId = triple.object;
+
+                var subjNode = filterNodesById(graph.nodes, subjId)[0];
+                var objNode = filterNodesById(graph.nodes, objId)[0];
+
+                if (subjNode == null) {
+                    subjNode = {id: subjId, label: subjId, weight: 1, type: "node"};
+                    graph.nodes.push(subjNode);
+                }
+
+                if (objNode == null) {
+                    objNode = {id: objId, label: objId, weight: 1, type: "node"};
+                    graph.nodes.push(objNode);
+                }
+
+                var predNode = {id: predId, label: predId, weight: 1, type: "pred"};
+                graph.nodes.push(predNode);
+
+                var blankLabel = "";
+
+                graph.links.push({source: subjNode, target: predNode, predicate: blankLabel, weight: 1});
+                graph.links.push({source: predNode, target: objNode, predicate: blankLabel, weight: 1});
+
+                graph.triples.push({s: subjNode, p: predNode, o: objNode});
+
+            });
+
+            return graph;
+        }
+
+        function update() {
+            // ==================== Add Marker ====================
+            svg.append("svg:defs").selectAll("marker")
+                .data(["end"])
+                .enter().append("svg:marker")
+                .attr("id", String)
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 25)
+                .attr("refY", -0.5)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("svg:polyline")
+                .attr("points", "0,-5 10,0 0,5")
+            ;
+
+            // ==================== Add Links ====================
+            links = container.append("g")
+                .selectAll(".link")
+                .data(graph.triples)
+                .enter()
+                .append("path")
+                .attr("marker-end", "url(#end)")
+                .attr("class", "link")
+            ;
+
+            // ==================== Add Link Names =====================
+            linkTexts = container.append("g")
+                .selectAll(".link-text")
+                .data(graph.triples)
+                .enter()
+                .append("text")
+                .attr("class", "link-text")
+                .text(function (d) {
+                    return d.p.label;
+                })
+            ;
+            //linkTexts.append("title")
+            //		.text(function(d) { return d.predicate; });
+
+            // ==================== Add Node Names =====================
+            nodeTexts = container.append("g")
+                .selectAll(".node-text")
+                .data(filterNodesByType(graph.nodes, "node"))
+                .enter()
+                .append("text")
+                .attr("class", "node-text")
+                .text(function (d) {
+                    // if (d.label.slice(-2, -1) == ".") {
+                    //     return Intl.NumberFormat().format(parseFloat(d.label).toFixed(2));
+                    // }
+                    // else {
+                    //     return d.label.replace(/T00:00:00/, '');
+                    // }
+                    return d.label;
+
+                })
+            ;
+            //nodeTexts.append("title")
+            //		.text(function(d) { return d.label; });
+
+            // ==================== Add Node =====================
+            nodes = container.append("g")
+                .selectAll(".node")
+                .data(filterNodesByType(graph.nodes, "node"))
+                .enter()
+                .append("circle")
+                .attr("class", "node")
+                .attr("r", 8)
+                .call(force.drag)
+                .on("mouseover", mouseOver(.20))
+                .on("mouseout", mouseOut)
+                .on("click", nodeClick());
+
+            ;//nodes
+
+            // ==================== Force ====================
+            force.on("tick", function () {
+                nodes
+                    .attr("cx", function (d) {
+                        return d.x;
+                    })
+                    .attr("cy", function (d) {
+                        return d.y;
+                    })
+                ;
+
+                links
+                    .attr("d", function (d) {
+                        return "M" + d.s.x + "," + d.s.y
+                            + "S" + d.p.x + "," + d.p.y
+                            + " " + d.o.x + "," + d.o.y;
+                    })
+                ;
+
+                nodeTexts
+                    .attr("x", function (d) {
+                        return d.x + 12;
+                    })
+                    .attr("y", function (d) {
+                        return d.y + 3;
+                    })
+                ;
+
+                linkTexts
+                    .attr("x", function (d) {
+                        return 4 + (d.s.x + d.p.x + d.o.x) / 3;
+                    })
+                    .attr("y", function (d) {
+                        return 4 + (d.s.y + d.p.y + d.o.y) / 3;
+                    })
+                ;
+            });
+
+            // ==================== Run ====================
+            force
+                .nodes(graph.nodes)
+                .links(graph.links)
+                .charge(-250)
+                .linkDistance(5)
+                .start()
+            ;
+
+        }
+
+        function zoomed() {
+            container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        }
+
+        // build a dictionary of nodes that are linked
+        var linkedByIndex = {};
+        graph.triples.forEach(function (d) {
+            linkedByIndex[d.s.index + "_" + d.o.index] = 1;
+        });
+        console.log(JSON.parse(JSON.stringify(linkedByIndex)));
+
+        // check the dictionary to see if nodes are linked
+        function isConnected(a, b) {
+            return linkedByIndex[a.index + "_" + b.index] || linkedByIndex[b.index + "_" + a.index] || a.index == b.index;
+        }
+
+        function mouseOver(opacity) {
+            return function (d) {
+                // check all other nodes to see if they're connected
+                // to this one. if so, keep the opacity at 1, otherwise
+                // fade
+                nodes.style("stroke-opacity", function (o) {
+                    thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;
+                });
+                nodes.style("fill-opacity", function (o) {
+                    thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;
+                });
+                nodeTexts.style("fill-opacity", function (o) {
+                    thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;
+                });
+                // also style link accordingly
+                links.style("stroke-opacity", function (o) {
+                    return o.s === d || o.o === d ? 1 : opacity;
+                });
+                links.style("stroke", function (o) {
+                    return o.s === d || o.o === d ? "#7ab380" : "#999";
+                });
+                linkTexts.style("fill-opacity", function (o) {
+                    return o.s === d || o.o === d ? 1 : opacity;
+                });
+            };
+        }
+
+        function mouseOut() {
+            nodes.style("stroke-opacity", 1);
+            nodes.style("fill-opacity", 1);
+            nodeTexts.style("fill-opacity", 1);
+            links.style("stroke-opacity", .20);
+            links.style("stroke", "#999");
+            linkTexts.style("fill-opacity", 1);
+        }
+
+        function nodeClick() {
+            return function (d) {
+                var header_topic = "";
+                var tmp = "";
+                $("#nodeClickable").removeClass("invisible");
+                $("#nodeClickable").css('cursor', 'move');
+                graph.triples.forEach(function (o) {
+                    if (o.s === d) {
+                        header_topic = d.id;
+                        tmp += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
+                    }
+                    else if (o.o === d) {
+                        header_topic = o.p.id + ": " + d.id;
+                        tmp += o.s.id + "<br>";
+                    }
+                });
+                $("#cardHeader").html(header_topic + '<button type="button" class="close" aria-label="Close"\n' +
+                    '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
+                    '                    <span aria-hidden="true">&times;</span>\n' +
+                    '                </button>');
+                $("#cardBody").html(tmp);
+                // here you can access data of node using d.key
+
+                //Make the DIV element draggagle:
+                dragElement(document.getElementById(("nodeClickable")));
+
+                function dragElement(elmnt) {
+                    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                    if (document.getElementById(elmnt.id + "header")) {
+                        /* if present, the header is where you move the DIV from:*/
+                        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+                    } else {
+                        /* otherwise, move the DIV from anywhere inside the DIV:*/
+                        elmnt.onmousedown = dragMouseDown;
+                    }
+
+                    function dragMouseDown(e) {
+                        e = e || window.event;
+                        // get the mouse cursor position at startup:
+                        pos3 = e.clientX;
+                        pos4 = e.clientY;
+                        document.onmouseup = closeDragElement;
+                        // call a function whenever the cursor moves:
+                        document.onmousemove = elementDrag;
+                    }
+
+                    function elementDrag(e) {
+                        e = e || window.event;
+                        // calculate the new cursor position:
+                        pos1 = pos3 - e.clientX;
+                        pos2 = pos4 - e.clientY;
+                        pos3 = e.clientX;
+                        pos4 = e.clientY;
+                        // set the element's new position:
+                        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                    }
+
+                    function closeDragElement() {
+                        /* stop moving when mouse button is released:*/
+                        document.onmouseup = null;
+                        document.onmousemove = null;
+                    }
+                }
+            }
+        }
+
+    </script>
+{% endblock %}
