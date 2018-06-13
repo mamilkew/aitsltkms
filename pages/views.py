@@ -9,6 +9,21 @@ from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from base64 import b64encode
+from datetime import datetime
+
+
+def forcegraph(request, post_id):
+    try:
+        posts = Post.objects.get(pk=post_id)
+        posts.result = transform_api(posts.source)
+        posts.save()
+
+        filter_facets = {}
+
+    except Post.DoesNotExist:
+        raise Http404("Question does not exist")
+
+    return render(request, 'pages/forcegraph.html', {'posts': posts})
 
 
 def index(request):
@@ -78,11 +93,17 @@ def detail(request, post_id):
     return render(request, 'pages/detail.html', {'posts': posts, 'filter_facets': filter_facets})
 
 
-def check_type(type_result, value):
+def check_type(datatype_result, type_result, value):
     if type_result == "uri":
         return value.split('#')[-1]
     elif type_result == "literal":
-        return value
+        if (datatype_result == "http://www.w3.org/2001/XMLSchema#dateTime"):
+            date_format = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S').date()
+            return date_format.strftime("%d %b'%y")
+        elif (datatype_result == "http://www.w3.org/2001/XMLSchema#float"):
+            return value
+        else:
+            return value
     else:
         return ''
 
@@ -206,7 +227,7 @@ def call_api(sparql):
     data = values.encode('ascii')
     request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
     try:
-        response_body = urlopen(request).read().decode('ascii')
+        response_body = json.loads(urlopen(request).read().decode('ascii'))
         return transform_api(response_body)
     except HTTPError as e:
         print(e.code + e.reason)
@@ -248,13 +269,17 @@ def call_api(sparql):
     # data = json.load(open(json_url))
     #
 def transform_api(data):
-    results = json.loads(data)['results']['bindings']
+    # results = json.loads(data)['results']['bindings']
+    results = data['results']['bindings']
     new_results = []
 
     for result in results:
         tmp = {}
-        tmp['subject'] = check_type(result.get('subject').get('type'), result.get('subject').get('value'))
-        tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
-        tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
+        tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'), result.get('subject').get('value'))
+        tmp['predicate'] = check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'), result.get('predicate').get('value'))
+        tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'), result.get('object').get('value'))
         new_results.append(tmp)
     return new_results
+
+
+
