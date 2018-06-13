@@ -15,7 +15,7 @@
 
                     {% for key, value in filter_facets.items %}
                         <div class="card">
-                            <div class="card-header collapsed" id="{{ key }}" data-toggle="collapse"
+                            <div class="card-header collapsed card-filter" id="{{ key }}" data-toggle="collapse"
                                  data-target="#collapse{{ key }}"
                                  aria-expanded="false" aria-controls="collapse{{ key }}">
                                 {{ key }}
@@ -50,7 +50,9 @@
             {#            <p>Result: {{ posts.result }}</p>#}
 
 
-            <div id="svg-body" class="panel-body"></div>
+            <div id="svg-body" class="panel-body">
+
+            </div>
             {#            <ul>#}
             {#                {% for each in posts.result %}#}
             {#                    <li>{{ each }}</li>#}
@@ -88,6 +90,20 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div id="nodeClickable" class="card border-success mb-3 position-absolute invisible"
+             style="width: 350px; right: 0; opacity: 0.9;">
+            <div class="card-header bg-transparent border-success text-success" id="cardHeader">Header
+                <button type="button" class="close" aria-label="Close"
+                        onclick='$("#nodeClickable").toggleClass("visible invisible");'>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="card-body" id="cardBody">
+                <h5 class="card-title">No Title</h5>
+                <p class="card-text">No Content</p>
+            </div>
+            <div class="card-footer bg-transparent border-success">Footer</div>
         </div>
     </div>
 {% endblock %}
@@ -141,9 +157,9 @@
         var svg = d3.select("#svg-body").append("svg")
             .attr("width", w + margin.right + margin.left)
             .attr("height", h + margin.top + margin.bottom)
+            .call(zoom)
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
-            .call(zoom);
+            .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
 
         var container = svg.append("g");
 
@@ -334,10 +350,10 @@
                 .append("text")
                 .attr("class", "node-text")
                 .text(function (d) {
-                    if (d.label.slice(-2, -1) == "."){
+                    if (d.label.slice(-2, -1) == ".") {
                         return Intl.NumberFormat().format(parseFloat(d.label).toFixed(2));
                     }
-                    else{
+                    else {
                         return d.label.replace(/T00:00:00/, '');
                     }
 
@@ -354,9 +370,11 @@
                 .append("circle")
                 .attr("class", "node")
                 .attr("r", 8)
+                .call(force.drag)
                 .on("mouseover", mouseOver(.20))
                 .on("mouseout", mouseOut)
-                .call(force.drag)
+                .on("click", nodeClick());
+
             ;//nodes
 
             // ==================== Force ====================
@@ -438,8 +456,8 @@
                     thisOpacity = isConnected(d, o) ? 1 : opacity;
                     return thisOpacity;
                 });
-                nodeTexts.style("fill", function (o) {
-                    thisOpacity = isConnected(d, o) ? "#000000" : "#999";
+                nodeTexts.style("fill-opacity", function (o) {
+                    thisOpacity = isConnected(d, o) ? 1 : opacity;
                     return thisOpacity;
                 });
                 // also style link accordingly
@@ -449,8 +467,8 @@
                 links.style("stroke", function (o) {
                     return o.s === d || o.o === d ? "#7ab380" : "#999";
                 });
-                linkTexts.style("fill", function (o) {
-                    return o.s === d || o.o === d ? "#000000" : "#999";
+                linkTexts.style("fill-opacity", function (o) {
+                    return o.s === d || o.o === d ? 1 : opacity;
                 });
             };
         }
@@ -458,10 +476,77 @@
         function mouseOut() {
             nodes.style("stroke-opacity", 1);
             nodes.style("fill-opacity", 1);
-            nodeTexts.style("fill", "#000000");
+            nodeTexts.style("fill-opacity", 1);
             links.style("stroke-opacity", .20);
             links.style("stroke", "#999");
-            linkTexts.style("fill", "#808080");
+            linkTexts.style("fill-opacity", 1);
+        }
+
+        function nodeClick() {
+            return function (d) {
+                var header_topic = "";
+                var tmp = "";
+                $("#nodeClickable").removeClass("invisible");
+                $("#nodeClickable").css('cursor', 'move');
+                graph.triples.forEach(function (o) {
+                    if (o.s === d){
+                        header_topic = d.id;
+                        tmp += "<label class='text-success'>" + o.p.id + "</label>: " + o.o.id + "<br>";
+                    }
+                    else if (o.o === d){
+                        header_topic = o.p.id + ": " + d.id;
+                        tmp += o.s.id + "<br>";
+                    }
+                });
+                $("#cardHeader").html(header_topic + '<button type="button" class="close" aria-label="Close"\n' +
+                    '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
+                    '                    <span aria-hidden="true">&times;</span>\n' +
+                    '                </button>');
+                $("#cardBody").html(tmp);
+                // here you can access data of node using d.key
+
+                //Make the DIV element draggagle:
+                dragElement(document.getElementById(("nodeClickable")));
+
+                function dragElement(elmnt) {
+                    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                    if (document.getElementById(elmnt.id + "header")) {
+                        /* if present, the header is where you move the DIV from:*/
+                        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+                    } else {
+                        /* otherwise, move the DIV from anywhere inside the DIV:*/
+                        elmnt.onmousedown = dragMouseDown;
+                    }
+
+                    function dragMouseDown(e) {
+                        e = e || window.event;
+                        // get the mouse cursor position at startup:
+                        pos3 = e.clientX;
+                        pos4 = e.clientY;
+                        document.onmouseup = closeDragElement;
+                        // call a function whenever the cursor moves:
+                        document.onmousemove = elementDrag;
+                    }
+
+                    function elementDrag(e) {
+                        e = e || window.event;
+                        // calculate the new cursor position:
+                        pos1 = pos3 - e.clientX;
+                        pos2 = pos4 - e.clientY;
+                        pos3 = e.clientX;
+                        pos4 = e.clientY;
+                        // set the element's new position:
+                        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                    }
+
+                    function closeDragElement() {
+                        /* stop moving when mouse button is released:*/
+                        document.onmouseup = null;
+                        document.onmousemove = null;
+                    }
+                }
+            }
         }
 
         {#function filtering(filter_id) {#}

@@ -14,12 +14,12 @@ body {
 
 }
 
-.card-header::after{
+.card-filter::after{
     font-family: "FontAwesome";
     content: "\f068";
     float: right;
 }
-.card-header.collapsed::after{
+.card-filter.collapsed::after{
     font-family: "FontAwesome";
     content: "\f067";
 }
