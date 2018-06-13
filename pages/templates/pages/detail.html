@@ -491,7 +491,7 @@
                 graph.triples.forEach(function (o) {
                     if (o.s === d){
                         header_topic = d.id;
-                        tmp += "<label class='text-success'>" + o.p.id + "</label>: " + o.o.id + "<br>";
+                        tmp += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
                     }
                     else if (o.o === d){
                         header_topic = o.p.id + ": " + d.id;
