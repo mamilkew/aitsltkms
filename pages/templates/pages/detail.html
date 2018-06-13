@@ -48,7 +48,11 @@
             {#            <p>Graph: {{ posts.graph }}</p>#}
             {#            <p>Subject: {{ posts.subject }}</p>#}
             {#            <p>Result: {{ posts.result }}</p>#}
-
+        <div class="progress" id="progress_bar">
+            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
+                 aria-valuemax="100">
+            </div>
+        </div>
 
             <div id="svg-body" class="panel-body">
 
@@ -489,11 +493,11 @@
                 $("#nodeClickable").removeClass("invisible");
                 $("#nodeClickable").css('cursor', 'move');
                 graph.triples.forEach(function (o) {
-                    if (o.s === d){
+                    if (o.s === d) {
                         header_topic = d.id;
-                        tmp += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
+                        tmp += "<label class='text-success'>" + o.p.id + ":</label> " + o.o.id + "<br>";
                     }
-                    else if (o.o === d){
+                    else if (o.o === d) {
                         header_topic = o.p.id + ": " + d.id;
                         tmp += o.s.id + "<br>";
                     }
@@ -575,20 +579,36 @@
         {#        }#}
         {#    });#}
         {#\}#}
+        function progress_running(){
+            $("#progress_bar").show();
+                var stops = [25, 55, 85, 99];
+                $.each(stops, function (index, value) {
+                    setTimeout(function () {
+                        $(".progress-bar").css("width", value + "%").attr("aria-valuenow", value).text(value + '%');
+                    }, index * 500);
+                });
+        }
+
 
         $(function () {
-            $("#filter_facet").submit(function (e) {
+            $("#progress_bar").hide();
+            //$("#filter_facet").submit(function (e) {
+            $("#filter_facet").on('change', function (e) {
+                progress_running();
+                $('#pjyear').text('');
+                $('#pjstatus').text('');
+                d3.select("svg").remove();
                 $.ajax({
                     url: '{% url 'filter_detail' %}',
                     data: $('#filter_facet').serialize(),
                     type: 'POST',
                     success: function (response) {
-                        $('#pjyear').text('');
-                        $('#pjstatus').text('');
+                        $("#progress_bar").hide();
+                        $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
                         sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
                         console.log(response);
-                        alert(response.filter_name);
-                        d3.select("svg").remove();
+                        // alert(response.filter_name);
+                        // d3.select("svg").remove();
                         svg = d3.select("#svg-body").append("svg")
                             .attr("width", w + margin.right + margin.left)
                             .attr("height", h + margin.top + margin.bottom)
