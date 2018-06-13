@@ -25,7 +25,7 @@ def call_api(sparql):
     data = values.encode('ascii')
     request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
     try:
-        response_body = urlopen(request).read().decode('ascii')
+        response_body = urlopen(request).read().decode('utf8')
         return response_body
     except HTTPError as e:
         print(e.code + e.reason)
@@ -78,6 +78,12 @@ class Post(models.Model):
         blank=True, null=True)
 
     def save(self, *args, **kwargs):  # do something every time you save
+        sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type aitslt:' + self.subject + ' .' \
+                     + '?subject ?predicate ?object .' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
+                     + '}order by ?subject'
+        data = call_api(sparql_all)
+        self.source = json.loads(data)
         # if not self.pk:
             # This code only happens if the objects is not in the database yet. Otherwise it would have pk
 

@@ -10,20 +10,43 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from base64 import b64encode
 from datetime import datetime
+from collections import OrderedDict
 
 
 def forcegraph(request, post_id):
     try:
         posts = Post.objects.get(pk=post_id)
-        posts.result = transform_api(posts.source)
-        posts.save()
-
+        results = posts.source['results']['bindings']  # get DB (from API)
+        new_results = []
         filter_facets = {}
+
+        for result in results:
+            tmp = {}
+            tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
+                                        result.get('subject').get('value'))
+            tmp['predicate'] = check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
+                                          result.get('predicate').get('value'))
+            tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'),
+                                       result.get('object').get('value'))
+            new_results.append(tmp)
+
+            if tmp['predicate'] in filter_facets:
+                tmp_filter = filter_facets.get(tmp['predicate'])
+                tmp_filter.append(tmp['object'])
+                filter_facets[tmp['predicate']] = list_facet(tmp_filter)
+            else:
+                filter_facets[tmp['predicate']] = [tmp['object']]
+        filter_facets = OrderedDict(sorted(filter_facets.items(), key=lambda t: t[0]))
+        # print(dict(sorted(filter_facets.items())))
+
+        posts.result = new_results
+        # posts.result = transform_api(posts.source)
+        posts.save()
 
     except Post.DoesNotExist:
         raise Http404("Question does not exist")
 
-    return render(request, 'pages/forcegraph.html', {'posts': posts})
+    return render(request, 'pages/forcegraph.html', {'posts': posts, 'filter_facets': filter_facets})
 
 
 def index(request):
@@ -52,9 +75,12 @@ def detail(request, post_id):
         # transform to pattern for visualization standard
         for result in results:
             tmp = {}
-            tmp['subject'] = check_type(result.get('subject').get('type'), result.get('subject').get('value'))
-            tmp['predicate'] = check_type(result.get('predicate').get('type'), result.get('predicate').get('value'))
-            tmp['object'] = check_type(result.get('object').get('type'), result.get('object').get('value'))
+            tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
+                                        result.get('subject').get('value'))
+            tmp['predicate'] = check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
+                                          result.get('predicate').get('value'))
+            tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'),
+                                       result.get('object').get('value'))
             new_results.append(tmp)
 
             #  make the list of ----facets---- and value

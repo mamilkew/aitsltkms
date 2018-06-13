@@ -5,10 +5,8 @@
             <br>
             <form id="filter_facet">
                 {% csrf_token %}
-                <h4>Faceted Search</h4>
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <h4>Faceted Search <button class="btn btn-outline-success" type="submit">Reset</button></h4>
                 <hr>
-
                 <div id="accordion" class="accordion">
                     {#        Group #iterative        #}
 
@@ -19,7 +17,7 @@
                                  aria-expanded="false" aria-controls="collapse{{ key }}">
                                 {{ key }}
                             </div>
-                            <div id="collapse{{ key }}" class="collapse" aria-labelledby="{{ key }}"
+                            <div id="collapse{{ key }}" class="collapse card-filter-body" aria-labelledby="{{ key }}"
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
@@ -41,6 +39,13 @@
             </form>
         </div>
         <div class="col-xs-12 col-md-9">
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <br>
+                    <h3 class="text-center">{{ posts.subject }}</h3>
+                    <br>
+                </div>
+            </div>
             <div id="svg-body" class="panel-body"></div>
         </div>
         <div id="nodeClickable" class="card border-success mb-3 position-absolute invisible"

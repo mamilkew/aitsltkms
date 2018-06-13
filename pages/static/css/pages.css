@@ -14,12 +14,18 @@ body {
 
 }
 
-.card-filter::after{
+.card-filter::after {
     font-family: "FontAwesome";
     content: "\f068";
     float: right;
 }
-.card-filter.collapsed::after{
+
+.card-filter.collapsed::after {
     font-family: "FontAwesome";
     content: "\f067";
+}
+
+.card-filter-body {
+    overflow-y: scroll !important;
+    max-height: 200px !important;
 }
