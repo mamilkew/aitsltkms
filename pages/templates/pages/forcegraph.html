@@ -364,25 +364,28 @@
 
         function nodeClick() {
             return function (d) {
+                var object_true = false;
                 var header_topic = "";
-                var tmp = "";
+                var tmp_subject = "", tmp_object = "";
                 $("#nodeClickable").removeClass("invisible");
                 $("#nodeClickable").css('cursor', 'move');
                 graph.triples.forEach(function (o) {
                     if (o.s === d) {
                         header_topic = d.id;
-                        tmp += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
+                        tmp_subject += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
                     }
                     else if (o.o === d) {
+                        object_true = true;
                         header_topic = o.p.id + ": " + d.id;
-                        tmp += o.s.id + "<br>";
+                        tmp_object += "<li>" + o.s.id + "</li>";
                     }
                 });
                 $("#cardHeader").html(header_topic + '<button type="button" class="close" aria-label="Close"\n' +
                     '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
                     '                    <span aria-hidden="true">&times;</span>\n' +
                     '                </button>');
-                $("#cardBody").html(tmp);
+                object_true ? $("#cardBody").html("<ol>"+tmp_object+"</ol>") : $("#cardBody").html(tmp_subject);
+
                 // here you can access data of node using d.key
 
                 //Make the DIV element draggagle:
