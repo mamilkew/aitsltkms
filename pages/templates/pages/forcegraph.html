@@ -9,7 +9,8 @@
                 <hr>
                 <div id="accordion" class="accordion">
                     {#        Group #iterative        #}
-
+                    <input type="hidden" name="subject_domain" value="{{ posts.subject }}">
+                    <input type="hidden" name="prefixes_query" value="{{ filter_prefix }}">
                     {% for key, value in filter_facets.items %}
                         <div class="card">
                             <div class="card-header collapsed card-filter" id="{{ key }}" data-toggle="collapse"
@@ -48,6 +49,11 @@
                     </div>
                 </div>
             </div>
+            <div class="progress" id="progress_bar" style="display: none">
+            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
+                 aria-valuemax="100">
+            </div>
+        </div>
             <div id="svg-body" class="panel-body"></div>
         </div>
         <div id="nodeClickable" class="card border-success mb-3 position-absolute invisible"
@@ -102,6 +108,7 @@
     </style>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
+        console.log({{ filter_prefix | safe }});
         var sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
         var margin = {top: 20, right: 50, bottom: 20, left: 150},
             w = 800 - margin.right - margin.left,
@@ -431,6 +438,63 @@
                 }
             }
         }
+
+        function progress_running(){
+            $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
+            $("#progress_bar").show();
+                var stops = [25, 55, 85, 99];
+                $.each(stops, function (index, value) {
+                    stop_progress_running = setTimeout(function () {
+                        $(".progress-bar").css("width", value + "%").attr("aria-valuenow", value).text(value + '%');
+                    }, index * 300);
+                    $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
+                });
+        }
+        function progress_stopping(){
+            clearTimeout(stop_progress_running);
+            $("#progress_bar").hide();
+        }
+        var stop_progress_running;
+        $(function () {
+            //$("#progress_bar").hide();
+            //$("#filter_facet").submit(function (e) {
+            $("#filter_facet").on('change', function (e) {
+                progress_running();
+                d3.select("svg").remove();
+                $.ajax({
+                    url: '{% url 'filter_query' %}',
+                    data: $('#filter_facet').serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                        progress_stopping();
+                        // sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
+                        console.log(response);
+                        // alert(response.filter_name);
+                        // d3.select("svg").remove();
+                        svg = d3.select("#svg-body").append("svg")
+                            .attr("width", w + margin.right + margin.left)
+                            .attr("height", h + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
+                            .call(zoom);
+                        container = svg.append("g");
+                        triples = response.query;
+                        graph = triplesToGraph(triples);
+                        update();
+                        console.log(graph);
+                        linkedByIndex = {};
+                        graph.triples.forEach(function (d) {
+                            linkedByIndex[d.s.index + "_" + d.o.index] = 1;
+                        });
+                        console.log(linkedByIndex);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+                e.preventDefault();
+            });
+        });
 
     </script>
 {% endblock %}

@@ -13,12 +13,71 @@ from datetime import datetime
 from collections import OrderedDict
 
 
+def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
+    nested = '{ select distinct ?subject where { ?subject rdf:type ' + subject_domain \
+             + ' . ?subject ?predicate ?object . ' \
+             + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+    print(prefixes_list)
+    if len(prefixes_list) == 2:
+        for p in prefixes_list:
+            if p in ['integer', 'float']:
+                for idx, each in enumerate(list_object):
+                    list_object[idx] = each
+            elif p in ['literal', 'dateTime']:
+                for idx, each in enumerate(list_object):
+                    list_object[idx] = '"{}"'.format(each)
+            else:
+                prefix_predicate = '<' + p + '#' + predicate + '>'
+    else:
+        prefix_predicate = '<' + prefixes_list[0] + '#' + predicate + '>'
+        for idx, each in enumerate(list_object):
+            list_object[idx] = '<' + prefixes_list[0] + '#' + each + '>'
+
+    nested += 'filter(?predicate = ' + prefix_predicate
+    text = make_filter_sparql(list_object, 'object')
+
+    nested += text + ')}}'
+    return nested
+
+
+def filter_query(request):
+    if request.method == 'POST':
+        if request.is_ajax():
+            prefix_data = request.POST.getlist('prefixes_query')[0]
+            domain_prefix = json.loads(prefix_data.replace("\'", "\"")).get(request.POST.get('subject_domain'))[0]
+            domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
+            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type ' + domain_prefix_subject + ' .' \
+                     + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+            facetdata = ''
+            # print(request.POST)
+            # print(request.POST.get('subject_domain'))
+            # print(request.POST.keys())
+            for k in request.POST.keys():
+                if k == 'csrfmiddlewaretoken':
+                    pass
+                elif k == 'subject_domain':
+                    pass
+                elif k == 'prefixes_query':
+                    prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
+                    print(prefix_json)
+                else:
+                    if k in prefix_json:
+                        print(request.POST.getlist(k))
+                        sparql += nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
+                        print(sparql)
+            sparql += '}order by ?subject'
+            new_results = call_api(sparql)
+
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
+
+
 def forcegraph(request, post_id):
     try:
         posts = Post.objects.get(pk=post_id)
         results = posts.source['results']['bindings']  # get DB (from API)
         new_results = []
         filter_facets = {}
+        filter_prefixes = {}
 
         for result in results:
             tmp = {}
@@ -36,6 +95,19 @@ def forcegraph(request, post_id):
                 filter_facets[tmp['predicate']] = list_facet(tmp_filter)
             else:
                 filter_facets[tmp['predicate']] = [tmp['object']]
+
+            prefix_subject = check_prefix(result.get('subject').get('datatype'),
+                                          result.get('subject').get('type'), result.get('subject').get('value'))
+            filter_prefixes = make_filter_prefixes(prefix_subject, posts.subject, filter_prefixes)
+
+            prefix_predicate = check_prefix(result.get('predicate').get('datatype'),
+                                            result.get('predicate').get('type'), result.get('predicate').get('value'))
+            filter_prefixes = make_filter_prefixes(prefix_predicate, tmp['predicate'], filter_prefixes)
+
+            prefix_object = check_prefix(result.get('object').get('datatype'), result.get('object').get('type'),
+                                         result.get('object').get('value'))
+            filter_prefixes = make_filter_prefixes(prefix_object, tmp['predicate'], filter_prefixes)
+
         filter_facets = OrderedDict(sorted(filter_facets.items(), key=lambda t: t[0]))
         # print(dict(sorted(filter_facets.items())))
 
@@ -46,7 +118,31 @@ def forcegraph(request, post_id):
     except Post.DoesNotExist:
         raise Http404("Question does not exist")
 
-    return render(request, 'pages/forcegraph.html', {'posts': posts, 'filter_facets': filter_facets})
+    return render(request, 'pages/forcegraph.html',
+                  {'posts': posts, 'filter_facets': filter_facets, 'filter_prefix': filter_prefixes})
+
+
+def make_filter_prefixes(prefixes, value, prefixes_dict):
+    if value in prefixes_dict:
+        tmp_prefix = prefixes_dict.get(value)
+        tmp_prefix.append(prefixes)
+        prefixes_dict[value] = list_facet(tmp_prefix)
+        return prefixes_dict
+    else:
+        prefixes_dict[value] = [prefixes]
+        return prefixes_dict
+
+
+def check_prefix(datatype_result, type_result, value):
+    if type_result == "uri":
+        return value.split('#')[0]
+    elif type_result == "literal":
+        if datatype_result is not None:
+            return datatype_result.split('#')[1]
+        else:
+            return type_result
+    else:
+        return value
 
 
 def index(request):
@@ -146,6 +242,7 @@ def list_facet(tmp_facets):
     facets = sorted(list(set(tmp_facets)))
     return facets
 
+
 #  Ajax from filter in detail page for call API to get result and display in existing page
 def filter_detail(request):
     if request.method == 'POST':
@@ -231,7 +328,7 @@ def make_nested_filter(predicate, list_object):
 
 def make_filter_sparql(list_filter, object_var):
     text = ''
-    print(list_filter)
+    # print(list_filter)
     for idx, each in enumerate(list_filter):
         if idx == 0:
             text += ' && (?' + object_var + ' = ' + each
@@ -243,7 +340,8 @@ def make_filter_sparql(list_filter, object_var):
 
 
 def call_api(sparql):
-    values = urlencode({'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
+    values = urlencode(
+        {'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
     credentials = b64encode('admin:admin'.encode('ascii'))
     headers = {
         'Authorization': 'Basic %s' % credentials.decode('ascii'),
@@ -253,7 +351,7 @@ def call_api(sparql):
     data = values.encode('ascii')
     request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
     try:
-        response_body = json.loads(urlopen(request).read().decode('ascii'))
+        response_body = json.loads(urlopen(request).read().decode('utf8'))
         return transform_api(response_body)
     except HTTPError as e:
         print(e.code + e.reason)
@@ -290,10 +388,10 @@ def call_api(sparql):
 
 # transform to pattern for visualization standard with file .json
 # def transform_data(filename):
-    # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-    # json_url = os.path.join(SITE_ROOT, "static/data", filename)
-    # data = json.load(open(json_url))
-    #
+# SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+# json_url = os.path.join(SITE_ROOT, "static/data", filename)
+# data = json.load(open(json_url))
+#
 def transform_api(data):
     # results = json.loads(data)['results']['bindings']
     results = data['results']['bindings']
@@ -301,11 +399,11 @@ def transform_api(data):
 
     for result in results:
         tmp = {}
-        tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'), result.get('subject').get('value'))
-        tmp['predicate'] = check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'), result.get('predicate').get('value'))
-        tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'), result.get('object').get('value'))
+        tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
+                                    result.get('subject').get('value'))
+        tmp['predicate'] = check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
+                                      result.get('predicate').get('value'))
+        tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'),
+                                   result.get('object').get('value'))
         new_results.append(tmp)
     return new_results
-
-
-
