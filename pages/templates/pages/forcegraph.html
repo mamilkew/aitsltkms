@@ -442,20 +442,21 @@
         function progress_running(){
             $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
             $("#progress_bar").show();
-                var stops = [25, 55, 85, 99];
-                $.each(stops, function (index, value) {
-                    stop_progress_running = setTimeout(function () {
-                        $(".progress-bar").css("width", value + "%").attr("aria-valuenow", value).text(value + '%');
-                    }, index * 300);
-                    $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
-                });
+            var stops = [25, 55, 85, 99];
+            $.each(stops, function (index, value) {
+                stop_progress_running = setTimeout(function () {
+                    $(".progress-bar").css("width", value + "%").attr("aria-valuenow", value).text(value + '%');
+                }, index * 300);
+            });
+
         }
         function progress_stopping(){
             clearTimeout(stop_progress_running);
+            $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
             $("#progress_bar").hide();
         }
         var stop_progress_running;
-        $(function () {
+        $(document).ready(function () {
             //$("#progress_bar").hide();
             //$("#filter_facet").submit(function (e) {
             $("#filter_facet").on('change', function (e) {
@@ -474,9 +475,9 @@
                         svg = d3.select("#svg-body").append("svg")
                             .attr("width", w + margin.right + margin.left)
                             .attr("height", h + margin.top + margin.bottom)
+                            .call(zoom)
                             .append("g")
-                            .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
-                            .call(zoom);
+                            .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
                         container = svg.append("g");
                         triples = response.query;
                         graph = triplesToGraph(triples);
