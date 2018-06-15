@@ -60,6 +60,41 @@ def call_api(sparql):
         return response_body
 
 
+class Postforcegraph(models.Model):
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    subject = models.URLField(max_length=200)
+    source = JSONField(blank=True, null=True, editable=False)
+    result = JSONField(blank=True, null=True, editable=False)
+    created_date = models.DateTimeField(
+        default=timezone.now, editable=False)
+    updated_date = models.DateTimeField(
+        default=timezone.now, editable=False)
+    published_date = models.DateTimeField(
+        blank=True, null=True)
+
+    def save(self, *args, **kwargs):  # do something every time you save
+        sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.subject + '> .' \
+                     + '?subject ?predicate ?object .' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
+                     + '}order by ?subject'
+        data = call_api(sparql_all)
+        self.source = json.loads(data)
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def was_published_last(self):
+        now = timezone.now()
+        if self.published_date is not None:
+            return self.published_date <= now
+
+    was_published_last.admin_order_field = 'published_date'
+    was_published_last.boolean = True
+    was_published_last.short_description = 'Last Published ?'
+
+    def __str__(self):
+        return self.title
+
+
 class Post(models.Model):
     author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
