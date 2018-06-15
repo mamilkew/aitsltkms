@@ -66,9 +66,10 @@ def forcegraph(request, post_id):
 def filter_query(request):
     if request.method == 'POST':
         if request.is_ajax():
-            prefix_data = request.POST.getlist('prefixes_query')[0]
-            domain_prefix = json.loads(prefix_data.replace("\'", "\"")).get(request.POST.get('subject_domain'))[0]
-            domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
+            # prefix_data = request.POST.getlist('prefixes_query')[0]
+            # domain_prefix = json.loads(prefix_data.replace("\'", "\"")).get(request.POST.get('subject_domain'))[0]
+            # domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
+            domain_prefix_subject = '<' + request.POST.get('subject_domain') + '>'
             sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type ' + domain_prefix_subject + ' .' \
                      + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
             facetdata = ''
