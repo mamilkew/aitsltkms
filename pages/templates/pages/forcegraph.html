@@ -374,27 +374,39 @@
 
         function nodeClick() {
             return function (d) {
-                var object_true = false;
-                var header_topic = "";
+                var subject_true = false, object_true = false;
+                var header_topic_s = "", header_topic_o = "";
                 var tmp_subject = "", tmp_object = "";
                 $("#nodeClickable").removeClass("invisible");
                 $("#nodeClickable").css('cursor', 'move');
                 graph.triples.forEach(function (o) {
                     if (o.s === d) {
-                        header_topic = d.id;
+                        subject_true = true;
+                        header_topic_s = d.id;
                         tmp_subject += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
                     }
                     else if (o.o === d) {
                         object_true = true;
-                        header_topic = o.p.id + ": " + d.id;
+                        header_topic_o = o.p.id + ": " + d.id;
                         tmp_object += "<li>" + o.s.id + "</li>";
                     }
                 });
-                $("#cardHeader").html(header_topic + '<button type="button" class="close" aria-label="Close"\n' +
+
+                {#object_true ? $("#cardBody").html("<ol>" + tmp_object + "</ol>") : $("#cardBody").html(tmp_subject);#}
+                if ((subject_true && object_true) || subject_true){
+                    $("#cardHeader").html(header_topic_s + '<button type="button" class="close" aria-label="Close"\n' +
                     '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
                     '                    <span aria-hidden="true">&times;</span>\n' +
                     '                </button>');
-                object_true ? $("#cardBody").html("<ol>" + tmp_object + "</ol>") : $("#cardBody").html(tmp_subject);
+                    $("#cardBody").html(tmp_subject);
+                }
+                else if (object_true){
+                    $("#cardHeader").html(header_topic_o + '<button type="button" class="close" aria-label="Close"\n' +
+                    '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
+                    '                    <span aria-hidden="true">&times;</span>\n' +
+                    '                </button>');
+                    $("#cardBody").html("<ol>" + tmp_object + "</ol>");
+                }
 
                 // here you can access data of node using d.key
 
