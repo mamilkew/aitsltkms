@@ -19,5 +19,7 @@ class PostforcegraphAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Postforcegraph, PostforcegraphAdmin)
-
+admin.site.site_header = 'VisualOntology Adminsitration'    # default: "Django Administration"
+admin.site.index_title = 'Visualization Management'         # default: "Site administration"
+admin.site.site_title = 'VisualOntology site admin'         # default: "Django site admin"
 
