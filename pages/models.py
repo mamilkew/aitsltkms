@@ -76,6 +76,9 @@ class Postforcegraph(models.Model):
     def save(self, *args, **kwargs):  # do something every time you save
         sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.subject + '> .' \
                      + '?subject ?predicate ?object .' \
+                     + 'optional{?subject rdfs:label ?s_label}' \
+                     + 'optional{?predicate rdfs:label ?p_label}' \
+                     + 'optional{?object rdfs:label ?o_label}' \
                      + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
                      + '}order by ?subject'
         data = call_api(sparql_all)

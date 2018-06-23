@@ -25,6 +25,12 @@ def forcegraph(request, post_id):
                                           result.get('predicate').get('value'))
             tmp['object'] = main_view.check_type(result.get('object').get('datatype'), result.get('object').get('type'),
                                        result.get('object').get('value'))
+            if result.get('s_label'):
+                tmp['s_label'] = result.get('s_label').get('value')
+            if result.get('p_label'):
+                tmp['p_label'] = result.get('p_label').get('value')
+            if result.get('o_label'):
+                tmp['o_label'] = result.get('o_label').get('value')
             new_results.append(tmp)
 
             #  ===== making a list of Filtering >> add to filter_prefixes to make Facet =====
@@ -56,7 +62,7 @@ def forcegraph(request, post_id):
         posts.save()
 
         return render(request, 'pages/forcegraph.html',
-                      {'posts': posts, 'filter_facets': filter_facets, 'filter_prefix': filter_prefixes})
+                      {'posts': posts.result, 'filter_facets': filter_facets, 'filter_prefix': filter_prefixes})
 
     except Postforcegraph.DoesNotExist:
         raise Http404("Post does not exist")

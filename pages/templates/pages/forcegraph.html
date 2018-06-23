@@ -117,7 +117,7 @@
             w = 800 - margin.right - margin.left,
             h = 600 - margin.top - margin.bottom;
 
-        var triples = {{ posts.result | safe }};
+        var triples = {{ posts | safe }};
 
         var zoom = d3.behavior.zoom()
             .scaleExtent([0.3, 3])
