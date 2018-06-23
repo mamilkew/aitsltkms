@@ -62,7 +62,7 @@ def forcegraph(request, post_id):
         posts.save()
 
         return render(request, 'pages/forcegraph.html',
-                      {'posts': posts.result, 'filter_facets': filter_facets, 'filter_prefix': filter_prefixes})
+                      {'posts': posts, 'filter_facets': filter_facets, 'filter_prefix': filter_prefixes})
 
     except Postforcegraph.DoesNotExist:
         raise Http404("Post does not exist")
@@ -77,7 +77,11 @@ def filter_query(request):
             # domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
             domain_prefix_subject = '<' + request.POST.get('subject_domain') + '>'
             sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type ' + domain_prefix_subject + ' .' \
-                     + '?subject ?predicate ?object . filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+                     + '?subject ?predicate ?object . ' \
+                     + 'optional{?subject rdfs:label ?s_label}' \
+                     + 'optional{?predicate rdfs:label ?p_label}' \
+                     + 'optional{?object rdfs:label ?o_label}' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
             facetdata = ''
             # print(request.POST)
             # print(request.POST.get('subject_domain'))

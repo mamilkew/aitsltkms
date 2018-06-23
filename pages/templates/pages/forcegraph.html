@@ -117,7 +117,7 @@
             w = 800 - margin.right - margin.left,
             h = 600 - margin.top - margin.bottom;
 
-        var triples = {{ posts | safe }};
+        var triples = {{ posts.result | safe }};
 
         var zoom = d3.behavior.zoom()
             .scaleExtent([0.3, 3])
@@ -163,21 +163,24 @@
                 var subjId = triple.subject;
                 var predId = triple.predicate;
                 var objId = triple.object;
+                var subjLabel = triple.hasOwnProperty('s_label') ? triple.s_label : subjId;
+                var predLabel = triple.hasOwnProperty('p_label') ? triple.p_label : predId;
+                var objLabel = triple.hasOwnProperty('o_label') ? triple.o_label : objId;
 
                 var subjNode = filterNodesById(graph.nodes, subjId)[0];
                 var objNode = filterNodesById(graph.nodes, objId)[0];
 
                 if (subjNode == null) {
-                    subjNode = {id: subjId, label: subjId, weight: 1, type: "node"};
+                    subjNode = {id: subjId, label: subjLabel, weight: 1, type: "node"};
                     graph.nodes.push(subjNode);
                 }
 
                 if (objNode == null) {
-                    objNode = {id: objId, label: objId, weight: 1, type: "node"};
+                    objNode = {id: objId, label: objLabel, weight: 1, type: "node"};
                     graph.nodes.push(objNode);
                 }
 
-                var predNode = {id: predId, label: predId, weight: 1, type: "pred"};
+                var predNode = {id: predId, label: predLabel, weight: 1, type: "pred"};
                 graph.nodes.push(predNode);
 
                 var blankLabel = "";
@@ -382,13 +385,13 @@
                 graph.triples.forEach(function (o) {
                     if (o.s === d) {
                         subject_true = true;
-                        header_topic_s = d.id;
-                        tmp_subject += "<label class='text-success'>" + o.p.id + ": </label>" + o.o.id + "<br>";
+                        header_topic_s = d.label;
+                        tmp_subject += "<label class='text-success'>" + o.p.label + ": </label>" + o.o.label + "<br>";
                     }
                     else if (o.o === d) {
                         object_true = true;
-                        header_topic_o = o.p.id + ": " + d.id;
-                        tmp_object += "<li>" + o.s.id + "</li>";
+                        header_topic_o = o.p.label + ": " + d.label;
+                        tmp_object += "<li>" + o.s.label + "</li>";
                     }
                 });
 

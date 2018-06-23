@@ -272,5 +272,11 @@ def transform_api(data):
                                       result.get('predicate').get('value'))
         tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'),
                                    result.get('object').get('value'))
+        if result.get('s_label'):
+            tmp['s_label'] = result.get('s_label').get('value')
+        if result.get('p_label'):
+            tmp['p_label'] = result.get('p_label').get('value')
+        if result.get('o_label'):
+            tmp['o_label'] = result.get('o_label').get('value')
         new_results.append(tmp)
     return new_results
