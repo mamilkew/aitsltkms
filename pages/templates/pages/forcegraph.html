@@ -18,13 +18,13 @@
                             <div class="card-header collapsed card-filter" id="{{ key }}" data-toggle="collapse"
                                  data-target="#collapse{{ key }}"
                                  aria-expanded="false" aria-controls="collapse{{ key }}">
-                                {{ key }}
+                                {{ value.1 }}
                             </div>
                             <div id="collapse{{ key }}" class="collapse card-filter-body" aria-labelledby="{{ key }}"
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
-                                        {% for v in value %}
+                                        {% for v in value.0 %}
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="{{ key }}"
                                                        value="{{ v }}"

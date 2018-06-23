@@ -35,11 +35,14 @@ def forcegraph(request, post_id):
 
             #  ===== making a list of Filtering >> add to filter_prefixes to make Facet =====
             if tmp['predicate'] in filter_facets:
-                tmp_filter = filter_facets.get(tmp['predicate'])
+                tmp_filter = filter_facets.get(tmp['predicate'])[0]
                 tmp_filter.append(tmp['object'])
-                filter_facets[tmp['predicate']] = main_view.list_facet(tmp_filter)
+                filter_facets[tmp['predicate']][0] = main_view.list_facet(tmp_filter)
             else:
-                filter_facets[tmp['predicate']] = [tmp['object']]
+                if tmp.get('p_label') is not None:
+                    filter_facets[tmp['predicate']] = [[tmp['object']], tmp['p_label']]
+                else:
+                    filter_facets[tmp['predicate']] = [[tmp['object']], tmp['predicate']]
 
             #  ===== making a list of prefixes =====
             prefix_subject = check_prefix(result.get('subject').get('datatype'),
@@ -53,7 +56,7 @@ def forcegraph(request, post_id):
             prefix_object = check_prefix(result.get('object').get('datatype'), result.get('object').get('type'),
                                          result.get('object').get('value'))
             filter_prefixes = make_filter_prefixes(prefix_object, tmp['predicate'], filter_prefixes)
-
+        print(filter_facets)
         filter_facets = OrderedDict(sorted(filter_facets.items(), key=lambda t: t[0]))
         # print(dict(sorted(filter_facets.items())))
 
