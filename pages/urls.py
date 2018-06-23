@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, forcegraph_views
+from . import views, forcegraph_views, timelinegraph_views
 
 urlpatterns = [
     path('', views.index, name='index'),  # ex: /pages/
@@ -7,4 +7,6 @@ urlpatterns = [
     path('filter_detail/', views.filter_detail, name='filter_detail'),
     path('<int:post_id>/', forcegraph_views.forcegraph, name='forcegraph'),
     path('filter_query/', forcegraph_views.filter_query, name='filter_query'),  # for ajax in forcegraph.html
+
+    path('timeline/', timelinegraph_views.timelinegraph, name='timelinegraph'),
 ]
