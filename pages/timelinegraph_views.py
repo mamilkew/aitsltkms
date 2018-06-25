@@ -1,7 +1,8 @@
 # from django.http import Http404
 from django.shortcuts import render
 from pages import views as main_view
-
+from .models import Postforcegraph
+from collections import OrderedDict
 
 # from .models import Postforcegraph
 # from django.http import JsonResponse
@@ -555,7 +556,9 @@ def timelinegraph(request):
             ]
         }
     }
-    results = main_view.transform_api(test_data)
+
+    project_data = Postforcegraph.objects.get(pk=4).source
+    results = main_view.transform_api(project_data)
     new_results = []
     new_results.append(nested_transformation(results, "Thailand"))
     new_results.append(nested_transformation(results, "Vietnam"))
@@ -591,4 +594,6 @@ def nested_transformation(results, group):
             tmp['subject'] = s_label
             tmp[p_label] = o_label
             new_result['commits'].append(tmp)
+
+    print(new_result)
     return new_result

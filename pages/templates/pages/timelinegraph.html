@@ -36,7 +36,7 @@
             {#\},#}
 
             drop: { //drops ----- Default: row => row.data
-                date: d => new Date(d.PJyear), //Default: d => new Date(d)
+                date: d => new Date(d.PJstart), //Default: d => new Date(d)
                 onMouseOver: commit => {
                     tooltip
                         .transition()
@@ -53,7 +53,7 @@
                         <h4 class="message">${commit.subject}</h4>
                             `;
                                 for (var key in commit) {
-                                    content = content + '<p>' + key + ': ' + commit[key] + '</p>';
+                                    content = content + '<label class="text-success">' + key + '</label>: ' + commit[key] + '</br>';
                                 }
                                 return content + '</div>';
                             }
@@ -68,7 +68,7 @@
                 onMouseOut: () => {
                     tooltip
                         .transition()
-                        .duration(1000)
+                        .duration(3000)
                         .style('opacity', 0)
                         .style('pointer-events', 'none');
                 },
