@@ -560,8 +560,8 @@ def timelinegraph(request):
     project_data = Postforcegraph.objects.get(pk=4).source
     results = main_view.transform_api(project_data)
     new_results = []
-    new_results.append(nested_transformation(results, "Thailand"))
-    new_results.append(nested_transformation(results, "Vietnam"))
+    new_results.append(nested_transformation(results, "All"))
+    # new_results.append(nested_transformation(results, "Vietnam"))
 
     return render(request, 'pages/timelinegraph.html', {'posts': new_results})
 
