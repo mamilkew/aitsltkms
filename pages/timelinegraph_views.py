@@ -20,7 +20,10 @@ def timelinegraph(request):
             "vars": [
                 "subject",
                 "predicate",
-                "object"
+                "object",
+                "s_label",
+                "p_label",
+                "o_label"
             ]
         },
         "results": {
@@ -37,6 +40,10 @@ def timelinegraph(request):
                     "object": {
                         "type": "literal",
                         "value": "Dual Degree Masters"
+                    },
+                    "p_label": {
+                        "type": "literal",
+                        "value": "Project Keyword"
                     }
                 },
                 {
@@ -51,6 +58,10 @@ def timelinegraph(request):
                     "object": {
                         "type": "literal",
                         "value": "Transportation Engineering"
+                    },
+                    "p_label": {
+                        "type": "literal",
+                        "value": "Project Keyword"
                     }
                 },
                 {
@@ -252,6 +263,10 @@ def timelinegraph(request):
                     "object": {
                         "type": "uri",
                         "value": "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#ManderPortmanWoodward"
+                    },
+                    "o_label": {
+                        "type": "literal",
+                        "value": "MPW"
                     }
                 },
                 {
@@ -422,6 +437,10 @@ def timelinegraph(request):
                     "object": {
                         "type": "literal",
                         "value": "Agricultural Water Productivity"
+                    },
+                    "p_label": {
+                        "type": "literal",
+                        "value": "Project Keyword"
                     }
                 },
                 {
@@ -466,6 +485,10 @@ def timelinegraph(request):
                     "object": {
                         "type": "literal",
                         "value": "Irrigation Management"
+                    },
+                    "p_label": {
+                        "type": "literal",
+                        "value": "Project Keyword"
                     }
                 },
                 {
@@ -494,6 +517,10 @@ def timelinegraph(request):
                     "object": {
                         "type": "uri",
                         "value": "http://www.semanticweb.org/milkk/ontologies/2017/11/testData#FoodAndAgricultureOrganization"
+                    },
+                    "o_label": {
+                        "type": "literal",
+                        "value": "FAO"
                     }
                 },
                 {
@@ -529,19 +556,39 @@ def timelinegraph(request):
         }
     }
     results = main_view.transform_api(test_data)
-    new_results = {"name": "Thailand",
-                   "commits": []}
+    new_results = []
+    new_results.append(nested_transformation(results, "Thailand"))
+    new_results.append(nested_transformation(results, "Vietnam"))
+
+    return render(request, 'pages/timelinegraph.html', {'posts': new_results})
+
+
+def nested_transformation(results, group):
+    new_result = {"name": group, "commits": []}
     for result in results:
+        if result.get('s_label') is not None:
+            s_label = result.get('s_label')
+        else:
+            s_label = result.get('subject')
+
+        if result.get('p_label') is not None:
+            p_label = result.get('p_label')
+        else:
+            p_label = result.get('predicate')
+
+        if result.get('o_label') is not None:
+            o_label = result.get('o_label')
+        else:
+            o_label = result.get('object')
+
         check_index = next(
-            (index for (index, d) in enumerate(new_results['commits']) if d["subject"] == result.get('subject')), None)
+            (index for (index, d) in enumerate(new_result['commits']) if d["subject"] == s_label), None)
         if check_index is not None:  # result.get('subject') in new_results['commits'].values()
-            tmp = new_results['commits'][check_index]
-            tmp[result.get('predicate')] = result.get('object')
-            # new_results[check_index].append(tmp)
+            tmp = new_result['commits'][check_index]
+            tmp[p_label] = o_label
         else:
             tmp = {}
-            tmp['subject'] = result.get('subject')
-            tmp[result.get('predicate')] = result.get('object')
-            new_results['commits'].append(tmp)
-
-    return render(request, 'pages/timelinegraph.html', {'posts': [new_results]})
+            tmp['subject'] = s_label
+            tmp[p_label] = o_label
+            new_result['commits'].append(tmp)
+    return new_result
