@@ -480,14 +480,18 @@
             //$("#progress_bar").hide();
             //$("#filter_facet").submit(function (e) {
             $("#filter_facet").on('change', function (e) {
-                progress_running();
-                d3.select("svg").remove();
                 $.ajax({
                     url: '{% url 'filter_query' %}',
                     data: $('#filter_facet').serialize(),
                     type: 'POST',
+                    beforeSend: function() {
+                        $("#filter_facet :input").attr("disabled", true);
+                        progress_running();
+                        d3.select("svg").remove();
+                    },
                     success: function (response) {
                         progress_stopping();
+                        $("#filter_facet :input").attr("disabled", false);
                         // sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
                         console.log(response);
                         // alert(response.filter_name);
