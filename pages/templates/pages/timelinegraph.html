@@ -50,7 +50,7 @@
             <div class="row">
                 <div class="col-xs-12 col-md-12">
                     <br>
-                    <h3 class="text-right">{{ posts.title }}</h3>
+                    <h3 class="text-center">{{ posts.title }}</h3>
                     <br>
                 </div>
             </div>
@@ -177,12 +177,43 @@
                 .filteredData()
                 .reduce((total, repo) => total.concat(repo.data), []);
 
-            numberCommitsContainer.textContent = filteredData.length;
+            var font = "{{ posts.subject }}";
+            numberCommitsContainer.textContent = filteredData.length + " " + font.split('#').reverse()[0] + " (s)";
             zoomStart.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[0]));
             zoomEnd.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[1]));
         };
 
         updateCommitsInformation(chart);
+
+        function categorizeData(filters, datas){
+            var resultData = datas;
+            filters.forEach(function(filter){
+                datas.forEach(function (data) {
+                    if (data.name == "All") {
+                        var tmp = {"name": filter, "commits": []};
+                        data.commits.forEach(function (obj, index) {
+                            Object.keys(obj).forEach(function (key) {
+                                if (obj[key] == filter){
+                                    tmp.commits.push(data.commits[index]);
+                                }
+                            });
+                        });
+                        resultData.push(tmp);
+                    }
+                });
+                console.log(resultData);
+            });
+
+
+{#                if (data[key] == '') {#}
+{##}
+{#                })#}
+{#                    var subjLabel = data;#}
+{##}
+{#            });#}
+
+            {#return resultData;#}
+        }
 
         var stop_progress_running;
         $(document).ready(function () {
@@ -201,6 +232,7 @@
                         {#alert(response.filter_name);#}
                         // d3.select("svg").remove();
                         const repositories = response.query;
+                        categorizeData(response.filter_name, repositories);
                         const repositoriesData = repositories.map(repository => ({
                             name: repository.name,
                             data: repository.commits,

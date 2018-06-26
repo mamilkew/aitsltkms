@@ -23,7 +23,7 @@ def filter_timeline(request):
                      + 'optional{?predicate rdfs:label ?p_label}' \
                      + 'optional{?object rdfs:label ?o_label}' \
                      + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
-            facetdata = ''
+            facetdata = []
             # print(request.POST)
             # print(request.POST.get('subject_domain'))
             # print(request.POST.keys())
@@ -36,7 +36,8 @@ def filter_timeline(request):
                     prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
                 else:
                     if k in prefix_json:
-                        print(request.POST.getlist(k))
+                        facetdata.extend(request.POST.getlist(k))
+                        print(facetdata)
                         sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
             results = main_view.call_api(sparql)
