@@ -6,21 +6,74 @@
 {% endblock %}
 {% block container %}
     <div class="row">
-        <div id="eventdrops-project" style="width: 90%;"></div>
-        <div id="eventdrops-demo" style="width: 90%;"></div>
-        <p class="infos">
-            <span id="numberCommits"></span> commits <span class="light">found between</span> <br/>
-            <span id="zoomStart"></span> <span class="light">and</span> <span id="zoomEnd"></span>
-        </p>
+        <div class="col-md-3 left-faceted">
+            <br>
+            <form id="filter_facet">
+                {% csrf_token %}
+                <h4>Faceted Search
+                    <button class="btn btn-outline-success" type="submit">Reset</button>
+                </h4>
+                <hr>
+                <div id="accordion" class="accordion">
+                    {#        Group #iterative        #}
+                    <input type="hidden" name="subject_domain" value="{{ posts.subject }}">
+                    <input type="hidden" name="prefixes_query" value="{{ filter_prefix }}">
+                    {% for key, value in filter_facets.items %}
+                        <div class="card">
+                            <div class="card-header collapsed card-filter" id="{{ key }}" data-toggle="collapse"
+                                 data-target="#collapse{{ key }}"
+                                 aria-expanded="false" aria-controls="collapse{{ key }}">
+                                {{ value.1 }}
+                            </div>
+                            <div id="collapse{{ key }}" class="collapse card-filter-body" aria-labelledby="{{ key }}"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for v in value.0 %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="{{ key }}"
+                                                       value="{{ v }}"
+                                                       id="checked{{ v }}"/>
+                                                <label class="form-check-label d-block"
+                                                       for="checked{{ v }}">{{ v }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-12 col-md-9">
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <br>
+                    <h3 class="text-center">{{ posts.title }}</h3>
+                    <br>
+                </div>
+            </div>
+            <div id="eventdrops-demo" style="width: 100%;"></div>
+            <p class="infos">
+                <span id="numberCommits"></span> commits <span class="light">found between</span> <br/>
+                <span id="zoomStart"></span> <span class="light">and</span> <span id="zoomEnd"></span>
+            </p>
+            <div class="text-right">
+                <label class="text-info small">Domain: {{ posts.subject }}</label>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
 {% block javascript %}
     <script src="https://unpkg.com/d3"></script>
-    <script src="https://unpkg.com/event-drops"></script>
+    <script src="{% static 'timeline/timeline_index.js' %}"></script>
+{#    <script src="https://unpkg.com/event-drops"></script>#}
 
     <script>
         var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+        var content;
         const tooltip = d3
             .select('body')
             .append('div')
@@ -35,9 +88,16 @@
             {#    onZoomEnd: () => updateCommitsInformation(chart),#}
             {#\},#}
 
+            range: {
+                start: new Date(new Date().getTime() - 3600000 * 24 * 365 * 5), // 4 year ago
+                {#end: new Date(),#}
+            },
+
+
             drop: { //drops ----- Default: row => row.data
                 date: d => new Date(d.PJstart), //Default: d => new Date(d)
                 onMouseOver: commit => {
+                    console.log(commit);
                     tooltip
                         .transition()
                         .duration(200)
@@ -47,7 +107,7 @@
                     tooltip
                         .html(
                             function () {
-                                var content = `
+                                content = `
                     <div class="commit">
                     <div class="content">
                         <h4 class="message">${commit.subject}</h4>
@@ -58,9 +118,17 @@
                                 return content + '</div>';
                             }
 
-                            {#${commit.PJstatus}</a>#}
-                            {#on <span class="date">${new Intl.DateTimeFormat('en-US', options).format(new Date(commit.PJstart))}</span> -#}
-                            {#<a class="sha" href="${commit.isRelatedTo}">${commit.isRelatedTo.slice(0, -5)}</a>#}
+                    {#        `#}
+                    {#<div class="commit">#}
+                    {#<div class="content">#}
+                    {#    <h4 class="message">${commit.subject}</h4>#}
+                    {#    <p>#}
+                    {#        <a href="https://www.github.com/${commit.PJyear}" class="author">${commit.PJstatus}</a>#}
+                    {#        on <span class="date">${new Intl.DateTimeFormat('en-US', options).format(new Date(commit.PJstart))}</span> -#}
+                    {#        <a class="sha" href="${commit.isRelatedTo}">${commit.isRelatedTo.slice(0, -5)}</a>#}
+                    {#    </p>#}
+                    {#</div>#}
+                {#`#}
                 )
                         .style('left', `${d3.event.pageX - 30}px`)
                         .style('top', `${d3.event.pageY + 20}px`);
@@ -75,8 +143,7 @@
             },
         });
 
-        const repositories = {{ posts | safe }};
-
+        const repositories = {{ new_results | safe }};
 
         const repositoriesData = repositories.map(repository => ({
             name: repository.name,
