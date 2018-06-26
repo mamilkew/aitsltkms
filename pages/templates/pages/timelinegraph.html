@@ -201,18 +201,8 @@
                         resultData.push(tmp);
                     }
                 });
-                console.log(resultData);
             });
-
-
-{#                if (data[key] == '') {#}
-{##}
-{#                })#}
-{#                    var subjLabel = data;#}
-{##}
-{#            });#}
-
-            {#return resultData;#}
+            return resultData;
         }
 
         var stop_progress_running;
@@ -231,8 +221,7 @@
                         console.log(response);
                         {#alert(response.filter_name);#}
                         // d3.select("svg").remove();
-                        const repositories = response.query;
-                        categorizeData(response.filter_name, repositories);
+                        const repositories = categorizeData(response.filter_name, response.query);
                         const repositoriesData = repositories.map(repository => ({
                             name: repository.name,
                             data: repository.commits,
