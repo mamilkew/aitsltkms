@@ -107,7 +107,11 @@
                     start: new Date(new Date().getTime() - 3600000 * 24 * 365 * 10), // 10 year ago
                     {#end: new Date(),#}
                 },
-
+                label: {
+                        padding: 20,
+                        text: d => `${d.name.slice(0,20)} (${d.data.length})`,
+                        width: 200,
+                },
 
                 drop: { //drops ----- Default: row => row.data
                     date: d => new Date(d.PJstart), //Default: d => new Date(d)

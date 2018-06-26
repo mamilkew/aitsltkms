@@ -10,41 +10,6 @@ import json
 # from datetime import datetime
 
 
-def filter_timeline(request):
-    if request.method == 'POST':
-        if request.is_ajax():
-            # prefix_data = request.POST.getlist('prefixes_query')[0]
-            # domain_prefix = json.loads(prefix_data.replace("\'", "\"")).get(request.POST.get('subject_domain'))[0]
-            # domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
-            domain_prefix_subject = '<' + request.POST.get('subject_domain') + '>'
-            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type ' + domain_prefix_subject + ' .' \
-                     + '?subject ?predicate ?object . ' \
-                     + 'optional{?subject rdfs:label ?s_label}' \
-                     + 'optional{?predicate rdfs:label ?p_label}' \
-                     + 'optional{?object rdfs:label ?o_label}' \
-                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
-            facetdata = []
-            # print(request.POST)
-            # print(request.POST.get('subject_domain'))
-            # print(request.POST.keys())
-            for k in request.POST.keys():
-                if k == 'csrfmiddlewaretoken':
-                    pass
-                elif k == 'subject_domain':
-                    pass
-                elif k == 'prefixes_query':
-                    prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
-                else:
-                    if k in prefix_json:
-                        facetdata.extend(request.POST.getlist(k))
-                        print(facetdata)
-                        sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
-            sparql += '}order by ?subject'
-            results = main_view.call_api(sparql)
-            new_results = [nested_transformation(results, "All")]
-    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
-
-
 def timelinegraph(request):
     # posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
     # posts = Post.objects.filter(published_date__lte=timezone.now())
@@ -595,8 +560,6 @@ def timelinegraph(request):
     new_results = []
     filtering = timeline_filter(project_data.source, project_data)
     new_results.append(nested_transformation(results, "All"))
-    # new_results.append(nested_transformation(results, "Vietnam"))
-
     print(filtering)
     return render(request, 'pages/timelinegraph.html', {'posts': project_data, 'new_results': new_results,
                                                         'filter_facets': filtering['filter_facets'],
@@ -631,9 +594,42 @@ def nested_transformation(results, group):
             tmp['subject'] = s_label
             tmp[p_label] = o_label
             new_result['commits'].append(tmp)
-
-    print(new_result)
     return new_result
+
+
+def filter_timeline(request):
+    if request.method == 'POST':
+        if request.is_ajax():
+            # prefix_data = request.POST.getlist('prefixes_query')[0]
+            # domain_prefix = json.loads(prefix_data.replace("\'", "\"")).get(request.POST.get('subject_domain'))[0]
+            # domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
+            domain_prefix_subject = '<' + request.POST.get('subject_domain') + '>'
+            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type ' + domain_prefix_subject + ' .' \
+                     + '?subject ?predicate ?object . ' \
+                     + 'optional{?subject rdfs:label ?s_label}' \
+                     + 'optional{?predicate rdfs:label ?p_label}' \
+                     + 'optional{?object rdfs:label ?o_label}' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+            facetdata = []
+            # print(request.POST)
+            # print(request.POST.get('subject_domain'))
+            # print(request.POST.keys())
+            for k in request.POST.keys():
+                if k == 'csrfmiddlewaretoken':
+                    pass
+                elif k == 'subject_domain':
+                    pass
+                elif k == 'prefixes_query':
+                    prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
+                else:
+                    if k in prefix_json:
+                        facetdata.extend(request.POST.getlist(k))
+                        print(facetdata)
+                        sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
+            sparql += '}order by ?subject'
+            results = main_view.call_api(sparql)
+            new_results = [nested_transformation(results, "All")]
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
 
 def timeline_filter(data, posts):
