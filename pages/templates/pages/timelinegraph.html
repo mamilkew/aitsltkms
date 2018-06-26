@@ -50,14 +50,19 @@
             <div class="row">
                 <div class="col-xs-12 col-md-12">
                     <br>
-                    <h3 class="text-center">{{ posts.title }}</h3>
+                    <h3 class="text-right">{{ posts.title }}</h3>
                     <br>
                 </div>
             </div>
+            <div class="progress" id="progress_bar" style="display: none">
+                <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
             <div id="eventdrops-demo" style="width: 100%;"></div>
-            <p class="infos">
-                <span id="numberCommits"></span> commits <span class="light">found between</span> <br/>
-                <span id="zoomStart"></span> <span class="light">and</span> <span id="zoomEnd"></span>
+            <p class="infos text-right">
+                <span class="light">There are </span><span id="numberCommits" class="text-info"></span> <span class="light">found between</span> <br/>
+                <span id="zoomStart" class="text-info"></span> <span class="light">and</span> <span id="zoomEnd" class="text-info"></span>
             </p>
             <div class="text-right">
                 <label class="text-info small">Domain: {{ posts.subject }}</label>
@@ -72,8 +77,15 @@
 {#    <script src="https://unpkg.com/event-drops"></script>#}
 
     <script>
-        var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+        var options = {year: 'numeric', month: 'long', day: 'numeric'};
         var content;
+
+        const repositories = {{ new_results | safe }};
+
+        const numberCommitsContainer = document.getElementById('numberCommits');
+        const zoomStart = document.getElementById('zoomStart');
+        const zoomEnd = document.getElementById('zoomEnd');
+
         const tooltip = d3
             .select('body')
             .append('div')
@@ -85,10 +97,12 @@
             const chart = eventDrops({
                 {#locale: usLocale,#}
                 d3,
-                {#zoom: {#}
-                {#    onZoomEnd: () => updateCommitsInformation(chart),#}
-                {#\},#}
-
+                zoom: {
+                    onZoom: () => updateCommitsInformation(chart),
+                },
+                bound: {
+                    format: d3.timeFormat('%B %d, %Y'),
+                },
                 range: {
                     start: new Date(new Date().getTime() - 3600000 * 24 * 365 * 10), // 10 year ago
                     {#end: new Date(),#}
@@ -98,7 +112,7 @@
                 drop: { //drops ----- Default: row => row.data
                     date: d => new Date(d.PJstart), //Default: d => new Date(d)
                     onMouseOver: commit => {
-                        console.log(commit);
+                        {#console.log(commit);#}
                         tooltip
                             .transition()
                             .duration(200)
@@ -146,9 +160,7 @@
             return chart;
         }
 
-
-        const repositories = {{ new_results | safe }};
-
+        const chart = updated();
         const repositoriesData = repositories.map(repository => ({
             name: repository.name,
             data: repository.commits,
@@ -158,19 +170,33 @@
         console.log(repositoriesData);
         d3.select('#eventdrops-demo')
             .data([repositoriesData])
-            .call(updated());
+            .call(chart);
 
+        const updateCommitsInformation = chart => {
+            const filteredData = chart
+                .filteredData()
+                .reduce((total, repo) => total.concat(repo.data), []);
 
+            numberCommitsContainer.textContent = filteredData.length;
+            zoomStart.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[0]));
+            zoomEnd.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[1]));
+        };
+
+        updateCommitsInformation(chart);
+
+        var stop_progress_running;
         $(document).ready(function () {
             //$("#progress_bar").hide();
             //$("#filter_facet").submit(function (e) {
             $("#filter_facet").on('change', function (e) {
+                progress_running();
                 d3.select("svg").remove();
                 $.ajax({
                     url: '{% url 'filter_timeline' %}',
                     data: $('#filter_facet').serialize(),
                     type: 'POST',
                     success: function (response) {
+                        progress_stopping();
                         console.log(response);
                         {#alert(response.filter_name);#}
                         // d3.select("svg").remove();
@@ -179,12 +205,13 @@
                             name: repository.name,
                             data: repository.commits,
                         }));
-
+                        const chart = updated();
                         console.log(repositories);
                         console.log(repositoriesData);
                         d3.select('#eventdrops-demo')
                             .data([repositoriesData])
-                            .call(updated());
+                            .call(chart);
+                        updateCommitsInformation(chart);
                     },
                     error: function (error) {
                         console.log(error);
@@ -194,5 +221,22 @@
             });
         });
 
+        function progress_running() {
+            $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
+            $("#progress_bar").show();
+            var stops = [25, 55, 85, 99];
+            $.each(stops, function (index, value) {
+                stop_progress_running = setTimeout(function () {
+                    $(".progress-bar").css("width", value + "%").attr("aria-valuenow", value).text(value + '%');
+                }, index * 300);
+            });
+
+        }
+
+        function progress_stopping() {
+            clearTimeout(stop_progress_running);
+            $(".progress-bar").css("width", 0 + "%").attr("aria-valuenow", 0).text('');
+            $("#progress_bar").hide();
+        }
     </script>
 {% endblock %}
