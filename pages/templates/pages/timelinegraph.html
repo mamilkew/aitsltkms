@@ -78,7 +78,7 @@
 
     <script>
         var options = {year: 'numeric', month: 'long', day: 'numeric'};
-        var content;
+        {#var content;#}
 
         const repositories = {{ new_results | safe }};
 
@@ -109,7 +109,15 @@
                 },
                 label: {
                         padding: 20,
-                        text: d => `${d.name.slice(0,20)} (${d.data.length})`,
+                        text: d => {
+                            var text_l = d.name.length;
+                            if (text_l > 20){
+                                return `${d.name.slice(0,20)}... (${d.data.length})`
+                            }
+                            else{
+                                return `${d.name} (${d.data.length})`
+                            }
+                        },
                         width: 200,
                 },
 
@@ -126,7 +134,7 @@
                         tooltip
                             .html(
                                 function () {
-                                    content = `
+                                    var content = `
                         <div class="commit">
                         <div class="content">
                             <h4 class="message">${commit.subject}</h4>
