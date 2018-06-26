@@ -81,67 +81,71 @@
             .style('opacity', 0)
             .style('pointer-events', 'auto');
 
-        const chart = eventDrops({
-            {#locale: usLocale,#}
-            d3,
-            {#zoom: {#}
-            {#    onZoomEnd: () => updateCommitsInformation(chart),#}
-            {#\},#}
+        function updated() {
+            const chart = eventDrops({
+                {#locale: usLocale,#}
+                d3,
+                {#zoom: {#}
+                {#    onZoomEnd: () => updateCommitsInformation(chart),#}
+                {#\},#}
 
-            range: {
-                start: new Date(new Date().getTime() - 3600000 * 24 * 365 * 5), // 4 year ago
-                {#end: new Date(),#}
-            },
+                range: {
+                    start: new Date(new Date().getTime() - 3600000 * 24 * 365 * 10), // 10 year ago
+                    {#end: new Date(),#}
+                },
 
 
-            drop: { //drops ----- Default: row => row.data
-                date: d => new Date(d.PJstart), //Default: d => new Date(d)
-                onMouseOver: commit => {
-                    console.log(commit);
-                    tooltip
-                        .transition()
-                        .duration(200)
-                        .style('opacity', 1)
-                        .style('pointer-events', 'auto');
+                drop: { //drops ----- Default: row => row.data
+                    date: d => new Date(d.PJstart), //Default: d => new Date(d)
+                    onMouseOver: commit => {
+                        console.log(commit);
+                        tooltip
+                            .transition()
+                            .duration(200)
+                            .style('opacity', 1)
+                            .style('pointer-events', 'auto');
 
-                    tooltip
-                        .html(
-                            function () {
-                                content = `
-                    <div class="commit">
-                    <div class="content">
-                        <h4 class="message">${commit.subject}</h4>
-                            `;
-                                for (var key in commit) {
-                                    content = content + '<label class="text-success">' + key + '</label>: ' + commit[key] + '</br>';
+                        tooltip
+                            .html(
+                                function () {
+                                    content = `
+                        <div class="commit">
+                        <div class="content">
+                            <h4 class="message">${commit.subject}</h4>
+                                `;
+                                    for (var key in commit) {
+                                        content = content + '<label class="text-success">' + key + '</label>: ' + commit[key] + '</br>';
+                                    }
+                                    return content + '</div>';
                                 }
-                                return content + '</div>';
-                            }
 
-                    {#        `#}
-                    {#<div class="commit">#}
-                    {#<div class="content">#}
-                    {#    <h4 class="message">${commit.subject}</h4>#}
-                    {#    <p>#}
-                    {#        <a href="https://www.github.com/${commit.PJyear}" class="author">${commit.PJstatus}</a>#}
-                    {#        on <span class="date">${new Intl.DateTimeFormat('en-US', options).format(new Date(commit.PJstart))}</span> -#}
-                    {#        <a class="sha" href="${commit.isRelatedTo}">${commit.isRelatedTo.slice(0, -5)}</a>#}
-                    {#    </p>#}
-                    {#</div>#}
-                {#`#}
-                )
-                        .style('left', `${d3.event.pageX - 30}px`)
-                        .style('top', `${d3.event.pageY + 20}px`);
+                        {#        `#}
+                        {#<div class="commit">#}
+                        {#<div class="content">#}
+                        {#    <h4 class="message">${commit.subject}</h4>#}
+                        {#    <p>#}
+                        {#        <a href="https://www.github.com/${commit.PJyear}" class="author">${commit.PJstatus}</a>#}
+                        {#        on <span class="date">${new Intl.DateTimeFormat('en-US', options).format(new Date(commit.PJstart))}</span> -#}
+                        {#        <a class="sha" href="${commit.isRelatedTo}">${commit.isRelatedTo.slice(0, -5)}</a>#}
+                        {#    </p>#}
+                        {#</div>#}
+                    {#`#}
+                    )
+                            .style('left', `${d3.event.pageX - 30}px`)
+                            .style('top', `${d3.event.pageY + 20}px`);
+                    },
+                    onMouseOut: () => {
+                        tooltip
+                            .transition()
+                            .duration(3000)
+                            .style('opacity', 0)
+                            .style('pointer-events', 'none');
+                    },
                 },
-                onMouseOut: () => {
-                    tooltip
-                        .transition()
-                        .duration(3000)
-                        .style('opacity', 0)
-                        .style('pointer-events', 'none');
-                },
-            },
-        });
+            });
+            return chart;
+        }
+
 
         const repositories = {{ new_results | safe }};
 
@@ -154,6 +158,41 @@
         console.log(repositoriesData);
         d3.select('#eventdrops-demo')
             .data([repositoriesData])
-            .call(chart);
+            .call(updated());
+
+
+        $(document).ready(function () {
+            //$("#progress_bar").hide();
+            //$("#filter_facet").submit(function (e) {
+            $("#filter_facet").on('change', function (e) {
+                d3.select("svg").remove();
+                $.ajax({
+                    url: '{% url 'filter_timeline' %}',
+                    data: $('#filter_facet').serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                        console.log(response);
+                        {#alert(response.filter_name);#}
+                        // d3.select("svg").remove();
+                        const repositories = response.query;
+                        const repositoriesData = repositories.map(repository => ({
+                            name: repository.name,
+                            data: repository.commits,
+                        }));
+
+                        console.log(repositories);
+                        console.log(repositoriesData);
+                        d3.select('#eventdrops-demo')
+                            .data([repositoriesData])
+                            .call(updated());
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+                e.preventDefault();
+            });
+        });
+
     </script>
 {% endblock %}

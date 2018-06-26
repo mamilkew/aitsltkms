@@ -4,13 +4,44 @@ from pages import views as main_view
 from pages import forcegraph_views as fg_view
 from .models import Postforcegraph
 from collections import OrderedDict
+from django.http import JsonResponse
+import json
 
-# from .models import Postforcegraph
-# from django.http import JsonResponse
-# import json
 # from datetime import datetime
-# from collections import OrderedDict
-# from pages import views as main_view
+
+
+def filter_timeline(request):
+    if request.method == 'POST':
+        if request.is_ajax():
+            # prefix_data = request.POST.getlist('prefixes_query')[0]
+            # domain_prefix = json.loads(prefix_data.replace("\'", "\"")).get(request.POST.get('subject_domain'))[0]
+            # domain_prefix_subject = '<' + domain_prefix + '#' + request.POST.get('subject_domain') + '>'
+            domain_prefix_subject = '<' + request.POST.get('subject_domain') + '>'
+            sparql = 'SELECT DISTINCT * WHERE{?subject rdf:type ' + domain_prefix_subject + ' .' \
+                     + '?subject ?predicate ?object . ' \
+                     + 'optional{?subject rdfs:label ?s_label}' \
+                     + 'optional{?predicate rdfs:label ?p_label}' \
+                     + 'optional{?object rdfs:label ?o_label}' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+            facetdata = ''
+            # print(request.POST)
+            # print(request.POST.get('subject_domain'))
+            # print(request.POST.keys())
+            for k in request.POST.keys():
+                if k == 'csrfmiddlewaretoken':
+                    pass
+                elif k == 'subject_domain':
+                    pass
+                elif k == 'prefixes_query':
+                    prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
+                else:
+                    if k in prefix_json:
+                        print(request.POST.getlist(k))
+                        sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
+            sparql += '}order by ?subject'
+            results = main_view.call_api(sparql)
+            new_results = [nested_transformation(results, "All")]
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
 
 def timelinegraph(request):
@@ -606,7 +637,7 @@ def nested_transformation(results, group):
 
 def timeline_filter(data, posts):
     results = data['results']['bindings']
-    new_results = []
+    # new_results = []
     filter_facets = {}
     filter_prefixes = {}
 
@@ -625,7 +656,7 @@ def timeline_filter(data, posts):
             tmp['p_label'] = result.get('p_label').get('value')
         if result.get('o_label'):
             tmp['o_label'] = result.get('o_label').get('value')
-        new_results.append(tmp)
+        # new_results.append(tmp)
 
         #  ===== making a list of Filtering >> add to filter_prefixes to make Facet =====
         if tmp['predicate'] in filter_facets:
@@ -639,13 +670,17 @@ def timeline_filter(data, posts):
                 filter_facets[tmp['predicate']] = [[tmp['object']], tmp['predicate']]
 
         #  ===== making a list of prefixes =====
-        prefix_subject = fg_view.check_prefix(result.get('subject').get('datatype'), result.get('subject').get('type'), result.get('subject').get('value'))
+        prefix_subject = fg_view.check_prefix(result.get('subject').get('datatype'), result.get('subject').get('type'),
+                                              result.get('subject').get('value'))
         filter_prefixes = fg_view.make_filter_prefixes(prefix_subject, posts.subject, filter_prefixes)
 
-        prefix_predicate = fg_view.check_prefix(result.get('predicate').get('datatype'), result.get('predicate').get('type'), result.get('predicate').get('value'))
+        prefix_predicate = fg_view.check_prefix(result.get('predicate').get('datatype'),
+                                                result.get('predicate').get('type'),
+                                                result.get('predicate').get('value'))
         filter_prefixes = fg_view.make_filter_prefixes(prefix_predicate, tmp['predicate'], filter_prefixes)
 
-        prefix_object = fg_view.check_prefix(result.get('object').get('datatype'), result.get('object').get('type'), result.get('object').get('value'))
+        prefix_object = fg_view.check_prefix(result.get('object').get('datatype'), result.get('object').get('type'),
+                                             result.get('object').get('value'))
         filter_prefixes = fg_view.make_filter_prefixes(prefix_object, tmp['predicate'], filter_prefixes)
 
     print(filter_facets)
