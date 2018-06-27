@@ -88,7 +88,7 @@ def check_type(datatype_result, type_result, value):
     elif type_result == "literal":
         if (datatype_result == "http://www.w3.org/2001/XMLSchema#dateTime"):
             date_format = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S').date()
-            return date_format.strftime("%d %b'%y")
+            return date_format.strftime("%d %b'%y %H:%M:%S")
         elif (datatype_result == "http://www.w3.org/2001/XMLSchema#float"):
             return value
         else:

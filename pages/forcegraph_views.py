@@ -121,7 +121,7 @@ def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
                     list_object[idx] = '"{}"'.format(each)
             elif p in ['dateTime']:
                 for idx, each in enumerate(list_object):
-                    list_object[idx] = '"{}"^^xsd:dateTime'.format(datetime.strptime(each, "%d %b'%y").isoformat())
+                    list_object[idx] = '"{}"^^xsd:dateTime'.format(datetime.strptime(each, "%d %b'%y %H:%M:%S").isoformat())
             else:
                 prefix_predicate = '<' + p + '#' + predicate + '>'
     else:
