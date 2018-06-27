@@ -190,7 +190,7 @@
                 .filteredData()
                 .reduce((total, repo) => total.concat(repo.data), []);
             var font = "{{ posts.subject }}";
-            numberCommitsContainer.textContent = font.split('#').reverse()[0] + " (s)";
+            numberCommitsContainer.textContent = "{{ dateShow }} of " + font.split('#').reverse()[0] + " (s)";
             {#numberCommitsContainer.textContent = filteredData.length + " " + font.split('#').reverse()[0] + " (s)";#}
             zoomStart.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[0]));
             zoomEnd.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[1]));
