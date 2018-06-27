@@ -79,10 +79,33 @@
 
     <script>
         var options = {year: 'numeric', month: 'long', day: 'numeric'};
-        {#var content;#}
 
         const repositories = {{ new_results | safe }};
 
+        repositories[0].commits.forEach(function (obj_idx, idx) {
+            var check_dup = false;
+            const result_test = repositories[0].commits.filter((obj, index) => {
+                if (index > idx) {
+                    if (obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"]){
+                        console.log(idx +" and " + index);
+                        console.log(obj_idx);
+                        check_dup = true;
+                        repositories[0].commits[idx] = {};
+                        repositories[0].commits[idx]["{{ dateShow }}"] = obj_idx["{{ dateShow }}"];
+                        repositories[0].commits[idx]["commits"] = [obj_idx];
+                    }
+                    return obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"];
+                }
+            });
+            if (check_dup){
+                Array.prototype.push.apply(repositories[0].commits[idx]["commits"], result_test);
+                {#repositories[0].commits[idx]["data"] = repositories[0].commits[idx];#}
+                console.log(result_test);
+                console.log(repositories[0].commits[idx]);
+            }
+        });
+
+        {#repositories[0].commits = result_test;#}
         const numberCommitsContainer = document.getElementById('numberCommits');
         const zoomStart = document.getElementById('zoomStart');
         const zoomEnd = document.getElementById('zoomEnd');
@@ -121,11 +144,30 @@
                         },
                         width: 200,
                 },
-
+                {#drops: row => {#}
+                    {#date: new Date(el.data[dateShow]),#}
+                {#    for (var i=0; i < row.data.length; i++) {#}
+                {#        row.data.forEach(function (obj, index) {#}
+                {#            if (i != index) {#}
+                {#                Object.keys(obj).forEach(function (key) {#}
+                {#                    if (key == dateShow) {#}
+                {#                        if (obj[key] == row.data[i][dateShow]){#}
+                {#                            console.log(i +" and " + index);#}
+                {#                            console.log(obj);#}
+                {#                            console.log(row.data[i]);#}
+                {#                            row.data[i] = [obj, row.data[i]];#}
+                {#                            console.log(row.data[i]);#}
+                {#                        }#}
+                {#                    }#}
+                {#                });#}
+                {#            }#}
+                {#        });#}
+                        {#console.log(row.data[i])#}
+                {#    }#}
+                {#\},#}
                 drop: { //drops ----- Default: row => row.data
                     date: d => new Date(d[dateShow]), //Default: d => new Date(d)
-                    onMouseOver: commit => {
-                        {#console.log(commit);#}
+                    onMouseOver: obj => {
                         tooltip
                             .transition()
                             .duration(200)
@@ -135,36 +177,57 @@
                         tooltip
                             .html(
                                 function () {
-                                    var content = `
-                        <div class="commit">
-                        <div class="content">
-                            <h4 class="message">${commit.subject}</h4>
-                                `;
-                                    for (var key in commit) {
-                                        content = content + '<label class="text-success">' + key + '</label>: ' + commit[key] + '</br>';
-                                    }
-                                    return content + '</div></div>';
-                                }
+                                    var content = `<div class="obj"><div class="content">`;
+                                    if (obj.hasOwnProperty("commits")) {
+                                        obj.commits.forEach(function (obj_commit, index) {
+                                            content += `
+                                <div id="tooptip_accordion">
+                                  <div class="card">
+                                    <div class="card-header collapsed card-filter" id="heading${index}"  data-toggle="collapse" data-target="#collapse${index}" aria-expanded="true" aria-controls="collapse${index}">
+                                      <a class="message btn">${obj_commit.subject}</a>
+                                    </div>
 
-                        {#        `#}
-                        {#<div class="commit">#}
-                        {#<div class="content">#}
-                        {#    <h4 class="message">${commit.subject}</h4>#}
-                        {#    <p>#}
-                        {#        <a href="https://www.github.com/${commit.PJyear}" class="author">${commit.PJstatus}</a>#}
-                        {#        on <span class="date">${new Intl.DateTimeFormat('en-US', options).format(new Date(commit.PJstart))}</span> -#}
-                        {#        <a class="sha" href="${commit.isRelatedTo}">${commit.isRelatedTo.slice(0, -5)}</a>#}
-                        {#    </p>#}
-                        {#</div>#}
+                                    <div id="collapse${index}" class="collapse" aria-labelledby="heading${index}" data-parent="#tooptip_accordion">
+                                      <div class="card-body">`;
+                                            for (var key in obj_commit) {
+                                                content = content + '<label class="text-success">' + key + '</label>: ' + obj_commit[key] + '</br>';
+                                            }
+                                        content += `</div></div></div>`;
+                                        });
+                                        return content + '</div></div></div>';
+                                    }
+                                    else {
+
+                                        var content = `
+                        <div class="obj">
+                        <div class="content">
+                            <h4 class="message">${obj.subject}</h4>
+                                `;
+                                        for (var key in obj) {
+                                            content = content + '<label class="text-success">' + key + '</label>: ' + obj[key] + '</br>';
+                                        }
+                                        return content + '</div></div>';
+                                    }
+                                }
+                    {#            `#}
+                    {#    <div class="obj">#}
+                    {#    <div class="content">#}
+                    {#        <h4 class="message">${obj.subject}</h4>#}
+                    {#        <p>#}
+                    {#            <a href="https://www.github.com/${obj.PJyear}" class="author">${obj.PJstatus}</a>#}
+                    {#            on <span class="date">${new Intl.DateTimeFormat('en-US', options).format(new Date(obj.PJstart))}</span> -#}
+                    {#            <a class="sha" href="${obj.isRelatedTo}">${obj.isRelatedTo.slice(0, -5)}</a>#}
+                    {#        </p>#}
+                    {#    </div>#}
                     {#`#}
                     )
                             .style('left', `${d3.event.pageX - 30}px`)
                             .style('top', `${d3.event.pageY + 20}px`);
                     },
-                    onMouseOut: () => {
+                    onClick: () => {
                         tooltip
                             .transition()
-                            .duration(3000)
+                            .duration(1000)
                             .style('opacity', 0)
                             .style('pointer-events', 'none');
                     },
@@ -198,15 +261,15 @@
 
         updateCommitsInformation(chart);
 
-        function categorizeData(filters, datas){
+        function categorizeData(filters, datas, dateShow){
             var resultData = datas;
             filters.forEach(function(filter){
                 datas.forEach(function (data) {
-                    if (data.name == "All") {
+                    if (data.name === "All") {
                         var tmp = {"name": filter, "commits": []};
                         data.commits.forEach(function (obj, index) {
                             Object.keys(obj).forEach(function (key) {
-                                if (obj[key] == filter){
+                                if (obj[key] === filter){
                                     tmp.commits.push(data.commits[index]);
                                 }
                             });
@@ -215,11 +278,57 @@
                     }
                 });
             });
+            resultData.forEach(function (result_i) {
+                result_i.commits.forEach(function (obj_idx, idx) {
+                    var check_dup = false;
+                    const result_test = result_i.commits.filter((obj, index) => {
+                        if (index > idx) {
+                            if (obj[dateShow] == obj_idx[dateShow]) {
+                                check_dup = true;
+                                result_i.commits[idx] = {};
+                                result_i.commits[idx]["{{ dateShow }}"] = obj_idx["{{ dateShow }}"];
+                                result_i.commits[idx]["commits"] = [obj_idx];
+                            }
+                            return obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"];
+                        }
+                    });
+                    if (check_dup) {
+                        Array.prototype.push.apply(result_i.commits[idx]["commits"], result_test);
+                        result_i.commits[idx]["data"] = result_i.commits[idx];
+                    }
+                });
+            });
+            {#repositories[0].commits.forEach(function (obj_idx, idx) {#}
+            {#    var check_dup = false;#}
+            {#    const result_test = repositories[0].commits.filter((obj, index) => {#}
+            {#        if (index > idx) {#}
+            {#            if (obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"]){#}
+            {#                console.log(idx +" and " + index);#}
+            {#                console.log(obj_idx);#}
+            {#                check_dup = true;#}
+            {#                repositories[0].commits[idx] = {};#}
+            {#                repositories[0].commits[idx]["{{ dateShow }}"] = obj_idx["{{ dateShow }}"];#}
+            {#                repositories[0].commits[idx]["commits"] = [obj_idx];#}
+            {#            }#}
+            {#            return obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"];#}
+            {#        }#}
+            {#    });#}
+            {#    if (check_dup){#}
+            {#        Array.prototype.push.apply(repositories[0].commits[idx]["commits"], result_test);#}
+                    {#repositories[0].commits[idx]["data"] = repositories[0].commits[idx];#}
+            {#        console.log(result_test);#}
+            {#        console.log(repositories[0].commits[idx]);#}
+            {#    }#}
+            {#\});#}
+
             return resultData;
         }
 
         var stop_progress_running;
         $(document).ready(function () {
+            $('div').not($( '.tooltip')).click(function() {
+                tooltip.transition().duration(1000).style('opacity', 0).style('pointer-events', 'none');
+             });
             //$("#progress_bar").hide();
             //$("#filter_facet").submit(function (e) {
             $("#filter_facet").on('change', function (e) {
@@ -235,10 +344,12 @@
                     success: function (response) {
                         progress_stopping();
                         $("#filter_facet :input").attr("disabled", false);
+                        $(".tooltip").html('');
+                        $(".tooltip").css({'pointer-events': 'none', 'opacity': 0});
                         console.log(response);
                         {#alert(response.filter_name);#}
                         // d3.select("svg").remove();
-                        const repositories = categorizeData(response.filter_name, response.query);
+                        const repositories = categorizeData(response.filter_name, response.query, response.dateShow);
                         const repositoriesData = repositories.map(repository => ({
                             name: repository.name,
                             data: repository.commits,
