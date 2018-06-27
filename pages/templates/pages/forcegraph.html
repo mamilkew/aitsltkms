@@ -26,11 +26,9 @@
                                     <ul class="list-group">
                                         {% for v in value.0 %}
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="{{ key }}"
-                                                       value="{{ v }}"
-                                                       id="checked{{ v }}"/>
-                                                <label class="form-check-label d-block"
-                                                       for="checked{{ v }}">{{ v }}</label>
+                                                <label class="form-check-label d-block" for="checked{{ v }}">
+                                                    <input class="form-check-input" type="checkbox" name="{{ key }}"
+                                                       value="{{ v }}" id="checked{{ v }}"/>{{ v }}</label>
                                             </div>
                                         {% endfor %}
                                     </ul>
