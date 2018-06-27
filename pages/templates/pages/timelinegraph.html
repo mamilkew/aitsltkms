@@ -17,6 +17,7 @@
                 <div id="accordion" class="accordion">
                     {#        Group #iterative        #}
                     <input type="hidden" name="subject_domain" value="{{ posts.subject }}">
+                    <input type="hidden" name="date_show" value="{{ dateShow }}">
                     <input type="hidden" name="prefixes_query" value="{{ filter_prefix }}">
                     {% for key, value in filter_facets.items %}
                         <div class="card">
@@ -61,7 +62,7 @@
             </div>
             <div id="eventdrops-demo" style="width: 100%;"></div>
             <p class="infos text-right">
-                <span class="light">There are </span><span id="numberCommits" class="text-info"></span> <span class="light">found between</span> <br/>
+                <span class="light">All </span><span id="numberCommits" class="text-info"></span> <span class="light">found between</span> <br/>
                 <span id="zoomStart" class="text-info"></span> <span class="light">and</span> <span id="zoomEnd" class="text-info"></span>
             </p>
             <div class="text-right">
@@ -93,7 +94,7 @@
             .style('opacity', 0)
             .style('pointer-events', 'auto');
 
-        function updated() {
+        function updated(dateShow) {
             const chart = eventDrops({
                 {#locale: usLocale,#}
                 d3,
@@ -122,7 +123,7 @@
                 },
 
                 drop: { //drops ----- Default: row => row.data
-                    date: d => new Date(d.PJstart), //Default: d => new Date(d)
+                    date: d => new Date(d[dateShow]), //Default: d => new Date(d)
                     onMouseOver: commit => {
                         {#console.log(commit);#}
                         tooltip
@@ -142,7 +143,7 @@
                                     for (var key in commit) {
                                         content = content + '<label class="text-success">' + key + '</label>: ' + commit[key] + '</br>';
                                     }
-                                    return content + '</div>';
+                                    return content + '</div></div>';
                                 }
 
                         {#        `#}
@@ -172,7 +173,7 @@
             return chart;
         }
 
-        const chart = updated();
+        const chart = updated("{{ dateShow }}");
         const repositoriesData = repositories.map(repository => ({
             name: repository.name,
             data: repository.commits,
@@ -188,9 +189,9 @@
             const filteredData = chart
                 .filteredData()
                 .reduce((total, repo) => total.concat(repo.data), []);
-
             var font = "{{ posts.subject }}";
-            numberCommitsContainer.textContent = filteredData.length + " " + font.split('#').reverse()[0] + " (s)";
+            numberCommitsContainer.textContent = font.split('#').reverse()[0] + " (s)";
+            {#numberCommitsContainer.textContent = filteredData.length + " " + font.split('#').reverse()[0] + " (s)";#}
             zoomStart.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[0]));
             zoomEnd.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[1]));
         };
@@ -242,7 +243,7 @@
                             name: repository.name,
                             data: repository.commits,
                         }));
-                        const chart = updated();
+                        const chart = updated(response.dateShow);
                         console.log(repositories);
                         console.log(repositoriesData);
                         d3.select('#eventdrops-demo')

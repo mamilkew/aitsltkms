@@ -556,17 +556,19 @@ def timelinegraph(request):
     }
 
     project_data = Postforcegraph.objects.get(pk=4)
+    date_show = "PJend"
     results = main_view.transform_api(project_data.source)
     new_results = []
     filtering = timeline_filter(project_data.source, project_data)
-    new_results.append(nested_transformation(results, "All"))
+    new_results.append(nested_transformation(results, "All", date_show))
     print(filtering)
     return render(request, 'pages/timelinegraph.html', {'posts': project_data, 'new_results': new_results,
                                                         'filter_facets': filtering['filter_facets'],
-                                                        'filter_prefix': filtering['filter_prefixes']})
+                                                        'filter_prefix': filtering['filter_prefixes'],
+                                                        'dateShow': date_show})
 
 
-def nested_transformation(results, group):
+def nested_transformation(results, group, date_show):
     new_result = {"name": group, "commits": []}
     for result in results:
         if result.get('s_label') is not None:
@@ -584,6 +586,9 @@ def nested_transformation(results, group):
         else:
             o_label = result.get('object')
 
+        if date_show == result.get('predicate'):
+            date_show = p_label
+
         check_index = next(
             (index for (index, d) in enumerate(new_result['commits']) if d["subject"] == s_label), None)
         if check_index is not None:  # result.get('subject') in new_results['commits'].values()
@@ -594,6 +599,7 @@ def nested_transformation(results, group):
             tmp['subject'] = s_label
             tmp[p_label] = o_label
             new_result['commits'].append(tmp)
+    new_result['date_show'] = date_show
     return new_result
 
 
@@ -619,6 +625,8 @@ def filter_timeline(request):
                     pass
                 elif k == 'subject_domain':
                     pass
+                elif k == 'date_show':
+                    pass
                 elif k == 'prefixes_query':
                     prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
                 else:
@@ -628,8 +636,8 @@ def filter_timeline(request):
                         sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
             results = main_view.call_api(sparql)
-            new_results = [nested_transformation(results, "All")]
-    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
+            new_results = [nested_transformation(results, "All", request.POST.get('date_show'))]
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results, 'dateShow': request.POST.get('date_show')})
 
 
 def timeline_filter(data, posts):
