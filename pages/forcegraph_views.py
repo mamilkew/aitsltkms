@@ -113,9 +113,12 @@ def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
     print(prefixes_list)
     if len(prefixes_list) == 2:
         for p in prefixes_list:
-            if p in ['integer', 'float']:
+            if p in ['integer']:
                 for idx, each in enumerate(list_object):
                     list_object[idx] = each
+            elif p in ['float']:
+                for idx, each in enumerate(list_object):
+                    list_object[idx] = '"{}"^^xsd:float'.format(each)
             elif p in ['literal']:
                 for idx, each in enumerate(list_object):
                     list_object[idx] = '"{}"'.format(each)
