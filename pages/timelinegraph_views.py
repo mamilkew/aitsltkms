@@ -633,6 +633,12 @@ def filter_timeline(request):
                         sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
             results = spql_wrapper.call_api(sparql)
+
+            for result in results:
+                if result.get('o_label') is not None:
+                    if result.get('object') in facetdata:
+                        facetdata[facetdata.index(result.get('object'))] = result.get('o_label')
+
             new_results = [nested_transformation(results, "All", request.POST.get('date_show'))]
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
     # , 'dateShow': request.POST.get('date_show')
