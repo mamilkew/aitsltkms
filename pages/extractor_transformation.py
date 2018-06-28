@@ -1,58 +1,5 @@
-import json
-from urllib.error import HTTPError
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-from base64 import b64encode
 from datetime import datetime
 from collections import OrderedDict
-
-
-def call_api(sparql):
-    values = urlencode(
-        {
-            'query': sparql})  # 'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql
-    credentials = b64encode('admin:admin'.encode('ascii'))  # username:password
-    headers = {
-        'Authorization': 'Basic %s' % credentials.decode('ascii'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/sparql-results+json'
-    }
-    data = values.encode('ascii')
-    request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
-    try:
-        response_body = json.loads(urlopen(request).read().decode('utf8'))
-        return transform_api(response_body)
-    except HTTPError as e:
-        print(e.code + e.reason)
-        print(request.__dict__)
-        response_body = {
-            "head": {
-                "vars": [
-                    "subject",
-                    "predicate",
-                    "object"
-                ]
-            },
-            "results": {
-                "bindings": [
-                    {
-                        "subject": {
-                            "type": "literal",
-                            "value": "Error"
-                        },
-                        "predicate": {
-                            "type": "literal",
-                            "value": e.code
-                        },
-                        "object": {
-                            "type": "literal",
-                            "value": e.reason
-                        }
-                    }
-                ]
-            }
-        }
-        return response_body
 
 
 # transform to pattern for visualization standard with file .json
@@ -102,19 +49,6 @@ def check_type(datatype_result, type_result, value):
 def list_facet(tmp_facets):
     facets = sorted(list(set(tmp_facets)))
     return facets
-
-
-def make_filter_sparql(list_filter, object_var):
-    text = ''
-    # print(list_filter)
-    for idx, each in enumerate(list_filter):
-        if idx == 0:
-            text += ' && (?' + object_var + ' = ' + each
-        else:
-            text += ' || ?' + object_var + ' = ' + each
-    if text != '':
-        text += ')'
-    return text
 
 
 def faceted_search(data, subject_domain):

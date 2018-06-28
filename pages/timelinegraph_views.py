@@ -1,12 +1,10 @@
 # from django.http import Http404
 from django.shortcuts import render
 from pages import extractor_transformation as extractor_trans
-from pages import forcegraph_views as fg_view
+from pages import sparql_wrapper as spql_wrapper
 from .models import Postforcegraph
 from django.http import JsonResponse
 import json
-
-# from datetime import datetime
 
 
 def timelinegraph(request):
@@ -632,9 +630,9 @@ def filter_timeline(request):
                     if k in prefix_json:
                         facetdata.extend(request.POST.getlist(k))
                         print(facetdata)
-                        sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
+                        sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
-            results = extractor_trans.call_api(sparql)
+            results = spql_wrapper.call_api(sparql)
             new_results = [nested_transformation(results, "All", request.POST.get('date_show'))]
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
     # , 'dateShow': request.POST.get('date_show')
