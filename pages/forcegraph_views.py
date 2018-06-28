@@ -4,7 +4,6 @@ from .models import Postforcegraph
 from django.http import JsonResponse
 import json
 from datetime import datetime
-from collections import OrderedDict
 from pages import extractor_transformation as extractor_trans
 
 
@@ -25,47 +24,21 @@ def forcegraph(request, post_id):
                                           result.get('predicate').get('value'))
             tmp['object'] = extractor_trans.check_type(result.get('object').get('datatype'), result.get('object').get('type'),
                                        result.get('object').get('value'))
-            if result.get('s_label'):
+            if result.get('s_label') is not None:
                 tmp['s_label'] = result.get('s_label').get('value')
-            if result.get('p_label'):
+            if result.get('p_label') is not None:
                 tmp['p_label'] = result.get('p_label').get('value')
-            if result.get('o_label'):
+            if result.get('o_label') is not None:
                 tmp['o_label'] = result.get('o_label').get('value')
             new_results.append(tmp)
 
-            #  ===== making a list of Filtering >> add to filter_prefixes to make Facet =====
-            if tmp['predicate'] in filter_facets:
-                tmp_filter = filter_facets.get(tmp['predicate'])[0]
-                tmp_filter.append(tmp['object'])
-                filter_facets[tmp['predicate']][0] = extractor_trans.list_facet(tmp_filter)
-            else:
-                if tmp.get('p_label') is not None:
-                    filter_facets[tmp['predicate']] = [[tmp['object']], tmp['p_label']]
-                else:
-                    filter_facets[tmp['predicate']] = [[tmp['object']], tmp['predicate']]
-
-            #  ===== making a list of prefixes =====
-            prefix_subject = check_prefix(result.get('subject').get('datatype'),
-                                          result.get('subject').get('type'), result.get('subject').get('value'))
-            filter_prefixes = make_filter_prefixes(prefix_subject, posts.subject, filter_prefixes)
-
-            prefix_predicate = check_prefix(result.get('predicate').get('datatype'),
-                                            result.get('predicate').get('type'), result.get('predicate').get('value'))
-            filter_prefixes = make_filter_prefixes(prefix_predicate, tmp['predicate'], filter_prefixes)
-
-            prefix_object = check_prefix(result.get('object').get('datatype'), result.get('object').get('type'),
-                                         result.get('object').get('value'))
-            filter_prefixes = make_filter_prefixes(prefix_object, tmp['predicate'], filter_prefixes)
-        print(filter_facets)
-        filter_facets = OrderedDict(sorted(filter_facets.items(), key=lambda t: t[0]))
-        # print(dict(sorted(filter_facets.items())))
-
+        filtering = extractor_trans.faceted_search(posts.source, posts.subject)
         posts.result = new_results
         # posts.result = transform_api(posts.source)
         posts.save()
 
         return render(request, 'pages/forcegraph.html',
-                      {'posts': posts, 'filter_facets': filter_facets, 'filter_prefix': filter_prefixes})
+                      {'posts': posts, 'filter_facets': filtering['filter_facets'], 'filter_prefix': filtering['filter_prefixes'],})
 
     except Postforcegraph.DoesNotExist:
         raise Http404("Post does not exist")
@@ -137,26 +110,3 @@ def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
 
     nested += text + ')}}'
     return nested
-
-
-def check_prefix(datatype_result, type_result, value):
-    if type_result == "uri":
-        return value.split('#')[0]
-    elif type_result == "literal":
-        if datatype_result is not None:
-            return datatype_result.split('#')[1]
-        else:
-            return type_result
-    else:
-        return value
-
-
-def make_filter_prefixes(prefixes, value, prefixes_dict):
-    if value in prefixes_dict:
-        tmp_prefix = prefixes_dict.get(value)
-        tmp_prefix.append(prefixes)
-        prefixes_dict[value] = extractor_trans.list_facet(tmp_prefix)
-        return prefixes_dict
-    else:
-        prefixes_dict[value] = [prefixes]
-        return prefixes_dict
