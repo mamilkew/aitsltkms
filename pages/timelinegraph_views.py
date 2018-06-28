@@ -637,7 +637,7 @@ def filter_timeline(request):
             sparql += '}order by ?subject'
             results = main_view.call_api(sparql)
             new_results = [nested_transformation(results, "All", request.POST.get('date_show'))]
-    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results, 'dateShow': request.POST.get('date_show')})
+    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})  # , 'dateShow': request.POST.get('date_show')
 
 
 def timeline_filter(data, posts):

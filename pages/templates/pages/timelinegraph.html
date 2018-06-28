@@ -84,22 +84,22 @@
             var check_dup = false;
             const result_test = repositories[0].commits.filter((obj, index) => {
                 if (index > idx) {
-                    if (obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"]){
-                        console.log(idx +" and " + index);
-                        console.log(obj_idx);
+                    if (obj[repositories[0].date_show] == obj_idx[repositories[0].date_show]){
+                        {#console.log(idx +" and " + index);#}
+                        {#console.log(obj_idx);#}
                         check_dup = true;
                         repositories[0].commits[idx] = {};
-                        repositories[0].commits[idx]["{{ dateShow }}"] = obj_idx["{{ dateShow }}"];
+                        repositories[0].commits[idx][repositories[0].date_show] = obj_idx[repositories[0].date_show];
                         repositories[0].commits[idx]["commits"] = [obj_idx];
                     }
-                    return obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"];
+                    return obj[repositories[0].date_show] == obj_idx[repositories[0].date_show];
                 }
             });
             if (check_dup){
                 Array.prototype.push.apply(repositories[0].commits[idx]["commits"], result_test);
                 {#repositories[0].commits[idx]["data"] = repositories[0].commits[idx];#}
-                console.log(result_test);
-                console.log(repositories[0].commits[idx]);
+                {#console.log(result_test);#}
+                {#console.log(repositories[0].commits[idx]);#}
             }
         });
 
@@ -234,7 +234,7 @@
             return chart;
         }
 
-        const chart = updated("{{ dateShow }}");
+        const chart = updated(repositories[0].date_show);
         const repositoriesData = repositories.map(repository => ({
             name: repository.name,
             data: repository.commits,
@@ -251,7 +251,7 @@
                 .filteredData()
                 .reduce((total, repo) => total.concat(repo.data), []);
             var font = "{{ posts.subject }}";
-            numberCommitsContainer.textContent = "{{ dateShow }} of " + font.split('#').reverse()[0] + " (s)";
+            numberCommitsContainer.textContent = repositories[0].date_show + " ({{ dateShow }}) of " + font.split('#').reverse()[0] + " (s)";
             {#numberCommitsContainer.textContent = filteredData.length + " " + font.split('#').reverse()[0] + " (s)";#}
             zoomStart.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[0]));
             zoomEnd.textContent = new Intl.DateTimeFormat('en-US', options).format(new Date(chart.scale().domain()[1]));
@@ -259,10 +259,10 @@
 
         updateCommitsInformation(chart);
 
-        function categorizeData(filters, datas, dateShow){
-            var resultData = datas;
+        function categorizeData(filters, data_query, dateShow){
+            var resultData = data_query;
             filters.forEach(function(filter){
-                datas.forEach(function (data) {
+                data_query.forEach(function (data) {
                     if (data.name === "All") {
                         var tmp = {"name": filter, "commits": []};
                         data.commits.forEach(function (obj, index) {
@@ -284,15 +284,15 @@
                             if (obj[dateShow] == obj_idx[dateShow]) {
                                 check_dup = true;
                                 result_i.commits[idx] = {};
-                                result_i.commits[idx]["{{ dateShow }}"] = obj_idx["{{ dateShow }}"];
+                                result_i.commits[idx][dateShow] = obj_idx[dateShow];
                                 result_i.commits[idx]["commits"] = [obj_idx];
                             }
-                            return obj["{{ dateShow }}"] == obj_idx["{{ dateShow }}"];
+                            return obj[dateShow] == obj_idx[dateShow];
                         }
                     });
                     if (check_dup) {
                         Array.prototype.push.apply(result_i.commits[idx]["commits"], result_test);
-                        result_i.commits[idx]["data"] = result_i.commits[idx];
+                        {#result_i.commits[idx]["data"] = result_i.commits[idx];#}
                     }
                 });
             });
@@ -347,12 +347,13 @@
                         console.log(response);
                         {#alert(response.filter_name);#}
                         // d3.select("svg").remove();
-                        const repositories = categorizeData(response.filter_name, response.query, response.dateShow);
+                        {#const repositories = response.query;#}
+                        const repositories = categorizeData(response.filter_name, response.query, response.query[0].date_show);
                         const repositoriesData = repositories.map(repository => ({
                             name: repository.name,
                             data: repository.commits,
                         }));
-                        const chart = updated(response.dateShow);
+                        const chart = updated(response.query[0].date_show);
                         console.log(repositories);
                         console.log(repositoriesData);
                         d3.select('#eventdrops-demo')
