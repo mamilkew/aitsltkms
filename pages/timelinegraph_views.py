@@ -587,12 +587,12 @@ def nested_transformation(results, group, date_show):
             date_show = p_label
 
         check_index = next(
-            (index for (index, d) in enumerate(new_result['commits']) if d["subject"] == s_label), None)
+            (index for (index, d) in enumerate(new_result['commits']) if d["subject"] == [s_label]), None)
         if check_index is not None:  # result.get('subject') in new_results['commits'].values()
             tmp = new_result['commits'][check_index]
             tmp[p_label] = o_label
         else:
-            tmp = {}
+            tmp = Dictlist()
             tmp['subject'] = s_label
             tmp[p_label] = o_label
             new_result['commits'].append(tmp)
@@ -637,3 +637,11 @@ def filter_timeline(request):
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
     # , 'dateShow': request.POST.get('date_show')
 
+
+class Dictlist(dict):
+    def __setitem__(self, key, value):
+        try:
+            self[key]
+        except KeyError:
+            super(Dictlist, self).__setitem__(key, [])
+        self[key].append(value)

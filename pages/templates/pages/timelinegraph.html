@@ -79,28 +79,8 @@
         var options = {year: 'numeric', month: 'long', day: 'numeric'};
 
         const repositories = {{ new_results | safe }};
-
-        repositories[0].commits.forEach(function (obj_idx, idx) {
-            var check_dup = false;
-            const result_test = repositories[0].commits.filter((obj, index) => {
-                if (index > idx) {
-                    if (obj[repositories[0].date_show] == obj_idx[repositories[0].date_show]){
-                        {#console.log(idx +" and " + index);#}
-                        {#console.log(obj_idx);#}
-                        check_dup = true;
-                        repositories[0].commits[idx] = {};
-                        repositories[0].commits[idx][repositories[0].date_show] = obj_idx[repositories[0].date_show];
-                        repositories[0].commits[idx]["commits"] = [obj_idx];
-                    }
-                    return obj[repositories[0].date_show] == obj_idx[repositories[0].date_show];
-                }
-            });
-            if (check_dup){
-                Array.prototype.push.apply(repositories[0].commits[idx]["commits"], result_test);
-                {#repositories[0].commits[idx]["data"] = repositories[0].commits[idx];#}
-                {#console.log(result_test);#}
-                {#console.log(repositories[0].commits[idx]);#}
-            }
+        repositories.forEach(function (repository, i) {
+           repositories[i] = nested_dateShow(repository, repository.date_show);
         });
 
         {#repositories[0].commits = result_test;#}
@@ -259,6 +239,34 @@
 
         updateCommitsInformation(chart);
 
+        function nested_dateShow(commits_list, date_show){
+            commits_list.commits.forEach(function (obj_idx, idx) {
+                var check_dup = false;
+                const result_test = commits_list.commits.filter((obj, index) => {
+                    if (index > idx) {
+                        if (obj_idx.hasOwnProperty(date_show) && obj.hasOwnProperty(date_show)) {
+                            if (obj[date_show][0] == obj_idx[date_show][0]){
+                                {#console.log(idx +" and " + index);#}
+                                {#console.log(obj_idx);#}
+                                check_dup = true;
+                                commits_list.commits[idx] = {};
+                                commits_list.commits[idx][date_show] = [obj_idx[date_show][0]];
+                                commits_list.commits[idx]["commits"] = [obj_idx];
+                            }
+                            return obj[date_show][0] == obj_idx[date_show][0];
+                        }
+                    }
+                });
+                if (check_dup){
+                    Array.prototype.push.apply(commits_list.commits[idx]["commits"], result_test);
+                    {#commits_list.commits[idx]["data"] = commits_list.commits[idx];#}
+                    {#console.log(result_test);#}
+                    {#console.log(commits_list.commits[idx]);#}
+                }
+            });
+            return commits_list;
+        }
+
         function categorizeData(filters, data_query, dateShow){
             var resultData = data_query;
             filters.forEach(function(filter){
@@ -267,35 +275,23 @@
                         var tmp = {"name": filter, "commits": []};
                         data.commits.forEach(function (obj, index) {
                             Object.keys(obj).forEach(function (key) {
-                                if (obj[key] === filter){
-                                    tmp.commits.push(data.commits[index]);
-                                }
+                                obj[key].forEach(function (value) {
+                                    if (value === filter){
+                                        tmp.commits.push(data.commits[index]);
+                                    }
+                                });
+
                             });
                         });
                         resultData.push(tmp);
                     }
                 });
             });
-            resultData.forEach(function (result_i) {
-                result_i.commits.forEach(function (obj_idx, idx) {
-                    var check_dup = false;
-                    const result_test = result_i.commits.filter((obj, index) => {
-                        if (index > idx) {
-                            if (obj[dateShow] == obj_idx[dateShow]) {
-                                check_dup = true;
-                                result_i.commits[idx] = {};
-                                result_i.commits[idx][dateShow] = obj_idx[dateShow];
-                                result_i.commits[idx]["commits"] = [obj_idx];
-                            }
-                            return obj[dateShow] == obj_idx[dateShow];
-                        }
-                    });
-                    if (check_dup) {
-                        Array.prototype.push.apply(result_i.commits[idx]["commits"], result_test);
-                        {#result_i.commits[idx]["data"] = result_i.commits[idx];#}
-                    }
-                });
+            resultData.forEach(function (result_i, i) {
+                resultData[i] = nested_dateShow(result_i, dateShow);
             });
+
+
             {#repositories[0].commits.forEach(function (obj_idx, idx) {#}
             {#    var check_dup = false;#}
             {#    const result_test = repositories[0].commits.filter((obj, index) => {#}
