@@ -1,6 +1,6 @@
 # from django.http import Http404
 from django.shortcuts import render
-from pages import views as main_view
+from pages import extractor_transformation as extractor_trans
 from pages import forcegraph_views as fg_view
 from .models import Postforcegraph
 from collections import OrderedDict
@@ -557,7 +557,7 @@ def timelinegraph(request):
 
     project_data = Postforcegraph.objects.get(pk=4)
     date_show = "PJend"
-    results = main_view.transform_api(project_data.source)
+    results = extractor_trans.transform_api(project_data.source)
     new_results = []
     filtering = timeline_filter(project_data.source, project_data)
     new_results.append(nested_transformation(results, "All", date_show))
@@ -635,7 +635,7 @@ def filter_timeline(request):
                         print(facetdata)
                         sparql += fg_view.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
-            results = main_view.call_api(sparql)
+            results = extractor_trans.call_api(sparql)
             new_results = [nested_transformation(results, "All", request.POST.get('date_show'))]
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})  # , 'dateShow': request.POST.get('date_show')
 
@@ -648,12 +648,12 @@ def timeline_filter(data, posts):
 
     for result in results:
         tmp = {}
-        tmp['subject'] = main_view.check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
+        tmp['subject'] = extractor_trans.check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
                                               result.get('subject').get('value'))
-        tmp['predicate'] = main_view.check_type(result.get('predicate').get('datatype'),
+        tmp['predicate'] = extractor_trans.check_type(result.get('predicate').get('datatype'),
                                                 result.get('predicate').get('type'),
                                                 result.get('predicate').get('value'))
-        tmp['object'] = main_view.check_type(result.get('object').get('datatype'), result.get('object').get('type'),
+        tmp['object'] = extractor_trans.check_type(result.get('object').get('datatype'), result.get('object').get('type'),
                                              result.get('object').get('value'))
         if result.get('s_label'):
             tmp['s_label'] = result.get('s_label').get('value')
@@ -667,7 +667,7 @@ def timeline_filter(data, posts):
         if tmp['predicate'] in filter_facets:
             tmp_filter = filter_facets.get(tmp['predicate'])[0]
             tmp_filter.append(tmp['object'])
-            filter_facets[tmp['predicate']][0] = main_view.list_facet(tmp_filter)
+            filter_facets[tmp['predicate']][0] = extractor_trans.list_facet(tmp_filter)
         else:
             if tmp.get('p_label') is not None:
                 filter_facets[tmp['predicate']] = [[tmp['object']], tmp['p_label']]

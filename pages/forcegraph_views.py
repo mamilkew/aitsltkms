@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 from datetime import datetime
 from collections import OrderedDict
-from pages import views as main_view
+from pages import extractor_transformation as extractor_trans
 
 
 def forcegraph(request, post_id):
@@ -19,11 +19,11 @@ def forcegraph(request, post_id):
         #  ===== transform to pattern for visualization standard for direct-forcegraph =====
         for result in results:
             tmp = {}
-            tmp['subject'] = main_view.check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
+            tmp['subject'] = extractor_trans.check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
                                         result.get('subject').get('value'))
-            tmp['predicate'] = main_view.check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
+            tmp['predicate'] = extractor_trans.check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
                                           result.get('predicate').get('value'))
-            tmp['object'] = main_view.check_type(result.get('object').get('datatype'), result.get('object').get('type'),
+            tmp['object'] = extractor_trans.check_type(result.get('object').get('datatype'), result.get('object').get('type'),
                                        result.get('object').get('value'))
             if result.get('s_label'):
                 tmp['s_label'] = result.get('s_label').get('value')
@@ -37,7 +37,7 @@ def forcegraph(request, post_id):
             if tmp['predicate'] in filter_facets:
                 tmp_filter = filter_facets.get(tmp['predicate'])[0]
                 tmp_filter.append(tmp['object'])
-                filter_facets[tmp['predicate']][0] = main_view.list_facet(tmp_filter)
+                filter_facets[tmp['predicate']][0] = extractor_trans.list_facet(tmp_filter)
             else:
                 if tmp.get('p_label') is not None:
                     filter_facets[tmp['predicate']] = [[tmp['object']], tmp['p_label']]
@@ -101,7 +101,7 @@ def filter_query(request):
                         print(request.POST.getlist(k))
                         sparql += nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
-            new_results = main_view.call_api(sparql)
+            new_results = extractor_trans.call_api(sparql)
 
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
@@ -133,7 +133,7 @@ def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
             list_object[idx] = '<' + prefixes_list[0] + '#' + each + '>'
 
     nested += 'filter(?predicate = ' + prefix_predicate
-    text = main_view.make_filter_sparql(list_object, 'object')
+    text = extractor_trans.make_filter_sparql(list_object, 'object')
 
     nested += text + ')}}'
     return nested
@@ -155,7 +155,7 @@ def make_filter_prefixes(prefixes, value, prefixes_dict):
     if value in prefixes_dict:
         tmp_prefix = prefixes_dict.get(value)
         tmp_prefix.append(prefixes)
-        prefixes_dict[value] = main_view.list_facet(tmp_prefix)
+        prefixes_dict[value] = extractor_trans.list_facet(tmp_prefix)
         return prefixes_dict
     else:
         prefixes_dict[value] = [prefixes]
