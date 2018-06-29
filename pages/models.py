@@ -28,7 +28,8 @@ def call_api(sparql, link_query):
         response_body = urlopen(request).read().decode('utf8')
         return response_body
     except HTTPError as e:
-        print(e.code + e.reason)
+        print(e.code)
+        print(e.reason)
         print(request.__dict__)
         response_body = {
             "head": {
@@ -58,6 +59,45 @@ def call_api(sparql, link_query):
             }
         }
         return response_body
+
+
+# class Forcegraph(models.Model):
+#     author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+#     page_title = models.CharField(max_length=200)
+#     query_link = models.URLField(max_length=300)
+#     domain_subject = models.URLField(max_length=300)
+#     source = JSONField(blank=True, null=True, editable=False)
+#     result = JSONField(blank=True, null=True, editable=False)
+#     created_date = models.DateTimeField(
+#         default=timezone.now, editable=False)
+#     updated_date = models.DateTimeField(
+#         default=timezone.now, editable=False)
+#     published_date = models.DateTimeField(
+#         blank=True, null=True)
+#
+#     def save(self, *args, **kwargs):  # do something every time you save
+#         sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject + '> .' \
+#                      + '?subject ?predicate ?object .' \
+#                      + 'optional{?subject rdfs:label ?s_label}' \
+#                      + 'optional{?predicate rdfs:label ?p_label}' \
+#                      + 'optional{?object rdfs:label ?o_label}' \
+#                      + 'filter(?object != owl:NamedIndividual)' \
+#                      + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
+#         data = call_api(sparql_all, self.query_link)
+#         self.source = json.loads(data)
+#         super().save(*args, **kwargs)  # Call the "real" save() method.
+#
+#     def was_published_last(self):
+#         now = timezone.now()
+#         if self.published_date is not None:
+#             return self.published_date <= now
+#
+#     was_published_last.admin_order_field = 'published_date'
+#     was_published_last.boolean = True
+#     was_published_last.short_description = 'Last Published ?'
+#
+#     def __str__(self):
+#         return self.page_title
 
 
 class Postforcegraph(models.Model):
