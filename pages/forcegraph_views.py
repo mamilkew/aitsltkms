@@ -40,7 +40,7 @@ def filter_query(request):
                      + 'optional{?subject rdfs:label ?s_label}' \
                      + 'optional{?predicate rdfs:label ?p_label}' \
                      + 'optional{?object rdfs:label ?o_label}' \
-                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
+                     + 'filter(?object != owl:NamedIndividual)'  # && ?predicate != rdf:type
             facetdata = ''
             # print(request.POST)
             # print(request.POST.get('subject_domain'))

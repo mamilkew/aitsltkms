@@ -79,8 +79,8 @@ class Postforcegraph(models.Model):
                      + 'optional{?subject rdfs:label ?s_label}' \
                      + 'optional{?predicate rdfs:label ?p_label}' \
                      + 'optional{?object rdfs:label ?o_label}' \
-                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                     + '}order by ?subject'
+                     + 'filter(?object != owl:NamedIndividual)' \
+                     + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
         data = call_api(sparql_all)
         self.source = json.loads(data)
         super().save(*args, **kwargs)  # Call the "real" save() method.
@@ -118,8 +118,8 @@ class Post(models.Model):
     def save(self, *args, **kwargs):  # do something every time you save
         sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type aitslt:' + self.subject + ' .' \
                      + '?subject ?predicate ?object .' \
-                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-                     + '}order by ?subject'
+                     + 'filter(?object != owl:NamedIndividual)' \
+                     + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type
         data = call_api(sparql_all)
         self.source = json.loads(data)
         # if not self.pk:
