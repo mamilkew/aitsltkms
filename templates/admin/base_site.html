@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">{% trans 'VisualOntology Adminsitration' %}</a></h1>
+{% endblock %}
+
+{% block welcome-msg %}
+    {% trans 'Welcome,' %}
+    <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+    <a id="ontMange" href="http://18.222.54.28:5820/milk-reasoning#!/schema">Ontology Management</a> /
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+    <script type="text/javascript">
+        alert(document.getElementById('ontMange').text);
+    </script>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
