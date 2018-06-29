@@ -73,7 +73,7 @@ def filter_timeline(request):
                      + 'optional{?object rdfs:label ?o_label}' \
                      + 'filter(?object != owl:NamedIndividual)'  # && ?predicate != rdf:type
             facetdata = []
-            # print(request.POST)
+            print(request.POST)
             # print(request.POST.get('subject_domain'))
             # print(request.POST.keys())
             for k in request.POST.keys():
@@ -83,6 +83,8 @@ def filter_timeline(request):
                     pass
                 elif k == 'date_show':
                     pass
+                elif k == 'link_query':
+                    link_query = request.POST.get('link_query')
                 elif k == 'prefixes_query':
                     prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
                 else:
@@ -91,7 +93,7 @@ def filter_timeline(request):
                         print(facetdata)
                         sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
-            results = spql_wrapper.call_api(sparql)
+            results = spql_wrapper.call_api(sparql, link_query)
 
             for result in results:
                 if result.get('o_label') is not None:

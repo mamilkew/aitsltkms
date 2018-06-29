@@ -4,6 +4,7 @@ from django.utils import timezone
 from .models import Post
 from django.http import HttpResponse, JsonResponse
 from pages import extractor_transformation as extractor_trans
+from pages import sparql_wrapper as spql_wrapper
 import os
 
 
@@ -140,7 +141,7 @@ def filter_detail(request):
 
             sparql += '}order by ?subject'
 
-            new_results = extractor_trans.call_api(sparql)
+            new_results = spql_wrapper.call_api(sparql, request.POST.get('link_query'))
 
             # new_results = transform_data("select_project.json")  # response_body
 
@@ -159,17 +160,17 @@ def make_nested_filter(predicate, list_object):
 
     if predicate == 'isSponsoredBy':
         nested += 'optional{?object rdf:type ?donor .} filter(?predicate = aitslt:' + predicate
-        text = extractor_trans.make_filter_sparql(list_object, 'donor')
+        text = spql_wrapper.make_filter_sparql(list_object, 'donor')
     elif predicate == 'isImplementedBy':
         nested += 'optional{?object aitslt:under ?organizationunit .} filter(?predicate = aitslt:' + predicate
-        text = extractor_trans.make_filter_sparql(list_object, 'organizationunit')
+        text = spql_wrapper.make_filter_sparql(list_object, 'organizationunit')
     elif predicate == 'includesPerson':
         nested += 'optional{?object rdf:type ?person .} filter((?predicate = aitslt:includesInvestigator ' \
                   + '|| ?predicate = aitslt:includesMember)'
-        text = extractor_trans.make_filter_sparql(list_object, 'person')
+        text = spql_wrapper.make_filter_sparql(list_object, 'person')
     else:
         nested += 'filter(?predicate = aitslt:' + predicate
-        text = extractor_trans.make_filter_sparql(list_object, 'object')
+        text = spql_wrapper.make_filter_sparql(list_object, 'object')
 
     nested += text + ')}}'
     return nested

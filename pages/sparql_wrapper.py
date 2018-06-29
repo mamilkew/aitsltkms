@@ -7,10 +7,10 @@ from base64 import b64encode
 from pages import extractor_transformation as extractor_trans
 
 
-def call_api(sparql):
+def call_api(sparql, link_query):
     values = urlencode(
         {
-            'query': sparql})  # 'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql
+            'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
     credentials = b64encode('admin:admin'.encode('ascii'))  # username:password
     headers = {
         'Authorization': 'Basic %s' % credentials.decode('ascii'),
@@ -18,12 +18,13 @@ def call_api(sparql):
         'Accept': 'application/sparql-results+json'
     }
     data = values.encode('ascii')
-    request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
+    request = Request(link_query, data=data, headers=headers)
     try:
         response_body = json.loads(urlopen(request).read().decode('utf8'))
         return extractor_trans.transform_api(response_body)
     except HTTPError as e:
-        print(e.code + e.reason)
+        print(e.code)
+        print(e.reason)
         print(request.__dict__)
         response_body = {
             "head": {

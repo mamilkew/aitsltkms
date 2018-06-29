@@ -14,7 +14,7 @@ from base64 import b64encode
 # Create your models here.
 
 
-def call_api(sparql):
+def call_api(sparql, link_query):
     values = urlencode({'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})
     credentials = b64encode('admin:admin'.encode('ascii'))
     headers = {
@@ -23,7 +23,7 @@ def call_api(sparql):
         'Accept': 'application/sparql-results+json'
     }
     data = values.encode('ascii')
-    request = Request('http://18.222.54.28:5820/milk-reasoning/query', data=data, headers=headers)
+    request = Request(link_query, data=data, headers=headers)
     try:
         response_body = urlopen(request).read().decode('utf8')
         return response_body
@@ -81,7 +81,7 @@ class Postforcegraph(models.Model):
                      + 'optional{?object rdfs:label ?o_label}' \
                      + 'filter(?object != owl:NamedIndividual)' \
                      + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
-        data = call_api(sparql_all)
+        data = call_api(sparql_all, 'http://18.222.54.28:5820/milk-reasoning/query')
         self.source = json.loads(data)
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
@@ -120,7 +120,7 @@ class Post(models.Model):
                      + '?subject ?predicate ?object .' \
                      + 'filter(?object != owl:NamedIndividual)' \
                      + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type
-        data = call_api(sparql_all)
+        data = call_api(sparql_all, 'http://18.222.54.28:5820/milk-reasoning/query')
         self.source = json.loads(data)
         # if not self.pk:
             # This code only happens if the objects is not in the database yet. Otherwise it would have pk
@@ -171,7 +171,7 @@ def ensure_post_exists(sender, instance, created, **kwargs):
                  + '?subject ?predicate ?object .' \
                  + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
                  + '}order by ?subject'
-        data = call_api(sparql_all)
+        data = call_api(sparql_all, 'http://18.222.54.28:5820/milk-reasoning/query')
         instance.source = json.loads(data)
         #  -----facet country-----
         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_country.json")
@@ -180,7 +180,7 @@ def ensure_post_exists(sender, instance, created, **kwargs):
                          + ' . ?subject ?predicate ?object.' \
                          + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
                          + '?object rdf:type aitslt:Country .}order by ?object'
-        data = call_api(sparql_country)
+        data = call_api(sparql_country, 'http://18.222.54.28:5820/milk-reasoning/query')
         instance.facet_country = json.loads(data)
         #  -----facet donor-----
         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_donor.json")
@@ -190,7 +190,7 @@ def ensure_post_exists(sender, instance, created, **kwargs):
                        + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?donor.' \
                        + 'filter(?donor != owl:NamedIndividual && ?predicate = aitslt:isSponsoredBy)' \
                        + '}order by ?donor'
-        data = call_api(sparql_donor)
+        data = call_api(sparql_donor, 'http://18.222.54.28:5820/milk-reasoning/query')
         instance.facet_donor = json.loads(data)
         #  -----facet organization unit-----
         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
@@ -199,7 +199,7 @@ def ensure_post_exists(sender, instance, created, **kwargs):
                      + ' . ?subject ?predicate ?object.' \
                      + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
                      + '?object aitslt:under ?organizationunit .}'
-        data = call_api(sparql_org)
+        data = call_api(sparql_org, 'http://18.222.54.28:5820/milk-reasoning/query')
         instance.facet_organizationunit = json.loads(data)
         #  -----facet person-----
         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_person.json")
@@ -209,7 +209,7 @@ def ensure_post_exists(sender, instance, created, **kwargs):
                         + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?person.' \
                         + 'filter(?person != owl:NamedIndividual && ( ?predicate = aitslt:includesInvestigator ' \
                         + '|| ?predicate = aitslt:includesMember))}order by ?person'
-        data = call_api(sparql_person)
+        data = call_api(sparql_person, 'http://18.222.54.28:5820/milk-reasoning/query')
         instance.facet_person = json.loads(data)
         instance.save()
         # print(instance)

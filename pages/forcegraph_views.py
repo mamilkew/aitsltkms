@@ -50,6 +50,8 @@ def filter_query(request):
                     pass
                 elif k == 'subject_domain':
                     pass
+                elif k == 'link_query':
+                    link_query = request.POST.get('link_query')
                 elif k == 'prefixes_query':
                     prefix_json = json.loads(request.POST.getlist(k)[0].replace("\'", "\""))
                 else:
@@ -57,7 +59,7 @@ def filter_query(request):
                         print(request.POST.getlist(k))
                         sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
-            new_results = spql_wrapper.call_api(sparql)
+            new_results = spql_wrapper.call_api(sparql, link_query)
 
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
 
