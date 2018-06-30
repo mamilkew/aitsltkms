@@ -94,13 +94,7 @@ class Forcegraph(models.Model):
         auto_choose=True,
         sort=True
     )
-    faceted_search = ChainedManyToManyField(
-        Property,
-        horizontal=True,
-        # verbose_name='faceted_search',
-        chained_field='domain_subject',
-        chained_model_field='domain_prop'
-    )
+    faceted_search = models.ManyToManyField(Property)
     # domain_subject = models.ForeignKey(Domain, on_delete=models.CASCADE)
     source = JSONField(blank=True, null=True, editable=False)
     result = JSONField(blank=True, null=True, editable=False)
