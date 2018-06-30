@@ -1,7 +1,14 @@
 from django.contrib import admin
-from .models import Post, Postforcegraph
+from .models import Post, Postforcegraph, Repository, Forcegraph
+
 
 # Register your models here.
+class RepositoryAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # This is the case when obj is already created i.e. it's an edit
+            return ['query_path']
+        else:
+            return []
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -17,8 +24,10 @@ class PostforcegraphAdmin(admin.ModelAdmin):
     search_fields = ['subject', 'result']
 
 
-admin.site.register(Post, PostAdmin)
-admin.site.register(Postforcegraph, PostforcegraphAdmin)
+admin.site.register(Repository, RepositoryAdmin)
+admin.site.register(Forcegraph)
+# admin.site.register(Post, PostAdmin)
+# admin.site.register(Postforcegraph, PostforcegraphAdmin)
 # admin.site.site_header = 'VisualOntology Adminsitration'    # default: "Django Administration"
 admin.site.index_title = 'Visualization Management'         # default: "Site administration"
 admin.site.site_title = 'VisualOntology site admin'         # default: "Django site admin"
