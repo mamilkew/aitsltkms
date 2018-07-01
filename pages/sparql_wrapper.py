@@ -59,8 +59,8 @@ def call_api(sparql, link_query):
 def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
     nested = '{ select distinct ?subject where { ?subject rdf:type ' + subject_domain \
              + ' . ?subject ?predicate ?object . ' \
-             + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)'
-    print(prefixes_list)
+             + 'filter(?object != owl:NamedIndividual)'
+    print(prefixes_list)  # && ?predicate != rdf:type
     if len(prefixes_list) == 2:
         for p in prefixes_list:
             if p in ['integer']:
@@ -75,6 +75,10 @@ def nested_filter_query(prefixes_list, subject_domain, predicate, list_object):
             elif p in ['dateTime']:
                 for idx, each in enumerate(list_object):
                     list_object[idx] = '"{}"^^xsd:dateTime'.format(datetime.strptime(each, "%d %b'%y %H:%M:%S").isoformat())
+            elif p in ['http://www.w3.org/1999/02/22-rdf-syntax-ns']:
+                for idx, each in enumerate(list_object):
+                    list_object[idx] = '<' + prefixes_list[0] + '#' + each + '>'
+                    prefix_predicate = '<' + p + '#' + predicate + '>'
             else:
                 prefix_predicate = '<' + p + '#' + predicate + '>'
     else:
