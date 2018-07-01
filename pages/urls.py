@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, forcegraph_views, timelinegraph_views
+from . import views, forcegraph_views, timelinegraph_views, admin
 
 urlpatterns = [
     path('', views.index, name='index'),  # ex: /pages/
@@ -11,4 +11,6 @@ urlpatterns = [
 
     path('filter_timeline/', timelinegraph_views.filter_timeline, name='filter_timeline'),
     path('timeline/', timelinegraph_views.timelinegraph, name='timelinegraph'),
+
+    path('property_faceted/', admin.PropertyAutoComplete.as_view(), name='property_faceted')
 ]
