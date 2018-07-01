@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render
-from .models import Forcegraph, Property
+from .models import Forcegraph
 from django.http import JsonResponse
 import json
 from pages import extractor_transformation as extractor_trans
@@ -16,9 +16,16 @@ def forcegraph(request, post_id):
 
         #  ===== making a list of Filtering
         filtering = extractor_trans.faceted_search(posts.source, posts.domain_subject.domain_path)
+
+        # ======== temporary key =========
+        posts.title = posts.page_title
         posts.subject = posts.domain_subject
+        # ======== temporary key =========
+
         posts.result = new_results
         posts.save()
+
+        # ======== compare facet to display  =========
         compare_facets = posts.faceted_search.select_related()
         if compare_facets:
             tmps = {}
@@ -29,7 +36,8 @@ def forcegraph(request, post_id):
             filtering['filter_facets'] = tmps
 
         return render(request, 'pages/forcegraph.html',
-                      {'posts': posts, 'filter_facets': filtering['filter_facets'], 'filter_prefix': filtering['filter_prefixes'],})
+                      {'posts': posts, 'filter_facets': filtering['filter_facets'],
+                       'filter_prefix': filtering['filter_prefixes'], })
 
     except Forcegraph.DoesNotExist:
         raise Http404("Post does not exist")
@@ -65,9 +73,9 @@ def filter_query(request):
                 else:
                     if k in prefix_json:
                         print(request.POST.getlist(k))
-                        sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
+                        sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k,
+                                                                   request.POST.getlist(k))
             sparql += '}order by ?subject'
             new_results = spql_wrapper.call_api(sparql, link_query)
 
     return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
-
