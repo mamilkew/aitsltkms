@@ -6,15 +6,17 @@ from django import forms
 
 # Register your models here.
 class ForcegraphForm(forms.ModelForm):
-    faceted_search = forms.ModelMultipleChoiceField(queryset=Property.objects.all(),
+    faceted_search = forms.ModelMultipleChoiceField(queryset=Property.objects.all(), required=False,
                                                     widget=autocomplete.ModelSelect2Multiple(url='property_faceted',
-                                                                                     forward=('repository_query',
-                                                                                              'domain_subject')))
+                                                                                             forward=(
+                                                                                             'repository_query',
+                                                                                             'domain_subject')))
 
     class Meta:
         model = Forcegraph
         fields = ('__all__')
         ordering = ['property_path']
+        extra_kwargs = {'faceted_search': {'allow_blank': True}}
 
 
 class PropertyAutoComplete(autocomplete.Select2QuerySetView):
@@ -36,6 +38,10 @@ class PropertyAutoComplete(autocomplete.Select2QuerySetView):
 
 class ForcegraphAdmin(admin.ModelAdmin):
     form = ForcegraphForm
+    list_display = ('page_title', 'created_date', 'updated_date', 'was_published_last')
+    ordering = ['updated_date']
+    list_filter = ['published_date']
+    search_fields = ['domain_subject', 'result']
 
 
 class RepositoryAdmin(admin.ModelAdmin):

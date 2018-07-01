@@ -29,6 +29,10 @@ class Repository(models.Model):
     def __str__(self):
         return '%s <%s>' % (self.repo_name, self.query_path)
 
+    # class Meta:
+    #     verbose_name = 'My Repository'
+    #     verbose_name_plural = 'My Repositories'
+
 
 def save_repository(sender, instance, created, **kwargs):
     if created:
@@ -125,7 +129,7 @@ class Forcegraph(models.Model):
 
     was_published_last.admin_order_field = 'published_date'
     was_published_last.boolean = True
-    was_published_last.short_description = 'Last Published ?'
+    was_published_last.short_description = 'Published ?'
 
     def __str__(self):
         return self.page_title
@@ -202,7 +206,7 @@ class Postforcegraph(models.Model):
                      + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
         data = call_api(sparql_all, 'http://18.222.54.28:5820/milk-reasoning/query')
         self.source = json.loads(data)
-        self.updated_date = timezone.now
+        self.updated_date = timezone.now()
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def was_published_last(self):
@@ -278,59 +282,60 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-#  -----should be the result from ice API ==> add to DB into "source" attribute-----
-# @receiver(post_save, sender=Post)
-# def ensure_post_exists(sender, instance, created, **kwargs):
-#     # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-#     if created is True:  # only new create
-#         print(instance.subject)
-#         # json_url = os.path.join(SITE_ROOT, "static/data", "select_project.json")
-#         # data = json.load(open(json_url))
-#         sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type aitslt:' + instance.subject + ' .' \
-#                      + '?subject ?predicate ?object .' \
-#                      + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
-#                      + '}order by ?subject'
-#         data = call_api(sparql_all, 'http://18.222.54.28:5820/milk-reasoning/query')
-#         instance.source = json.loads(data)
-#         #  -----facet country-----
-#         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_country.json")
-#         # data = json.load(open(json_url))
-#         sparql_country = 'select distinct ?object where{?subject rdf:type aitslt:' + instance.subject \
-#                          + ' . ?subject ?predicate ?object.' \
-#                          + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
-#                          + '?object rdf:type aitslt:Country .}order by ?object'
-#         data = call_api(sparql_country, 'http://18.222.54.28:5820/milk-reasoning/query')
-#         instance.facet_country = json.loads(data)
-#         #  -----facet donor-----
-#         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_donor.json")
-#         # data = json.load(open(json_url))
-#         sparql_donor = 'select distinct ?donor where{?subject rdf:type aitslt:' + instance.subject \
-#                        + ' . ?subject ?predicate ?object.' \
-#                        + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?donor.' \
-#                        + 'filter(?donor != owl:NamedIndividual && ?predicate = aitslt:isSponsoredBy)' \
-#                        + '}order by ?donor'
-#         data = call_api(sparql_donor, 'http://18.222.54.28:5820/milk-reasoning/query')
-#         instance.facet_donor = json.loads(data)
-#         #  -----facet organization unit-----
-#         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
-#         # data = json.load(open(json_url))
-#         sparql_org = 'select distinct ?organizationunit where{?subject rdf:type aitslt:' + instance.subject \
-#                      + ' . ?subject ?predicate ?object.' \
-#                      + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
-#                      + '?object aitslt:under ?organizationunit .}'
-#         data = call_api(sparql_org, 'http://18.222.54.28:5820/milk-reasoning/query')
-#         instance.facet_organizationunit = json.loads(data)
-#         #  -----facet person-----
-#         # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_person.json")
-#         # data = json.load(open(json_url))
-#         sparql_person = 'select distinct ?person where{?subject rdf:type aitslt:' + instance.subject \
-#                         + ' . ?subject ?predicate ?object.' \
-#                         + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?person.' \
-#                         + 'filter(?person != owl:NamedIndividual && ( ?predicate = aitslt:includesInvestigator ' \
-#                         + '|| ?predicate = aitslt:includesMember))}order by ?person'
-#         data = call_api(sparql_person, 'http://18.222.54.28:5820/milk-reasoning/query')
-#         instance.facet_person = json.loads(data)
-#         instance.save()
-#         # print(instance)
-#     else:
-#         print(kwargs)
+
+# -----should be the result from ice API ==> add to DB into "source" attribute-----
+@receiver(post_save, sender=Post)
+def ensure_post_exists(sender, instance, created, **kwargs):
+    # SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    if created is True:  # only new create
+        print(instance.subject)
+        # json_url = os.path.join(SITE_ROOT, "static/data", "select_project.json")
+        # data = json.load(open(json_url))
+        sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type aitslt:' + instance.subject + ' .' \
+                     + '?subject ?predicate ?object .' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type)' \
+                     + '}order by ?subject'
+        data = call_api(sparql_all, 'http://18.222.54.28:5820/milk-reasoning/query')
+        instance.source = json.loads(data)
+        #  -----facet country-----
+        # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_country.json")
+        # data = json.load(open(json_url))
+        sparql_country = 'select distinct ?object where{?subject rdf:type aitslt:' + instance.subject \
+                         + ' . ?subject ?predicate ?object.' \
+                         + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
+                         + '?object rdf:type aitslt:Country .}order by ?object'
+        data = call_api(sparql_country, 'http://18.222.54.28:5820/milk-reasoning/query')
+        instance.facet_country = json.loads(data)
+        #  -----facet donor-----
+        # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_donor.json")
+        # data = json.load(open(json_url))
+        sparql_donor = 'select distinct ?donor where{?subject rdf:type aitslt:' + instance.subject \
+                       + ' . ?subject ?predicate ?object.' \
+                       + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?donor.' \
+                       + 'filter(?donor != owl:NamedIndividual && ?predicate = aitslt:isSponsoredBy)' \
+                       + '}order by ?donor'
+        data = call_api(sparql_donor, 'http://18.222.54.28:5820/milk-reasoning/query')
+        instance.facet_donor = json.loads(data)
+        #  -----facet organization unit-----
+        # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_organizationunit.json")
+        # data = json.load(open(json_url))
+        sparql_org = 'select distinct ?organizationunit where{?subject rdf:type aitslt:' + instance.subject \
+                     + ' . ?subject ?predicate ?object.' \
+                     + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ' \
+                     + '?object aitslt:under ?organizationunit .}'
+        data = call_api(sparql_org, 'http://18.222.54.28:5820/milk-reasoning/query')
+        instance.facet_organizationunit = json.loads(data)
+        #  -----facet person-----
+        # json_url = os.path.join(SITE_ROOT, "static/data/facets", "facet_person.json")
+        # data = json.load(open(json_url))
+        sparql_person = 'select distinct ?person where{?subject rdf:type aitslt:' + instance.subject \
+                        + ' . ?subject ?predicate ?object.' \
+                        + 'filter(?object != owl:NamedIndividual && ?predicate != rdf:type) ?object rdf:type ?person.' \
+                        + 'filter(?person != owl:NamedIndividual && ( ?predicate = aitslt:includesInvestigator ' \
+                        + '|| ?predicate = aitslt:includesMember))}order by ?person'
+        data = call_api(sparql_person, 'http://18.222.54.28:5820/milk-reasoning/query')
+        instance.facet_person = json.loads(data)
+        instance.save()
+        # print(instance)
+    else:
+        print(kwargs)
