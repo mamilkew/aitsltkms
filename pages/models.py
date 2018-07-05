@@ -135,6 +135,64 @@ class Forcegraph(models.Model):
         return self.page_title
 
 
+class Timelinegraph(models.Model):
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    page_title = models.CharField(max_length=200)
+    repository_query = models.ForeignKey(Repository, on_delete=models.CASCADE)
+    domain_subject = ChainedForeignKey(
+        Domain,
+        chained_field='repository_query',
+        chained_model_field='repository_query',
+        show_all=False,
+        auto_choose=True,
+        sort=True
+    )
+    date_marked = ChainedForeignKey(
+        Property,
+        chained_field='domain_subject',
+        chained_model_field='domain_prop',
+        related_name='date_marked',
+        show_all=False,
+        auto_choose=True,
+        sort=True
+    )
+    faceted_search = models.ManyToManyField(Property)
+    # domain_subject = models.ForeignKey(Domain, on_delete=models.CASCADE)
+    source = JSONField(blank=True, null=True, editable=False)
+    result = JSONField(blank=True, null=True, editable=False)
+    created_date = models.DateTimeField(
+        default=timezone.now, editable=False)
+    updated_date = models.DateTimeField(
+        default=timezone.now, editable=False)
+    published_date = models.DateTimeField(
+        blank=True, null=True)
+
+    def save(self, *args, **kwargs):  # do something every time you save
+        sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject.domain_path + '> .' \
+                     + '?subject ?predicate ?object .' \
+                     + 'optional{?subject rdfs:label ?s_label}' \
+                     + 'optional{?predicate rdfs:label ?p_label}' \
+                     + 'optional{?object rdfs:label ?o_label}' \
+                     + 'filter(?object != owl:NamedIndividual)' \
+                     + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
+        data = call_api(sparql_all, self.repository_query.query_path)
+        self.source = json.loads(data)
+        self.updated_date = timezone.now()
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def was_published_last(self):
+        now = timezone.now()
+        if self.published_date is not None:
+            return self.published_date <= now
+
+    was_published_last.admin_order_field = 'published_date'
+    was_published_last.boolean = True
+    was_published_last.short_description = 'Published ?'
+
+    def __str__(self):
+        return self.page_title
+
+
 def call_api(sparql, link_query):
     values = urlencode(
         {'query': 'PREFIX aitslt:<http://www.semanticweb.org/milkk/ontologies/2017/11/testData#>' + sparql})

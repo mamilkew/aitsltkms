@@ -1,10 +1,24 @@
 from dal import autocomplete
 from django.contrib import admin
-from .models import Post, Postforcegraph, Repository, Forcegraph, Property
+from .models import Post, Postforcegraph, Repository, Forcegraph, Property, Timelinegraph
 from django import forms
 
 
 # Register your models here.
+class TimelinegraphForm(forms.ModelForm):
+    faceted_search = forms.ModelMultipleChoiceField(queryset=Property.objects.all(), required=False,
+                                                    widget=autocomplete.ModelSelect2Multiple(url='property_faceted',
+                                                                                             forward=(
+                                                                                             'repository_query',
+                                                                                             'domain_subject')))
+
+    class Meta:
+        model = Timelinegraph
+        fields = ('__all__')
+        ordering = ['property_path']
+        extra_kwargs = {'faceted_search': {'allow_blank': True}}
+
+
 class ForcegraphForm(forms.ModelForm):
     faceted_search = forms.ModelMultipleChoiceField(queryset=Property.objects.all(), required=False,
                                                     widget=autocomplete.ModelSelect2Multiple(url='property_faceted',
@@ -34,6 +48,14 @@ class PropertyAutoComplete(autocomplete.Select2QuerySetView):
             qs = Property.objects.filter(domain_prop=domain_subject).filter(property_path__contains=self.q)
 
         return qs
+
+
+class TimelinegraphAdmin(admin.ModelAdmin):
+    form = TimelinegraphForm
+    list_display = ('page_title', 'date_marked', 'created_date', 'updated_date', 'was_published_last')
+    ordering = ['updated_date']
+    list_filter = ['published_date']
+    search_fields = ['domain_subject', 'result']
 
 
 class ForcegraphAdmin(admin.ModelAdmin):
@@ -67,6 +89,7 @@ class PostforcegraphAdmin(admin.ModelAdmin):
 
 admin.site.register(Repository, RepositoryAdmin)
 admin.site.register(Forcegraph, ForcegraphAdmin)
+admin.site.register(Timelinegraph, TimelinegraphAdmin)
 # admin.site.register(Post, PostAdmin)
 # admin.site.register(Postforcegraph, PostforcegraphAdmin)
 # admin.site.site_header = 'VisualOntology Adminsitration'    # default: "Django Administration"
