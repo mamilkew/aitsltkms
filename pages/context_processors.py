@@ -10,4 +10,8 @@ def navbarmain(request):
     # pb = Post.objects.values('subject').annotate(newest_published_date=Max('published_date'))
     # pb_list = Post.objects.filter(subject__in=[b.get('subject') for b in pb], published_date__in=[b.get('newest_published_date') for b in pb])
     # print(pb_list)
-    return {'navbarMain': Postforcegraph.objects.raw(raw_query)}
+
+    from pages.models import Timelinegraph
+    timeline_bar = Timelinegraph.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
+
+    return {'navbarMain': Postforcegraph.objects.raw(raw_query), 'navbar_timeline': timeline_bar}

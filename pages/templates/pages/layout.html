@@ -31,7 +31,9 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'timelinegraph' %}">Timeline</a>
+{#                {% for each in navbar_timeline %}#}
+                    <a class="nav-link" href="{% url 'timelinegraph' navbar_timeline.id %}">{{ navbar_timeline.page_title }}</a>
+{#                {% endfor %}#}
             </li>
 {#            <li class="nav-item">#}
 {#                <a class="nav-link disabled">Hierarchy</a>#}
