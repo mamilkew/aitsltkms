@@ -10,7 +10,7 @@ urlpatterns = [
     path('filter_query/', forcegraph_views.filter_query, name='filter_query'),  # for ajax in forcegraph.html
 
     path('filter_timeline/', timelinegraph_views.filter_timeline, name='filter_timeline'),
-    path('timeline/', timelinegraph_views.timelinegraph, name='timelinegraph'),
+    path('timeline/<int:post_id>/', timelinegraph_views.timelinegraph, name='timelinegraph'),
 
     # after arrange the admin confuguration
     path('property_faceted/', admin.PropertyAutoComplete.as_view(), name='property_faceted'),

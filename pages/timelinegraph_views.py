@@ -1,27 +1,49 @@
-# from django.http import Http404
+from django.http import Http404
 from django.shortcuts import render
 from pages import extractor_transformation as extractor_trans
 from pages import sparql_wrapper as spql_wrapper
-from .models import Postforcegraph
+from .models import Postforcegraph, Timelinegraph
 from django.http import JsonResponse
 import json
 
 
-def timelinegraph(request):
-    # posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
-    # posts = Post.objects.filter(published_date__lte=timezone.now())
+def timelinegraph(request, post_id):
+    try:
+        # posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
+        # posts = Post.objects.filter(published_date__lte=timezone.now())
 
-    project_data = Postforcegraph.objects.get(pk=4)
-    date_show = "PJend"
-    results = extractor_trans.transform_api(project_data.source)
-    filtering = extractor_trans.faceted_search(project_data.source, project_data.subject)
-    new_results = []
-    new_results.append(nested_transformation(results, "All", date_show))
-    print(filtering)
-    return render(request, 'pages/timelinegraph.html', {'posts': project_data, 'new_results': new_results,
-                                                        'filter_facets': filtering['filter_facets'],
-                                                        'filter_prefix': filtering['filter_prefixes'],
-                                                        'dateShow': date_show})
+        # project_data = Postforcegraph.objects.get(pk=4)
+        project_data = Timelinegraph.objects.get(pk=post_id)
+        date_show = project_data.date_marked.property_path
+        results = extractor_trans.transform_api(project_data.source)
+        filtering = extractor_trans.faceted_search(project_data.source, project_data.domain_subject.domain_path)
+        new_results = []
+        new_results.append(nested_transformation(results, "All", date_show.split('#')[-1]))
+
+        # ======== temporary key =========
+        project_data.title = project_data.page_title
+        project_data.subject = project_data.domain_subject
+        # ======== temporary key =========
+
+        project_data.result = new_results
+        project_data.save()
+
+        # ======== compare facet to display  =========
+        compare_facets = project_data.faceted_search.select_related()
+        if compare_facets:
+            tmps = {}
+            for compare_facet in compare_facets:
+                value = compare_facet.property_path.split('#')[1]
+                if value in filtering['filter_facets']:
+                    tmps[value] = filtering['filter_facets'][value]
+            filtering['filter_facets'] = tmps
+
+        return render(request, 'pages/timelinegraph.html', {'posts': project_data, 'new_results': new_results,
+                                                            'filter_facets': filtering['filter_facets'],
+                                                            'filter_prefix': filtering['filter_prefixes'],
+                                                            'dateShow': date_show.split('#')[-1]})
+    except Timelinegraph.DoesNotExist:
+        raise Http404("Post does not exist")
 
 
 def nested_transformation(results, group, date_show):

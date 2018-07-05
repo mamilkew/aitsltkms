@@ -151,12 +151,12 @@ class Timelinegraph(models.Model):
         Property,
         chained_field='domain_subject',
         chained_model_field='domain_prop',
-        related_name='date_marked',
+        # related_name='date_marked',
         show_all=False,
-        auto_choose=True,
+        auto_choose=False,
         sort=True
     )
-    faceted_search = models.ManyToManyField(Property)
+    faceted_search = models.ManyToManyField(Property, related_name='faceted_search')
     # domain_subject = models.ForeignKey(Domain, on_delete=models.CASCADE)
     source = JSONField(blank=True, null=True, editable=False)
     result = JSONField(blank=True, null=True, editable=False)
