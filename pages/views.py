@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
-from .models import Post
+from .models import Post, Forcegraph
 from django.http import HttpResponse, JsonResponse
 from pages import extractor_transformation as extractor_trans
 from pages import sparql_wrapper as spql_wrapper
@@ -9,8 +9,8 @@ import os
 
 
 def index(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
-    # posts = Post.objects.filter(published_date__lte=timezone.now())
+    # posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').last()
+    posts = Forcegraph.objects.filter(published_date__lte=timezone.now())
     return render(request, 'pages/index.html', {'posts': posts})
 
 
