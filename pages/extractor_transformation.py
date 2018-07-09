@@ -75,6 +75,7 @@ def faceted_search(data, subject_domain):
         if tmp['predicate'] in filter_facets:
             tmp_filter = filter_facets.get(tmp['predicate'])[0]
             tmp_filter[result.get('object').get('value')] = tmp['object']
+            filter_facets[tmp['predicate']][0] = dict(sorted(tmp_filter.items()))
             # filter_facets[tmp['predicate']][0] = list_facet(tmp_filter)
         else:
             if tmp.get('p_label') is not None:
@@ -93,10 +94,10 @@ def faceted_search(data, subject_domain):
         #         filter_facets[tmp['predicate']] = [[tmp['object']], tmp['predicate']]
 
         #  ===== making a list of prefixes =====
-        prefix_subject = check_prefix(result.get('subject').get('datatype'), result.get('subject').get('type'),
-                                      result.get('subject').get('value'))
-        filter_prefixes = make_filter_prefixes(prefix_subject, subject_domain, filter_prefixes)
-
+        # prefix_subject = check_prefix(result.get('subject').get('datatype'), result.get('subject').get('type'),
+        #                               result.get('subject').get('value'))
+        # filter_prefixes = make_filter_prefixes(prefix_subject, subject_domain, filter_prefixes)
+        #
         prefix_predicate = check_prefix(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
                                         result.get('predicate').get('value'))
         filter_prefixes = make_filter_prefixes(prefix_predicate, tmp['predicate'], filter_prefixes)
