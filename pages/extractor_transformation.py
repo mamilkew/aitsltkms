@@ -58,14 +58,14 @@ def faceted_search(data, subject_domain):
 
     for result in results:
         tmp = {}
-        tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
-                                    result.get('subject').get('value'))
+        # tmp['subject'] = check_type(result.get('subject').get('datatype'), result.get('subject').get('type'),
+        #                             result.get('subject').get('value'))
         tmp['predicate'] = check_type(result.get('predicate').get('datatype'), result.get('predicate').get('type'),
                                       result.get('predicate').get('value'))
         tmp['object'] = check_type(result.get('object').get('datatype'), result.get('object').get('type'),
                                    result.get('object').get('value'))
-        if result.get('s_label') is not None:
-            tmp['s_label'] = result.get('s_label').get('value')
+        # if result.get('s_label') is not None:
+        #     tmp['s_label'] = result.get('s_label').get('value')
         if result.get('p_label') is not None:
             tmp['p_label'] = result.get('p_label').get('value')
         if result.get('o_label') is not None:
@@ -74,13 +74,23 @@ def faceted_search(data, subject_domain):
         #  ===== making a list of Filtering >> add to filter_prefixes to make Facet =====
         if tmp['predicate'] in filter_facets:
             tmp_filter = filter_facets.get(tmp['predicate'])[0]
-            tmp_filter.append(tmp['object'])
-            filter_facets[tmp['predicate']][0] = list_facet(tmp_filter)
+            tmp_filter[result.get('object').get('value')] = tmp['object']
+            # filter_facets[tmp['predicate']][0] = list_facet(tmp_filter)
         else:
             if tmp.get('p_label') is not None:
-                filter_facets[tmp['predicate']] = [[tmp['object']], tmp['p_label']]
+                filter_facets[tmp['predicate']] = [{result.get('object').get('value'): tmp['object']}, tmp['p_label']]
             else:
-                filter_facets[tmp['predicate']] = [[tmp['object']], tmp['predicate']]
+                filter_facets[tmp['predicate']] = [{result.get('object').get('value'): tmp['object']}, tmp['predicate']]
+
+        # if tmp['predicate'] in filter_facets:
+        #     tmp_filter = filter_facets.get(tmp['predicate'])[0]
+        #     tmp_filter.append(tmp['object'])
+        #     filter_facets[tmp['predicate']][0] = list_facet(tmp_filter)
+        # else:
+        #     if tmp.get('p_label') is not None:
+        #         filter_facets[tmp['predicate']] = [[tmp['object']], tmp['p_label']]
+        #     else:
+        #         filter_facets[tmp['predicate']] = [[tmp['object']], tmp['predicate']]
 
         #  ===== making a list of prefixes =====
         prefix_subject = check_prefix(result.get('subject').get('datatype'), result.get('subject').get('type'),

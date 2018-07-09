@@ -25,11 +25,11 @@
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
-                                        {% for v in value.0 %}
+                                        {% for k, v in value.0.items %}
                                             <div class="form-check">
                                                 <label class="form-check-label d-block" for="checked{{ v }}">
                                                     <input class="form-check-input" type="checkbox" name="{{ key }}"
-                                                       value="{{ v }}" id="checked{{ v }}"/>{{ v }}</label>
+                                                       value="{{ k }}" id="checked{{ v }}"/>{{ v }}</label>
                                             </div>
                                         {% endfor %}
                                     </ul>
