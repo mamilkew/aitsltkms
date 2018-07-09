@@ -36,6 +36,14 @@ def timelinegraph(request, post_id):
                 value = compare_facet.property_path.split('#')[1]
                 if value in filtering['filter_facets']:
                     tmps[value] = filtering['filter_facets'][value]
+
+            if 'type' in filtering['filter_facets']:
+                tmps['type'] = filtering['filter_facets']['type']
+            if 'comment' in filtering['filter_facets']:
+                tmps['comment'] = filtering['filter_facets']['comment']
+            if 'label' in filtering['filter_facets']:
+                tmps['label'] = filtering['filter_facets']['label']
+
             filtering['filter_facets'] = tmps
 
         return render(request, 'pages/timelinegraph.html', {'posts': project_data, 'new_results': new_results,
