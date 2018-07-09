@@ -121,17 +121,25 @@ def filter_timeline(request):
                     if k in prefix_json:
                         facetdata.extend(request.POST.getlist(k))
                         print(facetdata)
+                        # print(request.POST.getlist(k))
                         sparql += spql_wrapper.nested_filter_query(prefix_json.get(k), domain_prefix_subject, k, request.POST.getlist(k))
             sparql += '}order by ?subject'
             results = spql_wrapper.call_api(sparql, link_query)
 
+            for (i, item) in enumerate(facetdata):
+                facetdata[i] = item.split('#')[-1]
+
+            new_facetdata = []
             for result in results:
-                if result.get('o_label') is not None:
-                    if result.get('object') in facetdata:
-                        facetdata[facetdata.index(result.get('object'))] = result.get('o_label')
+                if result.get('object') in facetdata:
+                    if result.get('o_label') is not None:
+                        new_facetdata.append(result.get('o_label'))
+                        # facetdata[facetdata.index(result.get('object'))] = result.get('o_label')
+                    else:
+                        new_facetdata.append(result.get('object'))
 
             new_results = [nested_transformation(results, "All", request.POST.get('date_show'))]
-    return JsonResponse({'filter_name': facetdata, 'status': sparql, 'query': new_results})
+    return JsonResponse({'filter_name': extractor_trans.list_facet(new_facetdata), 'status': sparql, 'query': new_results})
     # , 'dateShow': request.POST.get('date_show')
 
 
