@@ -5,12 +5,34 @@ from django import forms
 
 
 # Register your models here.
+class DateMarkedAutoComplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Property.objects.none()
+
+        qs = Property.objects.none()
+
+        domain_subject = self.forwarded.get('domain_subject', None)
+        if domain_subject:
+            qs = Property.objects.filter(domain_prop=domain_subject)
+
+        if self.q:
+            qs = Property.objects.filter(domain_prop=domain_subject).filter(property_path__contains=self.q)
+
+        return qs
+
+
 class TimelinegraphForm(forms.ModelForm):
+    date_marked = forms.ModelChoiceField(queryset=Property.objects.all(), required=False,
+                                         widget=autocomplete.ModelSelect2(url='property_datedmarked',
+                                                                          forward=('repository_query',
+                                                                                             'domain_subject')))
     faceted_search = forms.ModelMultipleChoiceField(queryset=Property.objects.all(), required=False,
                                                     widget=autocomplete.ModelSelect2Multiple(url='property_faceted',
                                                                                              forward=(
                                                                                              'repository_query',
                                                                                              'domain_subject')))
+
 
     class Meta:
         model = Timelinegraph

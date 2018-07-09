@@ -9,6 +9,7 @@ urlpatterns = [
     path('<int:post_id>/', forcegraph_views.forcegraph, name='forcegraph'),
     path('filter_query/', forcegraph_views.filter_query, name='filter_query'),  # for ajax in forcegraph.html
 
+    path('property_datemarked/', admin.DateMarkedAutoComplete.as_view(), name='property_datedmarked'),
     path('filter_timeline/', timelinegraph_views.filter_timeline, name='filter_timeline'),
     path('timeline/<int:post_id>/', timelinegraph_views.timelinegraph, name='timelinegraph'),
 
