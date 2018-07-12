@@ -25,13 +25,18 @@
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
-                                        {% for k, v in value.0.items %}
-                                            <div class="form-check">
-                                                <label class="form-check-label d-block" for="checked{{ v }}">
-                                                    <input class="form-check-input" type="checkbox" name="{{ key }}"
-                                                       value="{{ k }}" id="checked{{ v }}"/>{{ v }}</label>
-                                            </div>
+                                        <select class="js-example-basic-multiple js-states form-control" name="{{ key }}" multiple="multiple" id="checked{{ key }}" data-placeholder="Select {{ value.1 }} (s)">
+                                            {% for k, v in value.0.items %}
+{#                                            <div class="form-check">#}
+{#                                                <label class="form-check-label d-block" for="checked{{ v }}">#}
+{#                                                    <input class="form-check-input" type="checkbox" name="{{ key }}"#}
+{#                                                       value="{{ k }}" id="checked{{ v }}"/>{{ v }}</label>#}
+
+                                                        <option value="{{ k }}">{{ v }}</option>
+
+{#                                            </div>#}
                                         {% endfor %}
+                                        </select>
                                     </ul>
                                 </div>
                             </div>
@@ -107,7 +112,9 @@
         svg {
             border: 1px solid #eeeeee;
         }
+
     </style>
+
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
         console.log({{ filter_prefix | safe }});
@@ -481,6 +488,8 @@
 
         var stop_progress_running;
         $(document).ready(function () {
+            $(".js-example-basic-multiple").select2();
+            $('.select2-search__field').width("100%");
             //$("#progress_bar").hide();
             //$("#filter_facet").submit(function (e) {
             $("#filter_facet").on('change', function (e) {
