@@ -78,7 +78,7 @@
     <style type="text/css">
         .node {
             stroke: #fff;
-            fill: #479a5b;
+            {#fill: #479a5b;#}
             stroke-width: 1.5px;
         }
 
@@ -132,6 +132,17 @@
         var container = svg.append("g");
 
         var force = d3.layout.force().size([w, h]);
+        {#var force = d3.forceSimulation()#}
+        {#// pull nodes together based on the links between them#}
+        {#    .force("link", d3.forceLink().id(function (d) {#}
+        {#            return d.id;#}
+        {#        }).strength(0.025))#}
+        {#    // push nodes apart to space them out#}
+        {#    .force("charge", d3.forceManyBody().strength(-100))#}
+        {#    // add some collision detection so they don't overlap#}
+        {#    .force("collide", d3.forceCollide().radius(2))#}
+        {#    // and draw them around the centre of the space#}
+        {#    .force("center", d3.forceCenter(w / 2, h / 2));#}
 
         var graph = triplesToGraph(triples);
 
@@ -170,12 +181,12 @@
                 var objNode = filterNodesById(graph.nodes, objId)[0];
 
                 if (subjNode == null) {
-                    subjNode = {id: subjId, label: subjLabel, weight: 1, type: "node"};
+                    subjNode = {id: subjId, label: subjLabel, weight: 1, type: "node", colour: "#479a5b"};
                     graph.nodes.push(subjNode);
                 }
 
                 if (objNode == null) {
-                    objNode = {id: objId, label: objLabel, weight: 1, type: "node"};
+                    objNode = {id: objId, label: objLabel, weight: 1, type: "node", colour: "#dc9a5b"};
                     graph.nodes.push(objNode);
                 }
 
@@ -263,7 +274,14 @@
                 .append("circle")
                 .attr("class", "node")
                 .attr("r", 8)
+                .attr("fill", function(d) {
+                    return d.colour;
+                })
                 .call(force.drag)
+                {#.call(d3.drag()#}
+                {#    .on("start", dragstarted)#}
+                {#    .on("drag", dragged)#}
+                {#    .on("end", dragended))#}
                 .on("mouseover", mouseOver(.20))
                 .on("mouseout", mouseOut)
                 .on("click", nodeClick());
@@ -273,6 +291,9 @@
             // ==================== Force ====================
             force.on("tick", function () {
                 nodes
+                    {#.attr("transform", function (d) {#}
+                    {#    return "translate(" + d.x + "," + d.y + ")";#}
+                    {#\})#}
                     .attr("cx", function (d) {
                         return d.x;
                     })
@@ -283,7 +304,22 @@
 
                 links
                     .attr("d", function (d) {
+                        {#var offset = 30;#}
+
+                        {#var midpoint_x = (d.s.x + d.o.x) / 2;#}
+                        {#var midpoint_y = (d.s.y + d.o.y) / 2;#}
+
+                        {#var dx = (d.o.x - d.s.x);#}
+                        {#var dy = (d.o.y - d.s.y);#}
+
+                        {#var normalise = Math.sqrt((dx * dx) + (dy * dy));#}
+                        {#var offSetX = midpoint_x + offset * (dy / normalise);#}
+                        {#var offSetY = midpoint_y - offset * (dx / normalise);#}
+                        {#var offSetX = midpoint_x + offset;#}
+                        {#var offSetY = midpoint_y - offset;#}
+
                         return "M" + d.s.x + "," + d.s.y
+                            {#+ "S" + offSetX + "," + offSetY#}
                             + "S" + d.p.x + "," + d.p.y
                             + " " + d.o.x + "," + d.o.y;
                     })
@@ -300,9 +336,15 @@
 
                 linkTexts
                     .attr("x", function (d) {
+                        {#var offset = 30;#}
+                        {#var midpoint_x = (d.s.x + d.o.x) / 2;#}
+                        {#var offSetX = midpoint_x + offset;#}
                         return 4 + (d.s.x + d.p.x + d.o.x) / 3;
                     })
                     .attr("y", function (d) {
+                        {#var offset = 30;#}
+                        {#var midpoint_y = (d.s.y + d.o.y) / 2;#}
+                        {#var offSetY = midpoint_y - offset;#}
                         return 4 + (d.s.y + d.p.y + d.o.y) / 3;
                     })
                 ;
@@ -311,6 +353,7 @@
             // ==================== Run ====================
             force
                 .nodes(graph.nodes)
+                {#.force("link")#}
                 .links(graph.links)
                 .charge(-250)
                 .linkDistance(5)
@@ -319,8 +362,27 @@
 
         }
 
+        {#function dragstarted(d) {#}
+        {#    if (!d3.event.active) force.alphaTarget(0.3).restart();#}
+        {#    d.cx = d.x;#}
+        {#    d.cy = d.y;#}
+        {#\}#}
+        {##}
+        {#function dragged(d) {#}
+        {#    d.cx = d3.event.x;#}
+        {#    d.cy = d3.event.y;#}
+        {#\}#}
+        {##}
+        {#function dragended(d) {#}
+        {#    if (!d3.event.active) force.alphaTarget(0);#}
+        {#    d.cx = null;#}
+        {#    d.cy = null;#}
+        {#\}#}
+
         function zoomed() {
             container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+            {#container.attr("transform", "translate(" + d3.event.transform.x+","+d3.event.transform.y + ")scale(" + d3.event.transform.k + ")");#}
+            {#container.attr("transform", d3.event.transform);#}
         }
 
         // build a dictionary of nodes that are linked
@@ -328,7 +390,7 @@
         graph.triples.forEach(function (d) {
             linkedByIndex[d.s.index + "_" + d.o.index] = 1;
         });
-        console.log(JSON.parse(JSON.stringify(linkedByIndex)));
+        {#console.log(JSON.parse(JSON.stringify(linkedByIndex)));#}
 
         // check the dictionary to see if nodes are linked
         function isConnected(a, b) {
@@ -357,7 +419,7 @@
                     return o.s === d || o.o === d ? 1 : opacity;
                 });
                 links.style("stroke", function (o) {
-                    return o.s === d || o.o === d ? "#7ab380" : "#999";
+                    return o.s === d || o.o === d ? o.s.colour : "#999";
                 });
                 linkTexts.style("fill-opacity", function (o) {
                     return o.s === d || o.o === d ? 1 : opacity;
