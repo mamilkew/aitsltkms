@@ -18,7 +18,7 @@
                     {#        Group #iterative        #}
                     <input type="hidden" name="subject_domain" value="{{ posts.subject }}">
                     <input type="hidden" name="date_show" value="{{ dateShow }}">
-                    <input type="hidden" name="link_query" value="http://18.222.54.28:5820/milk-reasoning/query">
+                    <input type="hidden" name="link_query" value="{{ posts.repository_query.query_path }}">
                     <input type="hidden" name="prefixes_query" value="{{ filter_prefix }}">
                     {% for key, value in filter_facets.items %}
                         <div class="card">

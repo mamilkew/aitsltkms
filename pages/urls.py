@@ -13,7 +13,7 @@ urlpatterns = [
     path('filter_timeline/', timelinegraph_views.filter_timeline, name='filter_timeline'),
     path('timeline/<int:post_id>/', timelinegraph_views.timelinegraph, name='timelinegraph'),
 
-    # after arrange the admin confuguration
+    # after arrange the admin configuration
     path('property_faceted/', admin.PropertyAutoComplete.as_view(), name='property_faceted'),
     path('forcegraph/<int:post_id>/', pages_forcegraph_views.forcegraph, name='pages_forcegraph'),
 ]
