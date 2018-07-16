@@ -7,7 +7,7 @@ urlpatterns = [
     path('filter_detail/', views.filter_detail, name='filter_detail'),
 
     path('<int:post_id>/', forcegraph_views.forcegraph, name='forcegraph'),
-    path('filter_query/', forcegraph_views.filter_query, name='filter_query'),  # for ajax in forcegraph.html
+    # path('filter_query/', forcegraph_views.filter_query, name='filter_query'),  # for ajax in forcegraph.html
 
     path('property_datemarked/', admin.DateMarkedAutoComplete.as_view(), name='property_datedmarked'),
     path('filter_timeline/', timelinegraph_views.filter_timeline, name='filter_timeline'),
@@ -16,4 +16,5 @@ urlpatterns = [
     # after arrange the admin configuration
     path('property_faceted/', admin.PropertyAutoComplete.as_view(), name='property_faceted'),
     path('forcegraph/<int:post_id>/', pages_forcegraph_views.forcegraph, name='pages_forcegraph'),
+    path('filter_query/', pages_forcegraph_views.filter_query, name='filter_query'),  # for ajax in forcegraph.html
 ]
