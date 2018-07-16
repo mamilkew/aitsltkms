@@ -27,15 +27,17 @@
         <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="mapping" data-toggle="dropdown" aria-haspopup="true"
-                   aria-expanded="false">Mapping</a>
+                   aria-expanded="false">Node-Links</a>
                 <div class="dropdown-menu mapping" aria-labelledby="mapping">
 {#                    <a class="dropdown-item" href="">Diagram</a>#}
                 </div>
             </li>
-            <li class="nav-item">
-{#                {% for each in navbar_timeline %}#}
-                    <a class="nav-link" href="{% url 'timelinegraph' navbar_timeline.id %}">{{ navbar_timeline.page_title }}</a>
-{#                {% endfor %}#}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="timebased" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="false">Timeline</a>
+                <div class="dropdown-menu timebased" aria-labelledby="timebased">
+{#                    <a class="dropdown-item" href="">Diagram</a>#}
+                </div>
             </li>
 {#            <li class="nav-item">#}
 {#                <a class="nav-link disabled">Hierarchy</a>#}
@@ -95,9 +97,13 @@
 <script>
     $(document).ready(function () {
         {% for each in navbarMain %}
-            $("div.mapping").append('<a class="dropdown-item" href="{% url 'forcegraph' each.id %}">{{ each.title }}</a>');
+            $("div.mapping").append('<a class="dropdown-item" href="{% url 'pages_forcegraph' each.id %}">{{ each.page_title }}</a>');
         {% endfor %}
-        });
+
+        {% for each in navbar_timeline %}
+            $("div.timebased").append('<a class="dropdown-item" href="{% url 'timelinegraph' each.id %}">{{ each.page_title }}</a>');
+        {% endfor %}
+    });
 </script>
 {% block javascript %}{% endblock %}
 </body>
