@@ -69,7 +69,8 @@ def faceted_search(data, subject_domain):
         if result.get('p_label') is not None:
             tmp['p_label'] = result.get('p_label').get('value')
         if result.get('o_label') is not None:
-            tmp['o_label'] = result.get('o_label').get('value')
+            # tmp['o_label'] = result.get('o_label').get('value')
+            tmp['object'] = result.get('o_label').get('value')
 
         #  ===== making a list of Filtering >> add to filter_prefixes to make Facet =====
         if tmp['predicate'] in filter_facets:
