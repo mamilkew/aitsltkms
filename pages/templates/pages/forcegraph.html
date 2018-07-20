@@ -5,15 +5,15 @@
             <br>
             <form id="filter_facet">
                 {% csrf_token %}
+                <input type="hidden" name="subject_domain" value="{{ posts.subject }}">
+                <input type="hidden" name="link_query" value="{{ posts.repository_query.query_path }}">
+                <input type="hidden" name="prefixes_query" value="{{ filter_prefix }}">
                 <h4>Faceted Search
                     <button class="btn btn-outline-success" type="submit">Reset</button>
                 </h4>
                 <hr>
                 <div id="accordion" class="accordion">
                     {#        Group #iterative        #}
-                    <input type="hidden" name="subject_domain" value="{{ posts.subject }}">
-                    <input type="hidden" name="link_query" value="{{ posts.repository_query.query_path }}">
-                    <input type="hidden" name="prefixes_query" value="{{ filter_prefix }}">
                     {% for key, value in filter_facets.items %}
                         <div class="card">
                             <div class="card-header collapsed card-filter" id="{{ key }}" data-toggle="collapse"
@@ -25,17 +25,18 @@
                                  data-parent="#accordion">
                                 <div class="card-body">
                                     <ul class="list-group">
-                                        <select class="js-example-basic-multiple js-states form-control" name="{{ key }}" multiple="multiple" id="checked{{ key }}" data-placeholder="Select {{ value.1 }} (s)">
+                                        <select class="jqsearchbox form-control"
+                                                name="{{ key }}" multiple="multiple" id="checked{{ key }}">
                                             {% for k, v in value.0.items %}
-{#                                            <div class="form-check">#}
-{#                                                <label class="form-check-label d-block" for="checked{{ v }}">#}
-{#                                                    <input class="form-check-input" type="checkbox" name="{{ key }}"#}
-{#                                                       value="{{ k }}" id="checked{{ v }}"/>{{ v }}</label>#}
+                                                {#                                            <div class="form-check">#}
+                                                {#                                                <label class="form-check-label d-block" for="checked{{ v }}">#}
+                                                {#                                                    <input class="form-check-input" type="checkbox" name="{{ key }}"#}
+                                                {#                                                       value="{{ k }}" id="checked{{ v }}"/>{{ v }}</label>#}
 
-                                                        <option value="{{ k }}">{{ v }}</option>
+                                                <option value="{{ k }}">{{ v }}</option>
 
-{#                                            </div>#}
-                                        {% endfor %}
+                                                {#                                            </div>#}
+                                            {% endfor %}
                                         </select>
                                     </ul>
                                 </div>
@@ -270,7 +271,7 @@
                 .append("circle")
                 .attr("class", "node")
                 .attr("r", 8)
-                .attr("fill", function(d) {
+                .attr("fill", function (d) {
                     return d.colour;
                 })
                 .call(force.drag)
@@ -407,18 +408,18 @@
                 });
 
                 {#object_true ? $("#cardBody").html("<ol>" + tmp_object + "</ol>") : $("#cardBody").html(tmp_subject);#}
-                if ((subject_true && object_true) || subject_true){
+                if ((subject_true && object_true) || subject_true) {
                     $("#cardHeader").html(header_topic_s + '<button type="button" class="close" aria-label="Close"\n' +
-                    '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
-                    '                    <span aria-hidden="true">&times;</span>\n' +
-                    '                </button>');
+                        '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
+                        '                    <span aria-hidden="true">&times;</span>\n' +
+                        '                </button>');
                     $("#cardBody").html(tmp_subject);
                 }
-                else if (object_true){
+                else if (object_true) {
                     $("#cardHeader").html(header_topic_o + '<button type="button" class="close" aria-label="Close"\n' +
-                    '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
-                    '                    <span aria-hidden="true">&times;</span>\n' +
-                    '                </button>');
+                        '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
+                        '                    <span aria-hidden="true">&times;</span>\n' +
+                        '                </button>');
                     $("#cardBody").html("<ol>" + tmp_object + "</ol>");
                 }
 
@@ -488,7 +489,14 @@
 
         var stop_progress_running;
         $(document).ready(function () {
-            $(".js-example-basic-multiple").select2();
+{#            {% for key, value in filter_facets.items %}#}
+{#                var data=[];#}
+{#                {% for k, v in value.0.items %}#}
+{#                    data.push({id: "{{ k }}", text: "{{ v }}"})#}
+{#                {% endfor %}#}
+{#                $("#checked{{ key }}").select2({data: data, placeholder: 'Select an option'});#}
+{#            {% endfor %}#}
+            $('.jqsearchbox').select2({placeholder: 'Select an option'});
             $('.select2-search__field').width("100%");
             //$("#progress_bar").hide();
             //$("#filter_facet").submit(function (e) {
@@ -497,7 +505,7 @@
                     url: '{% url 'filter_query' %}',
                     data: $('#filter_facet').serialize(),
                     type: 'POST',
-                    beforeSend: function() {
+                    beforeSend: function () {
                         $("#filter_facet :input").attr("disabled", true);
                         progress_running();
                         d3.select("svg").remove();
