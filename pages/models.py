@@ -22,6 +22,10 @@ class Repository(models.Model):
     created_date = models.DateTimeField(default=timezone.now, editable=False)
     updated_date = models.DateTimeField(blank=True, editable=False)
 
+    class Meta:
+        verbose_name = 'My Repository'
+        verbose_name_plural = 'My Repositories'
+
     def save(self, *args, **kwargs):  # do something every time you save
         self.updated_date = timezone.now()
         super().save(*args, **kwargs)  # Call the "real" save() method.
@@ -109,6 +113,10 @@ class Forcegraph(models.Model):
     published_date = models.DateTimeField(
         blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Graph Node-Link'
+        verbose_name_plural = 'Graph Node-Links'
+
     def save(self, *args, **kwargs):  # do something every time you save
         if not self.pk:
             sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject.domain_path + '> .' \
@@ -168,6 +176,10 @@ class Timelinegraph(models.Model):
         default=timezone.now, editable=False)
     published_date = models.DateTimeField(
         blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Graph Timeline'
+        verbose_name_plural = 'Graph Timelines'
 
     def save(self, *args, **kwargs):  # do something every time you save
         if not self.pk:
