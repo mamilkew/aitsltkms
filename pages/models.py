@@ -110,17 +110,18 @@ class Forcegraph(models.Model):
         blank=True, null=True)
 
     def save(self, *args, **kwargs):  # do something every time you save
-        sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject.domain_path + '> .' \
-                     + '?subject ?predicate ?object .' \
-                     + 'optional{?subject rdfs:label ?s_label}' \
-                     + 'optional{?predicate rdfs:label ?p_label}' \
-                     + 'optional{?object rdfs:label ?o_label}' \
-                     + 'filter(?object != owl:NamedIndividual)' \
-                     + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
-        data = call_api(sparql_all, self.repository_query.query_path)
-        self.source = json.loads(data)
-        self.updated_date = timezone.now()
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+        if not self.pk:
+            sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject.domain_path + '> .' \
+                         + '?subject ?predicate ?object .' \
+                         + 'optional{?subject rdfs:label ?s_label}' \
+                         + 'optional{?predicate rdfs:label ?p_label}' \
+                         + 'optional{?object rdfs:label ?o_label}' \
+                         + 'filter(?object != owl:NamedIndividual)' \
+                         + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
+            data = call_api(sparql_all, self.repository_query.query_path)
+            self.source = json.loads(data)
+            self.updated_date = timezone.now()
+            super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def was_published_last(self):
         now = timezone.now()
@@ -169,17 +170,18 @@ class Timelinegraph(models.Model):
         blank=True, null=True)
 
     def save(self, *args, **kwargs):  # do something every time you save
-        sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject.domain_path + '> .' \
-                     + '?subject ?predicate ?object .' \
-                     + 'optional{?subject rdfs:label ?s_label}' \
-                     + 'optional{?predicate rdfs:label ?p_label}' \
-                     + 'optional{?object rdfs:label ?o_label}' \
-                     + 'filter(?object != owl:NamedIndividual)' \
-                     + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
-        data = call_api(sparql_all, self.repository_query.query_path)
-        self.source = json.loads(data)
-        self.updated_date = timezone.now()
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+        if not self.pk:
+            sparql_all = 'SELECT DISTINCT * WHERE { ?subject rdf:type <' + self.domain_subject.domain_path + '> .' \
+                         + '?subject ?predicate ?object .' \
+                         + 'optional{?subject rdfs:label ?s_label}' \
+                         + 'optional{?predicate rdfs:label ?p_label}' \
+                         + 'optional{?object rdfs:label ?o_label}' \
+                         + 'filter(?object != owl:NamedIndividual)' \
+                         + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
+            data = call_api(sparql_all, self.repository_query.query_path)
+            self.source = json.loads(data)
+            self.updated_date = timezone.now()
+            super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def was_published_last(self):
         now = timezone.now()
