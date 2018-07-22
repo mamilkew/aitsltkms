@@ -391,13 +391,15 @@
                 var subject_true = false, object_true = false;
                 var header_topic_s = "", header_topic_o = "";
                 var tmp_subject = "", tmp_object = "";
+                var sortKeys = {};
                 $("#nodeClickable").removeClass("invisible");
                 $("#nodeClickable").css('cursor', 'move');
                 graph.triples.forEach(function (o) {
                     if (o.s === d) {
                         subject_true = true;
                         header_topic_s = d.label;
-                        tmp_subject += "<label class='text-success'>" + o.p.label + ": </label>" + o.o.label + "<br>";
+                        {#tmp_subject += "<label class='text-success'>" + o.p.label + ": </label>" + o.o.label + "<br>";#}
+                        sortKeys[o.p.label] = o.o.label;
                     }
                     else if (o.o === d) {
                         object_true = true;
@@ -408,6 +410,12 @@
 
                 {#object_true ? $("#cardBody").html("<ol>" + tmp_object + "</ol>") : $("#cardBody").html(tmp_subject);#}
                 if ((subject_true && object_true) || subject_true) {
+                    Object.keys(sortKeys)
+                        .sort()
+                        .reverse()
+                        .forEach(function (v, i) {
+                            tmp_subject += "<label class='text-success'>" + v + ": </label>" + sortKeys[v] + "<br>";
+                        });
                     $("#cardHeader").html(header_topic_s + '<button type="button" class="close" aria-label="Close"\n' +
                         '                        onclick=\'$("#nodeClickable").toggleClass("visible invisible");\'>\n' +
                         '                    <span aria-hidden="true">&times;</span>\n' +
@@ -501,15 +509,15 @@
             //$("#filter_facet").submit(function (e) {
             {#$("#filter_facet").change(function (e) {#}
             $(".jqsearchbox").change(function (e) {
-            {#$(".jqsearchbox").on('select2:select', function (e) {#}
+                {#$(".jqsearchbox").on('select2:select', function (e) {#}
                 $.ajax({
                     url: '{% url 'filter_query' %}',
                     data: $('#filter_facet').serialize(),
                     type: 'POST',
                     beforeSend: function () {
                         {#$(".jqsearchbox").on('select2:select', function (e) {#}
-                            $(".jqsearchbox").prop("disabled", true);
-                            {#e.preventDefault();#}
+                        $(".jqsearchbox").prop("disabled", true);
+                        {#e.preventDefault();#}
                         {#\});#}
                         progress_running();
                         d3.select("svg").remove();
@@ -544,7 +552,7 @@
                 });
                 e.preventDefault();
             });
-        {#\});#}
+            {#\});#}
         });
 
     </script>
