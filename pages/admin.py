@@ -48,6 +48,10 @@ class ForcegraphForm(forms.ModelForm):
                                                                                              'repository_query',
                                                                                              'domain_subject')))
 
+    def __init__(self, *args, **kwargs):
+        super(ForcegraphForm, self).__init__(*args, **kwargs)
+        self.fields['faceted_search'].help_text = 'Please make a blank if you want to get all values of filter'
+
     class Meta:
         model = Forcegraph
         fields = ('__all__')
