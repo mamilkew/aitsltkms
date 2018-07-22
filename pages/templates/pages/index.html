@@ -1,15 +1,22 @@
 {% extends 'pages/layout.html' %}
+{% load staticfiles %}
 {% block container %}
 
     <div class="starter-template">
         <h1>Prototype</h1>
         <p class="lead">ProjMind by AIT Solution</p>
+        <p class="text-secondary">Please select the visualization on the menu bar</p>
 
         {#        <h3><a href="{% url 'detail' posts.id %}">{{ posts.title }}</a></h3>#}
-{#        <h3><a href="{% url 'detail' posts.id %}">{{ posts.title }}</a></h3>#}
-                {% for post in posts %}
-                    <h3><a href="{% url 'pages_forcegraph' post.id %}">{{ post.page_title }}</a></h3>
-                {% endfor %}
+        {#        <h3><a href="{% url 'detail' posts.id %}">{{ posts.title }}</a></h3>#}
+
+        <div class="container">
+            <img src="{% static 'images/map_index.png' %}" width="100%"/>
+        </div>
+
+        {#            {% for post in posts %}#}
+        {#                <h3><a href="{% url 'pages_forcegraph' post.id %}">{{ post.page_title }}</a></h3>#}
+        {#            {% endfor %}#}
 
     </div>
 
