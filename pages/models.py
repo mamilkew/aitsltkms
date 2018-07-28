@@ -130,6 +130,9 @@ class Forcegraph(models.Model):
             self.source = json.loads(data)
             self.updated_date = timezone.now()
             super().save(*args, **kwargs)  # Call the "real" save() method.
+        else:
+            self.updated_date = timezone.now()
+            super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def was_published_last(self):
         now = timezone.now()
@@ -192,6 +195,9 @@ class Timelinegraph(models.Model):
                          + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
             data = call_api(sparql_all, self.repository_query.query_path)
             self.source = json.loads(data)
+            self.updated_date = timezone.now()
+            super().save(*args, **kwargs)  # Call the "real" save() method.
+        else:
             self.updated_date = timezone.now()
             super().save(*args, **kwargs)  # Call the "real" save() method.
 
