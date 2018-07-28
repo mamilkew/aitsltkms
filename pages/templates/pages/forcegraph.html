@@ -399,7 +399,12 @@
                         subject_true = true;
                         header_topic_s = d.label;
                         {#tmp_subject += "<label class='text-success'>" + o.p.label + ": </label>" + o.o.label + "<br>";#}
-                        sortKeys[o.p.label] = o.o.label;
+                        if (sortKeys.hasOwnProperty(o.p.label)) {
+                            sortKeys[o.p.label] += ', ' + o.o.label;
+                        } else {
+                            sortKeys[o.p.label] = o.o.label;
+                        }
+
                     }
                     else if (o.o === d) {
                         object_true = true;
