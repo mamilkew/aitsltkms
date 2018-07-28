@@ -25,7 +25,7 @@ SECRET_KEY = 'a&vi(az4@=%_%054ueqn1jg@vtlut^ez_yov4n%z-3=!ed_ji9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['milkks-mbp.desktops.cs.ait.ac.th', '127.0.0.1']
 
 
 # Application definition
