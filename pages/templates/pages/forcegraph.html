@@ -158,12 +158,8 @@
             });
         }
 
-        function colors_google(n) {
-            var colores_g = ["#3366cc", "#dc3912", "#ff9900", "#dc9a5b", "#5b479a", "#0099c6", "#9a5b47", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
-            return colores_g[n];
-        }
-
         function triplesToGraph(triples) {
+            var colors_google = ["#651067", "#dc3912", "#ff9900", "#6b59a4", "#dc9a5b", "#994499", "#b82e2e", "#6633cc", "#329262", "#5574a6", "#8b0707", "#3b3eac", "#e67300", "#3366cc", "#adc1ea", "#316395", "#9a5b47", "#66aa00", "#22aa99", "#aaaa11"];
             var colour_pred = {};
             var colour_count = 0;
             {#svg.html("");#}
@@ -183,8 +179,8 @@
                 var objNode = filterNodesById(graph.nodes, objId)[0];
 
                 if (!(colour_pred.hasOwnProperty(predId))) {
-                    colour_pred[predId] = colors_google(colour_count);
-                    if (colour_count === 19) {
+                    colour_pred[predId] = colors_google[colour_count];
+                    if (colour_count === colors_google.length) {
                         colour_count = 0;
                     } else {
                         colour_count++;
@@ -213,8 +209,6 @@
                 graph.triples.push({s: subjNode, p: predNode, o: objNode});
 
             });
-
-            console.log(colour_pred);
             return graph;
         }
 
@@ -285,8 +279,16 @@
                 .data(filterNodesByType(graph.nodes, "node"))
                 .enter()
                 .append("circle")
+                .attr("r", function (d, i) {
+                    var minR = 8;
+                    {#d.weight = graph.triples.filter(function (l) {#}
+                    {#    return l.s.index == d.index || l.o.index == d.index#}
+                    {#\});#}
+                    console.log(graph.nodes[i]);
+                    {#console.log(minR + (d.weight * 2));#}
+                    return 8;
+                })
                 .attr("class", "node")
-                .attr("r", 8)
                 .attr("fill", function (d) {
                     return d.colour;
                 })
