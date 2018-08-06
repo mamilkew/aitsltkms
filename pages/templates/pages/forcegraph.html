@@ -294,6 +294,9 @@
                 .append("text")
                 .attr("class", "node-text")
                 .attr("text-anchor", "middle")
+                .style("font", function (d) {
+                    return (10+(d.weight)/2)+"px sans-serif"
+                })
                 .text(function (d) {
                     // if (d.label.slice(-2, -1) == ".") {
                     //     return Intl.NumberFormat().format(parseFloat(d.label).toFixed(2));
