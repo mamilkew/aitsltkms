@@ -96,6 +96,7 @@
 
         marker {
             stroke: #999;
+            stroke-opacity: .20;
             fill: rgba(124, 240, 10, 0);
         }
 
@@ -121,7 +122,7 @@
         var sum_year = {}, sum_status = {}, list_year = {}, list_status = {};
         var margin = {top: 20, right: 50, bottom: 20, left: 150},
             w = 800 - margin.right - margin.left,
-            h = 600 - margin.top - margin.bottom;
+            h = 700 - margin.top - margin.bottom;
 
         var triples = {{ posts.result | safe }};
 
@@ -213,6 +214,17 @@
         }
 
         function update() {
+
+            // ==================== Run ====================
+            force
+                .nodes(graph.nodes)
+                {#.force("link")#}
+                .links(graph.links)
+                .charge(-250)
+                .linkDistance(5)
+                .start()
+            ;
+
             // ==================== Add Marker ====================
             svg.append("svg:defs").selectAll("marker")
                 .data(["end"])
@@ -252,6 +264,28 @@
             //linkTexts.append("title")
             //		.text(function(d) { return d.predicate; });
 
+
+            // ==================== Add Node =====================
+            nodes = container.append("g")
+                .selectAll(".node")
+                .data(filterNodesByType(graph.nodes, "node"))
+                .enter()
+                .append("circle")
+                .attr("r", function (d) {
+                    var minR = 8;
+                    return minR+(d.weight);
+                })
+                .attr("class", "node")
+                .attr("fill", function (d) {
+                    return d.colour;
+                })
+                .call(force.drag)
+                .on("mouseover", mouseOver(.10))
+                .on("mouseout", mouseOut)
+                .on("click", nodeClick());
+
+            ;//nodes
+
             // ==================== Add Node Names =====================
             nodeTexts = container.append("g")
                 .selectAll(".node-text")
@@ -259,6 +293,7 @@
                 .enter()
                 .append("text")
                 .attr("class", "node-text")
+                .attr("text-anchor", "middle")
                 .text(function (d) {
                     // if (d.label.slice(-2, -1) == ".") {
                     //     return Intl.NumberFormat().format(parseFloat(d.label).toFixed(2));
@@ -273,31 +308,6 @@
             //nodeTexts.append("title")
             //		.text(function(d) { return d.label; });
 
-            // ==================== Add Node =====================
-            nodes = container.append("g")
-                .selectAll(".node")
-                .data(filterNodesByType(graph.nodes, "node"))
-                .enter()
-                .append("circle")
-                .attr("r", function (d, i) {
-                    var minR = 8;
-                    {#d.weight = graph.triples.filter(function (l) {#}
-                    {#    return l.s.index == d.index || l.o.index == d.index#}
-                    {#\});#}
-                    console.log(graph.nodes[i]);
-                    {#console.log(minR + (d.weight * 2));#}
-                    return 8;
-                })
-                .attr("class", "node")
-                .attr("fill", function (d) {
-                    return d.colour;
-                })
-                .call(force.drag)
-                .on("mouseover", mouseOver(.20))
-                .on("mouseout", mouseOut)
-                .on("click", nodeClick());
-
-            ;//nodes
 
             // ==================== Force ====================
             force.on("tick", function () {
@@ -321,10 +331,10 @@
 
                 nodeTexts
                     .attr("x", function (d) {
-                        return d.x + 12;
+                        return d.x;
                     })
                     .attr("y", function (d) {
-                        return d.y + 3;
+                        return d.y;
                     })
                 ;
 
@@ -338,15 +348,6 @@
                 ;
             });
 
-            // ==================== Run ====================
-            force
-                .nodes(graph.nodes)
-                {#.force("link")#}
-                .links(graph.links)
-                .charge(-250)
-                .linkDistance(5)
-                .start()
-            ;
 
         }
 
