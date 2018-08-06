@@ -158,8 +158,14 @@
             });
         }
 
-        function triplesToGraph(triples) {
+        function colors_google(n) {
+            var colores_g = ["#3366cc", "#dc3912", "#ff9900", "#dc9a5b", "#5b479a", "#0099c6", "#9a5b47", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+            return colores_g[n];
+        }
 
+        function triplesToGraph(triples) {
+            var colour_pred = {};
+            var colour_count = 0;
             {#svg.html("");#}
             //Graph
             var graph = {nodes: [], links: [], triples: []};
@@ -176,13 +182,23 @@
                 var subjNode = filterNodesById(graph.nodes, subjId)[0];
                 var objNode = filterNodesById(graph.nodes, objId)[0];
 
+                if (!(colour_pred.hasOwnProperty(predId))) {
+                    colour_pred[predId] = colors_google(colour_count);
+                    if (colour_count === 19) {
+                        colour_count = 0;
+                    } else {
+                        colour_count++;
+                    }
+                }
+
                 if (subjNode == null) {
                     subjNode = {id: subjId, label: subjLabel, weight: 1, type: "node", colour: "#479a5b"};
                     graph.nodes.push(subjNode);
                 }
 
                 if (objNode == null) {
-                    objNode = {id: objId, label: objLabel, weight: 1, type: "node", colour: "#dc9a5b"};
+                    {#objColourNode = "#dc9a5b";#}
+                    objNode = {id: objId, label: objLabel, weight: 1, type: "node", colour: colour_pred[predId]};
                     graph.nodes.push(objNode);
                 }
 
@@ -198,6 +214,7 @@
 
             });
 
+            console.log(colour_pred);
             return graph;
         }
 
