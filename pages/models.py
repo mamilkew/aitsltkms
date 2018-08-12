@@ -12,6 +12,7 @@ from urllib.parse import urlencode
 from base64 import b64encode
 from django.db.models import Q
 from smart_selects.db_fields import ChainedForeignKey, ChainedManyToManyField
+from pages import extractor_transformation as extractor_trans
 
 
 # Create your models here.
@@ -128,6 +129,7 @@ class Forcegraph(models.Model):
                          + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
             data = call_api(sparql_all, self.repository_query.query_path)
             self.source = json.loads(data)
+            self.result = extractor_trans.transform_api(json.loads(data))  # solve the problem of saving frequently
             self.updated_date = timezone.now()
             super().save(*args, **kwargs)  # Call the "real" save() method.
         else:

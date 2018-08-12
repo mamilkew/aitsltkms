@@ -12,7 +12,7 @@ def forcegraph(request, post_id):
         posts = Forcegraph.objects.get(pk=post_id)  # ===== get DB (from API when created) =====
 
         #  ===== transform to pattern for visualization standard for s-p-o =====
-        new_results = extractor_trans.transform_api(posts.source)
+        # new_results = extractor_trans.transform_api(posts.source)
 
         #  ===== making a list of Filtering
         filtering = extractor_trans.faceted_search(posts.source, posts.domain_subject.domain_path)
@@ -22,8 +22,8 @@ def forcegraph(request, post_id):
         posts.subject = posts.domain_subject
         # ======== temporary key =========
 
-        posts.result = new_results
-        posts.save()
+        # posts.result = new_results
+        # posts.save()
 
         # ======== compare facet to display  =========
         compare_facets = posts.faceted_search.select_related()
