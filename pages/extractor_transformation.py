@@ -135,3 +135,47 @@ def make_filter_prefixes(prefixes, value, prefixes_dict):
     else:
         prefixes_dict[value] = [prefixes]
         return prefixes_dict
+
+
+def nested_transformation(results, group, date_show):
+    new_result = {"name": group, "commits": []}
+    for result in results:
+        if result.get('s_label') is not None:
+            s_label = result.get('s_label')
+        else:
+            s_label = result.get('subject')
+
+        if result.get('p_label') is not None:
+            p_label = result.get('p_label')
+        else:
+            p_label = result.get('predicate')
+
+        if result.get('o_label') is not None:
+            o_label = result.get('o_label')
+        else:
+            o_label = result.get('object')
+
+        if date_show == result.get('predicate'):
+            date_show = p_label
+
+        check_index = next(
+            (index for (index, d) in enumerate(new_result['commits']) if d["subject"] == [s_label]), None)
+        if check_index is not None:  # result.get('subject') in new_results['commits'].values()
+            tmp = new_result['commits'][check_index]
+            tmp[p_label] = o_label
+        else:
+            tmp = Dictlist()
+            tmp['subject'] = s_label
+            tmp[p_label] = o_label
+            new_result['commits'].append(tmp)
+    new_result['date_show'] = date_show
+    return new_result
+
+
+class Dictlist(dict):
+    def __setitem__(self, key, value):
+        try:
+            self[key]
+        except KeyError:
+            super(Dictlist, self).__setitem__(key, [])
+        self[key].append(value)

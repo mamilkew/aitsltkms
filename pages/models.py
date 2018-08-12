@@ -197,6 +197,11 @@ class Timelinegraph(models.Model):
                          + '}order by ?subject'  # filter(?object != owl:NamedIndividual && ?predicate != rdf:type)
             data = call_api(sparql_all, self.repository_query.query_path)
             self.source = json.loads(data)
+            results = extractor_trans.transform_api(json.loads(data))
+            new_results = []
+            new_results.append(extractor_trans.nested_transformation(results, "All",
+                                                                     self.date_marked.property_path.split('#')[-1]))
+            self.result = new_results  # solve the problem of saving frequently
             self.updated_date = timezone.now()
             super().save(*args, **kwargs)  # Call the "real" save() method.
         else:
